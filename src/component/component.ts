@@ -6,6 +6,7 @@ import { registry, residence } from './registry'
 import { LifeCycleCallback, EventCallback } from './callback'
 import { model, state } from './model'
 import { clonedeep } from '../util'
+import * as data from './data/data'
 
 export default class Component implements LifeCycleCallback, EventCallback {
   static register(type: string, clazz: FunctionConstructor): FunctionConstructor {
@@ -79,11 +80,14 @@ export default class Component implements LifeCycleCallback, EventCallback {
 }
 
 /* Method Object mixin 방법. */
-Object.assign(Component.prototype, ...[model, state]);
+Object.assign(Component.prototype, ...[
+  model, state,
+  data
+]);
 
 /* 단순한 state 속성의 getter/setter 정의 방법. */
 [
-  'center', 'dimension', 'rotate',
+  'center', 'dimension', 'rotate', 'data'
 ].forEach(property => Object.defineProperty(Component.prototype, property, {
   get() {
     return this.getState(property);
