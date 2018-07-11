@@ -1,0 +1,27 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "noImplicitAny": false,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "module": "commonjs",
+    "target": "es5",
+    "outDir": "./dist",
+    "sourceMap": true,
+    "baseUrl": "./",
+    "lib": [
+      "esnext.asynciterable",
+      "es5",
+      "es6",
+      "es7",
+      "es2017",
+      "dom"
+    ]
+  },
+  "include": [
+    "./src/**/*"
+  ],
+  "exclude": [
+    "**/*.spec.ts"
+  ]
+}

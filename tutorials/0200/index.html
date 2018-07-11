@@ -1,0 +1,38 @@
+<html>
+
+<head>
+  <script src="../../things-real.js"></script>
+</head>
+
+<body>
+  <h1>3D Modeling Library - REAL</h1>
+  <div id="scene"></div>
+
+  <script type="module">
+    import { html, render } from '../../node_modules/lit-html/lit-html.js';
+
+    async function create_scene() {
+      var {
+        create
+      } = REAL;
+
+      const SCENE = await create({ mode: 'modeler' });
+
+      const show = (scene) => {
+        return html`
+        <h2>targetEl : ${scene.targetEl}</h2>
+        <h2>mode : ${scene.mode}</h2>
+        <h2>model : ${scene.model}</h2>
+      `;
+      };
+
+      const el = document.querySelector('#scene');
+
+      render(show(SCENE), el);
+    }
+
+    create_scene();
+  </script>
+</body>
+
+</html>
