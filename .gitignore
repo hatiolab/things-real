@@ -1,11 +1,3 @@
 node_modules/
 npm-debug.log
-bundle.js
-samples/*yumin*.*
-things-scene.js
-things-scene.js.map
-bower_components
-docs/_site
-docs/.sass-cache
-docs/Gemfile.lock
 .DS_Store
