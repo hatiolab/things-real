@@ -1,5 +1,5 @@
 {
-  "name": "things-real",
+  "name": "@hatiolab/things-real",
   "description": "3D modeling library",
   "version": "1.0.0",
   "main": "dist/things-real.js",
