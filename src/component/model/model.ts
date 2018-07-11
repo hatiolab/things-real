@@ -2,16 +2,21 @@ import { clonedeep } from '../../util'
 import { isEqual } from 'lodash';
 
 export default {
-  get(prop) {
-    return this._model[prop];
-  },
 
-  getModel(prop) {
+  /**
+   * get / set 함수는 모델을 변경하거나 가져오는 기능을 하도록 정의되어있으나 (기존 things-scene의 관례에 따라)
+   * 실질적으로 State를 변경하거나 가져오는 기능으로 바꾸는 것이 사용 빈도에 있어서 효율적일 것 같다.
+   */
+  get(prop) {
     return this._model[prop];
   },
 
   set(props, value) {
     this.setModel(props, value);
+  },
+
+  getModel(prop) {
+    return this._model[prop];
   },
 
   setModel(props, value) {
