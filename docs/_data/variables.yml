@@ -2,10 +2,10 @@ default:
   text_skin: default
   lang: en
   paths:
-    root: blog
-    home: blog
-    archive: archive.html
-    rss:  feed.xml
+    root: /things-real
+    home: /things-real/blog
+    archive: /things-real/archive.html
+    rss:  /things-real/feed.xml
   mathjax: false
   mathjax_autoNumber: false
   mermaid: false
