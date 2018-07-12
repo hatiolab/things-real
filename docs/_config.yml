@@ -17,7 +17,7 @@
 ## => Site Settings
 ##############################
 url: https://heartyoh.github.io/things-real/
-baseurl: /
+baseurl: /things-real
 title: Things Real
 description: >
     3D 모델링 및 VR 컨텐츠 저작 라이브러리 | 田琦的小站
