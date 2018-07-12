@@ -23,6 +23,10 @@
   version "4.1.4"
   resolved "https://registry.yarnpkg.com/@types/chai/-/chai-4.1.4.tgz#5ca073b330d90b4066d6ce18f60d57f2084ce8ca"
 
+"@types/lodash@^4.14.111":
+  version "4.14.111"
+  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.111.tgz#d926250baa9526c0ffe85914dd10363068e7893a"
+
 "@types/mocha@^5.2.4":
   version "5.2.4"
   resolved "https://registry.yarnpkg.com/@types/mocha/-/mocha-5.2.4.tgz#2f8fbdf95c69ebf82150a7864864010f186745bf"
@@ -36,6 +40,20 @@
 "@types/sinon@^5.0.1":
   version "5.0.1"
   resolved "https://registry.yarnpkg.com/@types/sinon/-/sinon-5.0.1.tgz#a15b36ec42f1f53166617491feabd1734cb03e21"
+
+"@types/three@^0.92.12":
+  version "0.92.12"
+  resolved "https://registry.yarnpkg.com/@types/three/-/three-0.92.12.tgz#7c0f78bac119ccf9e3de159728fe0b12d9c6d410"
+  dependencies:
+    "@types/webvr-api" "*"
+
+"@types/tinycolor2@^1.4.0":
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/@types/tinycolor2/-/tinycolor2-1.4.0.tgz#77792ebbbe8a1c9b291cb949fafeb7de121c4c6a"
+
+"@types/webvr-api@*":
+  version "0.0.34"
+  resolved "https://registry.yarnpkg.com/@types/webvr-api/-/webvr-api-0.0.34.tgz#8fa49028de925c7b8bce3d559d3374ce2c89ee28"
 
 "@webassemblyjs/ast@1.5.13":
   version "1.5.13"
@@ -5262,6 +5280,10 @@ timers-browserify@^2.0.4:
 timespan@2.3.x:
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/timespan/-/timespan-2.3.0.tgz#4902ce040bd13d845c8f59b27e9d59bad6f39929"
+
+tinycolor2@^1.4.1:
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/tinycolor2/-/tinycolor2-1.4.1.tgz#f4fad333447bc0b07d4dc8e9209d8f39a8ac77e8"
 
 tmp@0.0.33, tmp@0.0.x, tmp@^0.0.33:
   version "0.0.33"

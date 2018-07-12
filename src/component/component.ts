@@ -4,7 +4,7 @@
 
 import { registry, residence } from './registry'
 import { LifeCycleCallback } from './callback'
-import { IModel, Model } from './model'
+import { Model } from './model'
 import { clonedeep, mixin } from '../util'
 // import * as data from './data/data'
 

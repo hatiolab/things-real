@@ -32,7 +32,8 @@ module.exports = (env, argv) => {
       filename: "things-real.js",
       path: path.resolve(__dirname, './dist'),
       library: 'REAL',
-      libraryTarget: 'umd'
+      libraryTarget: 'umd',
+      umdNamedDefine: true
     },
     module: {
       rules: [{

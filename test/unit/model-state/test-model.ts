@@ -6,22 +6,17 @@ describe('Component model', () => {
   it('should ...', () => {
     const component = new Component({
       model: {
-        center: 10,
-        dimension: '100'
+        scale: { x: 1, y: 1, z: 1 }
       }
     });
 
-    component.dimension = '180'; // state
-    component.setModel('center', 50); // model
-    component.clearState('dimension'); // state
-    component.center = 40; // state
-    component.clearState('center'); // state
-    component.rotate = '0'; // state
+    component.setModel('scale', { x: 10, y: 10, z: 10 }); // model
+    component.scale = { x: 100, y: 100, z: 100 }; // state
+    component.clearState('scale'); // state
+    component.rotate = { x: 0.1, y: 0.1, z: 0.1 }; // state
 
-    component.dimension.should.equals('100');
-    component.center.should.equal(50);
-    console.log(component.model);
-    component.center.should.equal(component.state.center);
+    component.scale.x.should.equal(10);
+    component.scale.should.equal(component.state.scale);
   });
 
 });

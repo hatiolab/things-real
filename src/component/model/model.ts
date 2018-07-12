@@ -1,27 +1,39 @@
 import { clonedeep } from '../../util'
-import { isEqual } from 'lodash';
+import { isEqual } from 'lodash'
 
-export interface IModel {
-  text?: string,
-  dimension?: Object | string | number,
-  center?: Object | string | number,
-  rotate?: Object | string | number,
+interface I3Dimension {
+  x: number,
+  y: number,
+  z: number
 }
 
-export class Model implements IModel {
+interface IState {
+  id?: string,
+  class?: string,
+  text?: string,
+  translate?: I3Dimension,
+  scale?: I3Dimension,
+  rotate?: I3Dimension,
+  data?: any,
+  color?: any,
+  style?: any,
+  [propName: string]: any;
+}
+
+export class Model implements IState {
 
   constructor(model: Object) {
     this._model = clonedeep(model);;
   }
 
-  private _model: IModel = {}
-  private _state: IModel = {}
+  private _model: IState = {}
+  private _state: IState = {}
 
-  get model(): IModel {
+  get model(): IState {
     return this._model;
   }
 
-  get state(): IModel {
+  get state(): IState {
     return {
       ...this._model,
       ...this._state
@@ -35,7 +47,7 @@ export class Model implements IModel {
 
   /**
    * get / set 함수는 모델을 변경하거나 가져오는 기능을 하도록 정의되어있으나 (기존 things-scene의 관례에 따라)
-   * 실질적으로 State를 변경하거나 가져오는 기능으로 바꾸는 것이 사용 빈도에 있어서 효율적일 것 같다.
+   * 실질적으로 State를 변경하거나 가져오는 기능으로 바꾸는 것이 사용 빈도에 있어서 효율적일 것 같다. 또는 아예 제거하는 것이 좋다.
    */
   get(prop: string) {
     return this._model[prop];
@@ -160,16 +172,18 @@ export class Model implements IModel {
   /**
    * Simple Properties
    */
-  public text: any;
-  public center: any;
-  public dimension: any;
-  public rotate: any;
+  public text: string;
+  public translate: I3Dimension;
+  public scale: I3Dimension;
+  public rotate: I3Dimension;
+  public color: any;
+  public style: any;
   public data: any;
 }
 
 /* 단순한 state 속성의 getter/setter 정의 방법. */
 [
-  'text', 'center', 'dimension', 'rotate', 'data'
+  'text', 'translate', 'scale', 'rotate', 'scale', 'color', 'style', 'data'
 ].forEach(property => Object.defineProperty(Model.prototype, property, {
   get() {
     return this.getState(property);

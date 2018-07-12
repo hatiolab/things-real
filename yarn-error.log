@@ -1,5 +1,5 @@
 Arguments: 
-  /Users/super/.nvm/versions/node/v9.5.0/bin/node /Users/super/.nvm/versions/node/v9.5.0/bin/yarn add -D es6-polyfill
+  /Users/super/.nvm/versions/node/v9.5.0/bin/node /Users/super/.nvm/versions/node/v9.5.0/bin/yarn add @types/lit-html
 
 PATH: 
   /usr/local/sbin:/Users/super/.rvm/gems/ruby-2.3.4/bin:/Users/super/.rvm/gems/ruby-2.3.4@global/bin:/Users/super/.rvm/rubies/ruby-2.3.4/bin:/Users/super/.nvm/versions/node/v9.5.0/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/sbin:/Users/super/.rvm/gems/ruby-2.3.4/bin:/Users/super/.rvm/gems/ruby-2.3.4@global/bin:/Users/super/.rvm/rubies/ruby-2.3.4/bin:/Users/super/.rvm/bin
@@ -14,7 +14,7 @@ Platform:
   darwin x64
 
 Trace: 
-  Error: https://registry.yarnpkg.com/es6-polyfill: Not found
+  Error: https://registry.yarnpkg.com/@types%2flit-html: Not found
       at Request.params.callback [as _callback] (/Users/super/.nvm/versions/node/v9.5.0/lib/node_modules/yarn/lib/cli.js:65656:18)
       at Request.self.callback (/Users/super/.nvm/versions/node/v9.5.0/lib/node_modules/yarn/lib/cli.js:134675:22)
       at Request.emit (events.js:160:13)
@@ -42,7 +42,9 @@ npm manifest:
     "devDependencies": {
       "@types/chai": "^4.1.4",
       "@types/mocha": "^5.2.4",
+      "@types/should": "^13.0.0",
       "@types/sinon": "^5.0.1",
+      "babel-polyfill": "^6.26.0",
       "chai": "^4.1.2",
       "karma": "^2.0.4",
       "karma-chai": "^0.1.0",
@@ -52,7 +54,6 @@ npm manifest:
       "karma-typescript-preprocessor2": "^1.2.1",
       "karma-webpack": "^3.0.0",
       "mocha": "^5.2.0",
-      "phantomjs-polyfill": "^0.0.2",
       "phantomjs-prebuilt": "^2.1.16",
       "should": "^13.2.1",
       "sinon": "^6.1.3",
@@ -65,9 +66,12 @@ npm manifest:
       "webpack-merge": "^4.1.3"
     },
     "dependencies": {
+      "@types/three": "^0.92.12",
+      "@types/tinycolor2": "^1.4.0",
       "lit-html": "^0.10.2",
       "lodash": "^4.17.10",
-      "three": "^0.94.0"
+      "three": "^0.94.0",
+      "tinycolor2": "^1.4.1"
     }
   }
 
@@ -104,9 +108,29 @@ Lockfile:
     version "5.2.4"
     resolved "https://registry.yarnpkg.com/@types/mocha/-/mocha-5.2.4.tgz#2f8fbdf95c69ebf82150a7864864010f186745bf"
   
+  "@types/should@^13.0.0":
+    version "13.0.0"
+    resolved "https://registry.yarnpkg.com/@types/should/-/should-13.0.0.tgz#96c00117f1896177848fdecfa336313c230c879e"
+    dependencies:
+      should "*"
+  
   "@types/sinon@^5.0.1":
     version "5.0.1"
     resolved "https://registry.yarnpkg.com/@types/sinon/-/sinon-5.0.1.tgz#a15b36ec42f1f53166617491feabd1734cb03e21"
+  
+  "@types/three@^0.92.12":
+    version "0.92.12"
+    resolved "https://registry.yarnpkg.com/@types/three/-/three-0.92.12.tgz#7c0f78bac119ccf9e3de159728fe0b12d9c6d410"
+    dependencies:
+      "@types/webvr-api" "*"
+  
+  "@types/tinycolor2@^1.4.0":
+    version "1.4.0"
+    resolved "https://registry.yarnpkg.com/@types/tinycolor2/-/tinycolor2-1.4.0.tgz#77792ebbbe8a1c9b291cb949fafeb7de121c4c6a"
+  
+  "@types/webvr-api@*":
+    version "0.0.34"
+    resolved "https://registry.yarnpkg.com/@types/webvr-api/-/webvr-api-0.0.34.tgz#8fa49028de925c7b8bce3d559d3374ce2c89ee28"
   
   "@webassemblyjs/ast@1.5.13":
     version "1.5.13"
@@ -522,7 +546,15 @@ Lockfile:
     dependencies:
       follow-redirects "1.0.0"
   
-  babel-runtime@^6.0.0:
+  babel-polyfill@^6.26.0:
+    version "6.26.0"
+    resolved "https://registry.yarnpkg.com/babel-polyfill/-/babel-polyfill-6.26.0.tgz#379937abc67d7895970adc621f284cd966cf2153"
+    dependencies:
+      babel-runtime "^6.26.0"
+      core-js "^2.5.0"
+      regenerator-runtime "^0.10.5"
+  
+  babel-runtime@^6.0.0, babel-runtime@^6.26.0:
     version "6.26.0"
     resolved "https://registry.yarnpkg.com/babel-runtime/-/babel-runtime-6.26.0.tgz#965c7058668e82b55d7bfe04ff2337bc8b5647fe"
     dependencies:
@@ -1141,7 +1173,7 @@ Lockfile:
     version "0.1.1"
     resolved "https://registry.yarnpkg.com/copy-descriptor/-/copy-descriptor-0.1.1.tgz#676f6eb3c39997c2ee1ac3a924fd6124748f578d"
   
-  core-js@^2.2.0, core-js@^2.4.0:
+  core-js@^2.2.0, core-js@^2.4.0, core-js@^2.5.0:
     version "2.5.7"
     resolved "https://registry.yarnpkg.com/core-js/-/core-js-2.5.7.tgz#f972608ff0cead68b841a16a932d0b183791814e"
   
@@ -4173,10 +4205,6 @@ Lockfile:
     version "2.1.0"
     resolved "https://registry.yarnpkg.com/performance-now/-/performance-now-2.1.0.tgz#6309f4e0e5fa913ec1c69307ae364b4b377c9e7b"
   
-  phantomjs-polyfill@^0.0.2:
-    version "0.0.2"
-    resolved "https://registry.yarnpkg.com/phantomjs-polyfill/-/phantomjs-polyfill-0.0.2.tgz#8c6a7163e9bc8fd9ffdbe7d605cb5352f9fb891e"
-  
   phantomjs-prebuilt@^2.1.16, phantomjs-prebuilt@^2.1.7:
     version "2.1.16"
     resolved "https://registry.yarnpkg.com/phantomjs-prebuilt/-/phantomjs-prebuilt-2.1.16.tgz#efd212a4a3966d3647684ea8ba788549be2aefef"
@@ -4501,6 +4529,10 @@ Lockfile:
       double-ended-queue "^2.1.0-0"
       redis-commands "^1.2.0"
       redis-parser "^2.6.0"
+  
+  regenerator-runtime@^0.10.5:
+    version "0.10.5"
+    resolved "https://registry.yarnpkg.com/regenerator-runtime/-/regenerator-runtime-0.10.5.tgz#336c3efc1220adcedda2c9fab67b5a7955a33658"
   
   regenerator-runtime@^0.11.0:
     version "0.11.1"
@@ -4852,7 +4884,7 @@ Lockfile:
     version "1.0.0"
     resolved "https://registry.yarnpkg.com/should-util/-/should-util-1.0.0.tgz#c98cda374aa6b190df8ba87c9889c2b4db620063"
   
-  should@^13.2.1:
+  should@*, should@^13.2.1:
     version "13.2.1"
     resolved "https://registry.yarnpkg.com/should/-/should-13.2.1.tgz#84e6ebfbb145c79e0ae42307b25b3f62dcaf574e"
     dependencies:
@@ -5325,6 +5357,10 @@ Lockfile:
   timespan@2.3.x:
     version "2.3.0"
     resolved "https://registry.yarnpkg.com/timespan/-/timespan-2.3.0.tgz#4902ce040bd13d845c8f59b27e9d59bad6f39929"
+  
+  tinycolor2@^1.4.1:
+    version "1.4.1"
+    resolved "https://registry.yarnpkg.com/tinycolor2/-/tinycolor2-1.4.1.tgz#f4fad333447bc0b07d4dc8e9209d8f39a8ac77e8"
   
   tmp@0.0.33, tmp@0.0.x, tmp@^0.0.33:
     version "0.0.33"
