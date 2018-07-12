@@ -1,39 +1,41 @@
 import { clonedeep } from '../../util'
 import { isEqual } from 'lodash'
 
-interface I3Dimension {
+interface ThreeDimension {
   x: number,
   y: number,
   z: number
 }
 
-interface IState {
+export interface ComponentModel {
+  type?: string,
   id?: string,
   class?: string,
   text?: string,
-  translate?: I3Dimension,
-  scale?: I3Dimension,
-  rotate?: I3Dimension,
+  translate?: ThreeDimension,
+  scale?: ThreeDimension,
+  rotate?: ThreeDimension,
   data?: any,
   color?: any,
   style?: any,
+  components?: ComponentModel[],
   [propName: string]: any;
 }
 
-export class Model implements IState {
+export class Model implements ComponentModel {
 
   constructor(model: Object) {
     this._model = clonedeep(model);;
   }
 
-  private _model: IState = {}
-  private _state: IState = {}
+  private _model: ComponentModel = {}
+  private _state: ComponentModel = {}
 
-  get model(): IState {
+  get model(): ComponentModel {
     return this._model;
   }
 
-  get state(): IState {
+  get state(): ComponentModel {
     return {
       ...this._model,
       ...this._state
@@ -173,9 +175,9 @@ export class Model implements IState {
    * Simple Properties
    */
   public text: string;
-  public translate: I3Dimension;
-  public scale: I3Dimension;
-  public rotate: I3Dimension;
+  public translate: ThreeDimension;
+  public scale: ThreeDimension;
+  public rotate: ThreeDimension;
   public color: any;
   public style: any;
   public data: any;

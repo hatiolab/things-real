@@ -1,1 +1,1 @@
-export { Model } from './model'
+export { ComponentModel, Model } from './model'
