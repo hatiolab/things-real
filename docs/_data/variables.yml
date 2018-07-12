@@ -2,10 +2,10 @@ default:
   text_skin: default
   lang: en
   paths:
-    root: /
-    home: /
-    archive:  /archive.html
-    rss:  /feed.xml
+    root: blog
+    home: blog
+    archive: archive.html
+    rss:  feed.xml
   mathjax: false
   mathjax_autoNumber: false
   mermaid: false
