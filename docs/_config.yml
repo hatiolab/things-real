@@ -16,11 +16,11 @@
 
 ## => Site Settings
 ##############################
-url: https://tianqi.name
+url: https://heartyoh.github.io/things-real/
 baseurl: /
-title: Qi's Site
+title: Things Real
 description: >
-    Tian Qi's Site | 田琦的小站
+    3D 모델링 및 VR 컨텐츠 저작 라이브러리 | 田琦的小站
 
 
 ## => Language and Timezone
@@ -32,18 +32,18 @@ timezone: Asia/Seoul
 ## => Author and Social
 ##############################
 author:
-  name: Tian Qi
-  email: kitian616@outlook.com
-  twitter: kitian616
-  github:  kitian616
+  name: hatiolab.com
+  email: heartyoh@hatiolab.com
+  twitter: hatiolab
+  github:  hatiolab
   googleplus: 101827554735084402671
   weibo: 234695683
-  douban: kitian616
+  douban: hatiolab
 
 
 ## => GitHub Repository (if the site is hosted by GitHub)
 ##############################
-repository: kitian616/kitian616.github.io
+repository: heartyoh/things-real
 repository_tree: master
 
 
@@ -77,7 +77,7 @@ paginate_path: /blog/page:num
 comments:
   provider: disqus
   disqus:
-    shortname: kitian616-github-io
+    shortname: things-real
 
 
 ## => Pageview
