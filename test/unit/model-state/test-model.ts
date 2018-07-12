@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { Component } from '../../../src/component'
+import { Component } from '../../../src'
 
 describe('Component model', () => {
 

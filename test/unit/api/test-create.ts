@@ -1,11 +1,11 @@
 import { expect } from 'chai';
-import { create, Mode } from '../../../src/api'
+import { create, SceneMode } from '../../../src'
 
 describe('API create', () => {
 
   it('should ...', async () => {
     const scene = await create({
-      mode: Mode.VIEW,
+      mode: SceneMode.VIEW,
       targetEl: 'scene',
       model: {
         width: 800,
@@ -13,7 +13,7 @@ describe('API create', () => {
       }
     });
 
-    expect(scene).contain.keys('mode');
+    expect(scene.sceneMode).to.equal(SceneMode.VIEW);
   });
 
 });

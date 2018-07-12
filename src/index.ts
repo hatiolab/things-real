@@ -1,4 +1,3 @@
-export * from './api'
+export * from './main'
 export * from './component'
-
-namespace REAL { }
+export * from './scene'
