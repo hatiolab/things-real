@@ -5,12 +5,14 @@
 import { registry, residence } from './registry'
 import { LifeCycleCallback } from './callback'
 import { Model } from './model'
+import { Class, ComponentModel } from '../types'
+import Container from './container'
 import { clonedeep, mixin } from '../util'
 // import * as data from './data/data'
 
 export default class Component extends Model implements LifeCycleCallback {
 
-  static register(type: string, clazz: FunctionConstructor): FunctionConstructor {
+  static register(type: string, clazz?: Class): Class {
     return registry.register(type, clazz);
   }
 
@@ -18,15 +20,13 @@ export default class Component extends Model implements LifeCycleCallback {
     return residence.residents;
   }
 
-  constructor({
-    model = {}
-  } = {}) {
+  constructor(model: ComponentModel) {
     super(model);
 
     residence.put(this);
   }
 
-  dispose(): void { }
+  dispose() { }
 
   /* LifeCycleCallback */
   created() { }
@@ -35,7 +35,28 @@ export default class Component extends Model implements LifeCycleCallback {
   ready() { }
   disposed() { }
 
+  /* Component */
+  get hierarchy(): ComponentModel {
+    return clonedeep(this.model);
+  }
+
+  private _container: Container
+
+  get container(): Container {
+    return this._container
+  }
+
+  set container(container: Container) {
+    this._container = container
+  }
+
+  get isContainer(): boolean {
+    return false
+  }
+
 }
+
+Component.register('component', Component)
 
 /* Method Object mixin 방법. */
 // mixin(Component, [Model]);

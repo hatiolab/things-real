@@ -1,3 +1,4 @@
+export * from './types'
 export * from './main'
-export * from './component'
 export * from './scene'
+export * from './component'

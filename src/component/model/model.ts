@@ -1,26 +1,6 @@
+import { ThreeDimension, ComponentModel } from '../../types'
 import { clonedeep } from '../../util'
 import { isEqual } from 'lodash'
-
-interface ThreeDimension {
-  x: number,
-  y: number,
-  z: number
-}
-
-export interface ComponentModel {
-  type?: string,
-  id?: string,
-  class?: string,
-  text?: string,
-  translate?: ThreeDimension,
-  scale?: ThreeDimension,
-  rotate?: ThreeDimension,
-  data?: any,
-  color?: any,
-  style?: any,
-  components?: ComponentModel[],
-  [propName: string]: any;
-}
 
 export class Model implements ComponentModel {
 

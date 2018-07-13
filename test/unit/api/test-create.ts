@@ -1,5 +1,4 @@
 import { expect } from 'chai'
-import { html, render } from 'lit-html'
 import { create, SceneMode } from '../../../src'
 
 describe('API create', () => {

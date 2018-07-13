@@ -1,10 +1,13 @@
-import { SceneConfig, SceneModel, SceneMode, FitMode } from '../main'
+import { SceneConfig, SceneModel, SceneMode, FitMode } from '../types'
+import { Component, Container, RootContainer } from '../component'
 
 export default class Scene {
   private _sceneMode: SceneMode
   private _fitMode: FitMode
   private _targetEl: HTMLElement
   private _sceneModel: SceneModel
+
+  private _rootContainer: Container
 
   constructor(config: SceneConfig) {
 
@@ -27,6 +30,11 @@ export default class Scene {
     this._sceneMode = config.mode | SceneMode.VIEW
     this._fitMode = config.fit | FitMode.RATIO
     this._sceneModel = config.model
+
+    this._rootContainer = new RootContainer({
+      type: 'root',
+      components: config.model.components
+    })
   }
 
   get sceneMode() {
