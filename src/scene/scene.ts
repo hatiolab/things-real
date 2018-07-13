@@ -1,6 +1,7 @@
 import { SceneConfig, SceneModel, SceneMode, FitMode } from '../types'
 import { Component, Container, RootContainer } from '../component'
 import { compile } from '../main'
+import { select } from '../component/model';
 
 export default class Scene {
   private _sceneMode: SceneMode
@@ -51,4 +52,12 @@ export default class Scene {
   }
 
   fit(mode: FitMode): void { }
+
+  findAll(selector: string): Component[] {
+    return this.rootContainer.findAll(selector)
+  }
+
+  findById(id: string): Component {
+    return this.rootContainer.findById(id)
+  }
 }

@@ -4,9 +4,10 @@
 
 import { registry, residence } from './registry'
 import { LifeCycleCallback } from './callback'
-import { ModelAndState } from './model'
+import { ModelAndState, select } from './model'
 import { Class, ComponentModel } from '../types'
 import Container from './container'
+import RootContainer from './root-container'
 import { clonedeep, mixin } from '../util'
 // import * as data from './data/data'
 
@@ -40,23 +41,42 @@ export default class Component extends ModelAndState implements LifeCycleCallbac
     return clonedeep(this.model);
   }
 
-  private _container: Container
-
-  get container(): Container {
-    return this._container
-  }
-
-  set container(container: Container) {
-    this._container = container
-  }
+  public container: Container
 
   get isContainer(): boolean {
     return false
   }
 
+  get isRoot(): boolean {
+    return false
+  }
+
+  get root(): RootContainer {
+    return this.container.root
+  }
+
+  /*
+   * 조건에 맞는 컴포넌트를 찾기 위한 기능들
+   *
+   * findAll(selector, ...others) 조건에 맞는 모든 컴포넌트를 찾아낸다.
+   * findById(id) 파라미터 id와 같은 id를 가진 컴포넌트를 찾는다.
+   */
+
+  findAll(selector: string | Function, ...others) {
+    if (typeof selector === 'string')
+      return select(selector, this, others[0] || this) // others[0] means (self)
+
+    if (typeof selector === 'function' && selector(this, ...others))
+      return [this]
+  }
+
+  findById(id: string) {
+    return this.root.findById(id)
+  }
 }
+
+/* Method Object mixin 방법. */
+// mixin(Component, finder, ...);
 
 Component.register('component', Component)
 
-/* Method Object mixin 방법. */
-// mixin(Component, [Model]);

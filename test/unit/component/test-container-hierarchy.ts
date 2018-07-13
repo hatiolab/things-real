@@ -1,9 +1,9 @@
 import { expect } from 'chai';
 import { Component, Container, compile } from '../../../src'
 
-describe('Container', () => {
+describe('Container - hierarchy', () => {
 
-  it('자식 컴포넌트들의 container 속성은 부모 컨테이너를 가리켜야 한다.', () => {
+  it('하위 모델정보를 포함해야 한다.', () => {
     const childModel = {
       type: 'component',
       id: 'child'
@@ -20,7 +20,11 @@ describe('Container', () => {
     const parent: Container = compile(parentModel) as Container;
     const child = parent.components[0];
 
-    child.container.should.equal(parent);
+    const childHierachy = child.hierarchy;
+    const parentHierachy = parent.hierarchy;
+
+    childHierachy.id.should.equal('child');
+    parentHierachy.components.length.should.equal(1);
   });
 
 });

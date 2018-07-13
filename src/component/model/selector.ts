@@ -38,7 +38,7 @@ function match_by_type(selector, component, listener, root) {
 }
 
 // match의 self는 root 이다.
-export function match(selector, component, listener, root) {
+export function match(selector, component, listener?, root?) {
   if (selector == '(all)')
     return true
 
@@ -87,7 +87,7 @@ function match_relatives_for_select(selector, component, self, root) {
 }
 
 // select의 self는 self 이다.
-export function select(selector, component, self) {
+export function select(selector, component, self?) {
 
   if (selector == '(root)')
     return [component]

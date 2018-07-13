@@ -4,7 +4,8 @@
 
 import { ComponentModel } from '../types'
 import Component from './component'
-import { clonedeep, mixin } from '../util'
+import { select } from './model'
+import { clonedeep } from '../util'
 
 export default class Container extends Component {
 
@@ -62,6 +63,29 @@ export default class Container extends Component {
     // this.root && this.root.isReady && component.ready()
   }
 
+  insertComponentAt(component, index) {
+    var oldContainer = component.container
+
+    if (oldContainer) {
+      oldContainer.removeComponent(component)
+    }
+
+    // TODO index가 유효하지 않은 경우(예를 들면, index가 전체 컴포넌트 개수보다 큰 경우)에 대한 검증
+    var head = this._components.splice(0, index)
+    this._components = head.concat(component, this._components)
+
+    // 실제 적용된 인덱스를 다시 구한다.
+    index = this._components.indexOf(component)
+
+    component.container = this
+    component.added(this) /* callback */
+
+    // this.trigger('add', this, component, index)
+
+    // component.delegate_on(this)
+    // component.trigger('added', this, component, index)
+  }
+
   removeComponent(component: Component) {
     var idx = this.components.indexOf(component)
 
@@ -78,6 +102,103 @@ export default class Container extends Component {
     // component.trigger('removed', this, component)
     // component.delegate_off(this)
   }
+
+  moveChildAt(index, child) {
+    var oldIndex = this.indexOf(child)
+    if (oldIndex == -1)
+      return
+
+    var head = this._components.splice(0, oldIndex)
+    var tail = this._components.splice(1)
+
+    this._components = head.concat(tail)
+
+    index = Math.max(0, index)
+    index = Math.min(index, this._components.length)
+
+    head = this._components.splice(0, index)
+    this._components = head.concat(child, this._components)
+  }
+
+  moveChildForward(child) {
+    var index = this.indexOf(child)
+    if (index == -1 || index == this._components.length - 1)
+      return
+
+    this._components[index] = this._components[index + 1]
+    this._components[index + 1] = child
+  }
+
+  moveChildBackward(child) {
+    var index = this.indexOf(child)
+    if (index == -1 || index == 0)
+      return
+
+    this._components[index] = this._components[index - 1]
+    this._components[index - 1] = child
+  }
+
+  moveChildToFront(child) {
+    var index = this.indexOf(child)
+    if (index == -1 || index == this._components.length - 1)
+      return
+
+    var head = this._components.splice(0, index)
+    var tail = this._components.splice(1)
+
+    this._components = head.concat(tail, this._components)
+  }
+
+  moveChildToBack(child) {
+    var index = this.indexOf(child)
+    if (index == -1 || index == 0)
+      return
+
+    var head = this._components.splice(0, index)
+    var tail = this._components.splice(0)
+
+    this._components = this._components.concat(head, tail)
+  }
+
+  findAll(s, ...others) {
+    if (typeof s === 'string')
+      return select(s, this, others[0] || this) // others[0] means (self)
+
+    if (typeof s !== 'function')
+      return
+
+    var found = []
+
+    for (let i = this.components.length - 1; i >= 0; i--) {
+      let components = this.components[i].findAll(s, ...others)
+      if (components)
+        found = found.concat(components);
+    }
+
+    if (s(this, ...others))
+      found.push(this)
+
+    return found;
+  }
+
+  traverse(fn, context) {
+    fn.call(context, this);
+
+    if (this.components.length == 0)
+      return
+
+    this.components.forEach(component => {
+      if (component.isContainer)
+        (component as Container).traverse(fn, context);
+      else
+        fn.call(context, component);
+    })
+  }
+
+  indexOf(component) {
+    return this.components.indexOf(component)
+  }
+
 }
 
 Component.register('container', Container);
@@ -95,10 +216,6 @@ Component.register('container', Container);
 
 //   get showMoveHandle() {
 //     return true;
-//   }
-
-//   isContainer() {
-//     return true
 //   }
 
 //   containable(component) {
@@ -128,47 +245,6 @@ Component.register('container', Container);
 //     })
 //   }
 
-
-
-//   removeComponent(component) {
-//     var idx = this._components.indexOf(component)
-
-//     if (idx == -1)
-//       return
-
-//     this._components.splice(idx, 1)
-
-//     component.container = null
-//     component.removed(this) /* callback */
-
-//     this.trigger('remove', this, component)
-
-//     component.trigger('removed', this, component)
-//     component.delegate_off(this)
-//   }
-
-//   insertComponentAt(component, index) {
-//     var oldContainer = component.container
-
-//     if (oldContainer) {
-//       oldContainer.removeComponent(component)
-//     }
-
-//     // TODO index가 유효하지 않은 경우(예를 들면, index가 전체 컴포넌트 개수보다 큰 경우)에 대한 검증
-//     var head = this._components.splice(0, index)
-//     this._components = head.concat(component, this._components)
-
-//     // 실제 적용된 인덱스를 다시 구한다.
-//     index = this._components.indexOf(component)
-
-//     component.container = this
-//     component.added(this) /* callback */
-
-//     this.trigger('add', this, component, index)
-
-//     component.delegate_on(this)
-//     component.trigger('added', this, component, index)
-//   }
 
 //   add(comp) {
 //     if (!(comp instanceof Array))
@@ -208,20 +284,6 @@ Component.register('container', Container);
 //     this._components.forEach(fn, context)
 //   }
 
-//   traverse(fn, context) {
-//     fn.call(context, this);
-
-//     if (!this._components)
-//       return
-
-//     this._components.forEach(component => {
-//       if (component.isContainer())
-//         component.traverse(fn, context);
-//       else
-//         fn.call(context, component);
-//     })
-//   }
-
 //   indexOf(item) {
 //     return (this._components || EMPTY).indexOf(item)
 //   }
@@ -230,62 +292,6 @@ Component.register('container', Container);
 //     return (this._components || EMPTY).length
 //   }
 
-//   moveChildAt(index, child) {
-//     var oldIndex = this.indexOf(child)
-//     if (oldIndex == -1)
-//       return
-
-//     var head = this._components.splice(0, oldIndex)
-//     var tail = this._components.splice(1)
-
-//     this._components = head.concat(tail)
-
-//     index = Math.max(0, index)
-//     index = Math.min(index, this._components.length)
-
-//     head = this._components.splice(0, index)
-//     this._components = head.concat(child, this._components)
-//   }
-
-//   moveChildForward(child) {
-//     var index = this.indexOf(child)
-//     if (index == -1 || index == this.size() - 1)
-//       return
-
-//     this._components[index] = this._components[index + 1]
-//     this._components[index + 1] = child
-//   }
-
-//   moveChildBackward(child) {
-//     var index = this.indexOf(child)
-//     if (index == -1 || index == 0)
-//       return
-
-//     this._components[index] = this._components[index - 1]
-//     this._components[index - 1] = child
-//   }
-
-//   moveChildToFront(child) {
-//     var index = this.indexOf(child)
-//     if (index == -1 || index == this.size() - 1)
-//       return
-
-//     var head = this._components.splice(0, index)
-//     var tail = this._components.splice(1)
-
-//     this._components = head.concat(tail, this._components)
-//   }
-
-//   moveChildToBack(child) {
-//     var index = this.indexOf(child)
-//     if (index == -1 || index == 0)
-//       return
-
-//     var head = this._components.splice(0, index)
-//     var tail = this._components.splice(0)
-
-//     this._components = this._components.concat(head, tail)
-//   }
 
 //   symmetryX(x) {
 
@@ -296,35 +302,6 @@ Component.register('container', Container);
 //     })
 //   }
 
-//   /*
-//    * 조건에 맞는 컴포넌트를 찾기 위한 기능들
-//    *
-//    * findAll(s, ...others) 조건에 맞는 모든 컴포넌트를 찾아낸다.
-//    * findFirst(finder, ...others) finder 함수에서 조건에 맞는 첫번째 컴포넌트를 리턴한다. (To Be Defined)
-//    * capture(x, y) 파라미터로 주어진 좌표값을 포함하는 컴포넌트를 찾는다. (Event Capturing)
-//    * findById(id) 파라미터 id와 같은 id를 가진 컴포넌트를 찾는다.
-//    */
-
-//   findAll(s, ...others) {
-//     if (typeof s === 'string')
-//       return selector.select(s, this, others[0] || this) // others[0] means (self)
-
-//     if (typeof s !== 'function')
-//       return
-
-//     var found = []
-
-//     for (let i = this.components.length - 1; i >= 0; i--) {
-//       let components = this.components[i].findAll(s, ...others)
-//       if (components)
-//         found = found.concat(components);
-//     }
-
-//     if (s(this, ...others))
-//       found.push(this)
-
-//     return found;
-//   }
 
 //   findFirst(s, ...others) {
 //     if (typeof s === 'string')
@@ -345,9 +322,6 @@ Component.register('container', Container);
 //     return null;
 //   }
 
-//   findById(id) {
-//     return this.root.findById(id)
-//   }
 
 //   contains(x, y) {
 //     // 효율을 위해서, contains를 호출하기 전에 x, y좌표값은 이 컴포넌트에 대해서 이미 transcoord 된 상태이다.
