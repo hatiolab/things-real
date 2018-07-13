@@ -4,13 +4,13 @@
 
 import { registry, residence } from './registry'
 import { LifeCycleCallback } from './callback'
-import { Model } from './model'
+import { ModelAndState } from './model'
 import { Class, ComponentModel } from '../types'
 import Container from './container'
 import { clonedeep, mixin } from '../util'
 // import * as data from './data/data'
 
-export default class Component extends Model implements LifeCycleCallback {
+export default class Component extends ModelAndState implements LifeCycleCallback {
 
   static register(type: string, clazz?: Class): Class {
     return registry.register(type, clazz);

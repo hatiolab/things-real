@@ -1,3 +1,2 @@
-export { Model } from './model'
+export { ModelAndState } from './model-and-state'
 export * from './selector'
-export * from './compile'

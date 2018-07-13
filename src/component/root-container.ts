@@ -1,21 +1,7 @@
-import { ComponentModel } from '../types'
 import Component from './component'
 import Container from './container'
-import { compile } from './model'
 
 export default class RootContainer extends Container {
-
-  constructor(model: ComponentModel) {
-    super(model);
-
-    this.model.components && this.model.components.forEach(component => {
-      this.addComponent(compile(component))
-    });
-  }
-
-  dispose() {
-    super.dispose()
-  }
 }
 
 Component.register('root', RootContainer)

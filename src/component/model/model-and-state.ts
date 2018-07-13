@@ -2,10 +2,11 @@ import { ThreeDimension, ComponentModel } from '../../types'
 import { clonedeep } from '../../util'
 import { isEqual } from 'lodash'
 
-export class Model implements ComponentModel {
+export class ModelAndState implements ComponentModel {
 
   constructor(model: Object) {
-    this._model = clonedeep(model);;
+    this._model = clonedeep(model);
+    delete this._model.components;
   }
 
   private _model: ComponentModel = {}
@@ -166,7 +167,7 @@ export class Model implements ComponentModel {
 /* 단순한 state 속성의 getter/setter 정의 방법. */
 [
   'text', 'translate', 'scale', 'rotate', 'scale', 'color', 'style', 'data'
-].forEach(property => Object.defineProperty(Model.prototype, property, {
+].forEach(property => Object.defineProperty(ModelAndState.prototype, property, {
   get() {
     return this.getState(property);
   },

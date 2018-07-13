@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { Component, Container } from '../../../src'
+import { Component, Container, compile } from '../../../src'
 
 describe('Container', () => {
 
@@ -17,14 +17,14 @@ describe('Container', () => {
       ]
     };
 
-    const child = new Component(childModel);
-    const parent = new Container(parentModel);
+    const parent: Container = compile(parentModel) as Container;
+    const child = parent.components[0];
 
     const childHierachy = child.hierarchy;
     const parentHierachy = parent.hierarchy;
 
     childHierachy.id.should.equal('child');
-    // parentHierachy.components.length.should.equal(1);
+    parentHierachy.components.length.should.equal(1);
   });
 
 });

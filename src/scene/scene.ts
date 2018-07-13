@@ -1,5 +1,6 @@
 import { SceneConfig, SceneModel, SceneMode, FitMode } from '../types'
 import { Component, Container, RootContainer } from '../component'
+import { compile } from '../main'
 
 export default class Scene {
   private _sceneMode: SceneMode
@@ -7,7 +8,7 @@ export default class Scene {
   private _targetEl: HTMLElement
   private _sceneModel: SceneModel
 
-  private _rootContainer: Container
+  private _rootContainer: RootContainer
 
   constructor(config: SceneConfig) {
 
@@ -31,10 +32,10 @@ export default class Scene {
     this._fitMode = config.fit | FitMode.RATIO
     this._sceneModel = config.model
 
-    this._rootContainer = new RootContainer({
+    this._rootContainer = compile({
       type: 'root',
       components: config.model.components
-    })
+    }) as RootContainer
   }
 
   get sceneMode() {
@@ -43,6 +44,10 @@ export default class Scene {
 
   get fitMode() {
     return this._fitMode
+  }
+
+  get rootContainer​​() {
+    return this._rootContainer
   }
 
   fit(mode: FitMode): void { }
