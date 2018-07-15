@@ -2,18 +2,15 @@
  * Copyright © HatioLab Inc. All rights reserved.
  */
 
-import { EventTracker } from '../../../src/event/event-tracker'
-import mixin from '../../../src/util/mixin'
-import Event from '../../../src/util/event'
+import { EventSource, EventTracker } from '../../../src/event'
 
 import { expect } from 'chai'
 
-describe('EventTracker', function () {
+describe('EventTracker', () => {
 
   var eventTracker;
 
-  class EventSource {
-    trigger: (s, e) => void
+  class EventSourceTest extends EventSource {
     test(e) {
       this.trigger('dragstart', e);
       for (var i = 0; i < 10; i++) {
@@ -27,12 +24,10 @@ describe('EventTracker', function () {
     }
   }
 
-  mixin(EventSource.prototype, Event.withEvent)
-
   var evsource;
 
-  beforeEach(function () {
-    evsource = new EventSource();
+  beforeEach(() => {
+    evsource = new EventSourceTest();
     eventTracker = new EventTracker({
       select: function (selector, listener) {
         if (selector === '(self)')
@@ -41,12 +36,12 @@ describe('EventTracker', function () {
     });
   });
 
-  afterEach(function () {
+  afterEach(() => {
     eventTracker.dispose();
   });
 
-  describe('on', function () {
-    it('should execute belonging event handlers on the bound events', function () {
+  describe('on', () => {
+    it('should execute belonging event handlers on the bound events', () => {
       var startcount = 0;
       var movecount = 0;
       var endcount = 0;
@@ -73,6 +68,7 @@ describe('EventTracker', function () {
       eventTracker.off(evsource, handlers);
 
       eventTracker.on(evsource, handlers);
+
       evsource.test();
 
       startcount.should.equal(2);
@@ -80,7 +76,7 @@ describe('EventTracker', function () {
       endcount.should.equal(2);
     });
 
-    it('should bind on the specified object self when handlers call-backed', function () {
+    it('should bind on the specified object self when handlers call-backed', () => {
       var self = {
         a: 'a'
       };
@@ -97,7 +93,7 @@ describe('EventTracker', function () {
       self.a.should.equal('A');
     });
 
-    it('should bind target object self member when handlers call-backed if bind object is not specified', function () {
+    it('should bind target object self member when handlers call-backed if bind object is not specified', () => {
       var calc = 1;
 
       var handlers = {
@@ -112,7 +108,7 @@ describe('EventTracker', function () {
       calc.should.equal(2);
     });
 
-    it('should recognize (self) selector', function () {
+    it('should recognize (self) selector', () => {
 
       var count = 0;
 
@@ -130,8 +126,8 @@ describe('EventTracker', function () {
 
   });
 
-  describe('off', function () {
-    it('should remove managed tracker matched with target object and handlers', function () {
+  describe('off', () => {
+    it('should remove managed tracker matched with target object and handlers', () => {
       var handlers1 = {
         dragstart: function (e) {
         },
@@ -163,7 +159,7 @@ describe('EventTracker', function () {
       trackers.length.should.equal(1);
     });
 
-    it('should match with only target object when handlers is not specified', function () {
+    it('should match with only target object when handlers is not specified', () => {
       var handlers1 = {
         dragstart: function (e) {
         },

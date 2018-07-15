@@ -2,17 +2,14 @@
  * Copyright © HatioLab Inc. All rights reserved.
  */
 
-import { EventTracker, StandAloneTracker } from '../../../src/event/event-tracker'
-import mixin from '../../../src/util/mixin'
-import Event from '../../../src/util/event'
+import { EventSource, EventTracker, StandAloneTracker } from '../../../src/event'
 
 import { expect } from 'chai'
 
 describe('StandAloneTracker', function () {
 
   describe('on/off', function () {
-    class EventSource {
-      trigger: (s, e) => void
+    class EventSourceTest extends EventSource {
 
       test(e) {
         this.trigger('dragstart', e);
@@ -27,12 +24,10 @@ describe('StandAloneTracker', function () {
       }
     }
 
-    mixin(EventSource.prototype, Event.withEvent)
-
     var evsource;
 
     beforeEach(function () {
-      evsource = new EventSource();
+      evsource = new EventSourceTest();
     });
 
     it('should execute belonging event handlers on the bound events', function () {

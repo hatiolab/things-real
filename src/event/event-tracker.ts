@@ -2,8 +2,9 @@
  * Copyright © HatioLab Inc. All rights reserved.
  */
 
+import EventSource from './event-source'
+
 type HandlerMap = { [s: string]: Function; }
-type EventSource = object
 
 /**
  * StandAloneTracker 는 Event Source에서 발생하는 이벤트를 소비하는 Handler를 실행하는 기능을 한다.
@@ -13,11 +14,13 @@ export class StandAloneTracker {
   /**
    * Event Source Object
    */
-  public eventOrigin
+  public eventOrigin: EventSource
+  public handlerMap: HandlerMap = {}
+
   /**
    * event - handler (실행 context가 binding된)의 mapping object
    */
-  public handlerMap: HandlerMap = {}
+  private boundHandlerMap = {}
 
   private started: boolean = false
 
@@ -31,13 +34,14 @@ export class StandAloneTracker {
     if (eventOrigin)
       this.eventOrigin = eventOrigin
 
+    // tracker off 시 동작을 위해서 handlerMap을 보관해야 한다.
+    this.handlerMap = handlerMap
+
     var context = context || this.eventOrigin || this
 
-    this.handlerMap = {}
-
-    for (let ev in handlerMap) {
-      let handler = handlerMap[ev]
-      this.handlerMap[ev] = handler.bind(context)
+    for (let event in handlerMap) {
+      let handler = handlerMap[event]
+      this.boundHandlerMap[event] = handler.bind(context)
     }
   }
 
@@ -55,10 +59,10 @@ export class StandAloneTracker {
     if (this.started)
       return
 
-    for (let ev in this.handlerMap) {
-      let handler = this.handlerMap[ev]
+    for (let event in this.handlerMap) {
+      let handler = this.boundHandlerMap[event]
 
-      this.eventOrigin.on(ev, handler)
+      this.eventOrigin.on(event, handler)
     }
 
     this.started = true
@@ -68,10 +72,10 @@ export class StandAloneTracker {
    * Event Source의 이벤트 subscribe를 종료한다.
    */
   off() {
-    for (let ev in this.handlerMap) {
-      let handler = this.handlerMap[ev]
+    for (let event in this.handlerMap) {
+      let handler = this.boundHandlerMap[event]
 
-      this.eventOrigin.off(ev, handler)
+      this.eventOrigin.off(event, handler)
     }
 
     this.started = false
