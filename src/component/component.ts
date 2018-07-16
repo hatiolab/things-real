@@ -9,7 +9,7 @@ import { Class, ComponentModel } from '../types'
 import Container from './container'
 import RootContainer from './root-container'
 import { clonedeep, mixin } from '../util'
-// import * as data from './data/data'
+import * as Data from './data/data'
 
 export default class Component extends ModelAndState implements LifeCycleCallback {
 
@@ -78,17 +78,18 @@ export default class Component extends ModelAndState implements LifeCycleCallbac
     return this.root.findById(id)
   }
 
-  refreshMappings() {
-    // TODO implement
-  }
-
-  executeMappings() {
-    // TODO implement
-  }
+  /**
+   * Data Manipulation Methods
+   */
+  executeMappings
+  onchangeData
+  buildMappings
+  disposeMappings
+  onchangeMappings
 }
 
 /* Method Object mixin 방법. */
-// mixin(Component, finder, ...);
+mixin(Component, Data);
 
 Component.register('component', Component)
 

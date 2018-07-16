@@ -98,10 +98,12 @@ export default class RootContainer extends Container {
   }
 
   refreshMappings() {
-    if (this.disposed)
-      return
+    // if (this.disposed)
+    //   return
 
-    refresh_mapping_debouncer(this)
+    this.executeMappings();
+
+    // refresh_mapping_debouncer(this)
   }
 
   get eventMap() {
