@@ -31,7 +31,7 @@ describe('Selector', function () {
 
       root.addComponent(computer);
       computer.addComponent(folder);
-      [file1, file2, link].forEach(comp => folder.addComponent(comp));
+      [file1, file2, link].forEach(component => folder.addComponent(component));
 
       var files = select('file', computer);
       files.length.should.equal(2);

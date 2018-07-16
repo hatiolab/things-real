@@ -6,14 +6,16 @@ import EventSource from './event-source'
 import EventPump from './event-pump'
 import { select } from '../component/model'
 
+type HandlerMap = { [s: string]: Function; }
+
 export default class EventEngine {
   private eventMaps: {
-    eventPump,
-    listener,
-    handlerMap,
-    deliverer
+    eventPump: EventPump,
+    listener: object,
+    handlerMap: HandlerMap,
+    deliverer: EventSource
   }[] = []
-  private _root: Object
+  private _root: object
 
   constructor(root) {
     this.root = root
@@ -63,7 +65,7 @@ export default class EventEngine {
     }
   }
 
-  remove(listener, handlerMap) {
+  remove(listener, handlerMap?) {
     var maps = this.eventMaps.slice(0) // Clone Array
     for (let i = 0; i < maps.length; i++) {
       let item = maps[i]

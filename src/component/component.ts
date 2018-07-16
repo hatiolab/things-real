@@ -55,6 +55,10 @@ export default class Component extends ModelAndState implements LifeCycleCallbac
     return this.container.root
   }
 
+  get eventMap() {
+    return null
+  }
+
   /*
    * 조건에 맞는 컴포넌트를 찾기 위한 기능들
    *
@@ -72,6 +76,14 @@ export default class Component extends ModelAndState implements LifeCycleCallbac
 
   findById(id: string) {
     return this.root.findById(id)
+  }
+
+  refreshMappings() {
+    // TODO implement
+  }
+
+  executeMappings() {
+    // TODO implement
   }
 }
 

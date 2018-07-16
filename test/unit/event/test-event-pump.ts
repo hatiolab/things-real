@@ -57,7 +57,7 @@ describe('EventPump', function () {
     folder2 = new Container({ type: 'folder', id: 'folder2' });
     folder3 = new Container({ type: 'folder', id: 'folder3' });
 
-    [folder1, folder2, folder3].forEach(file => root.addComponent(file));
+    [folder1, folder2, folder3].forEach(folder => root.addComponent(folder));
 
     folder11 = new Container({ type: 'folder', id: 'folder11' });
 

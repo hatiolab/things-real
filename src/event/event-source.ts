@@ -5,11 +5,11 @@
 import { once, isEmpty } from 'lodash'
 
 type Handler = { callback: Function, context: object }
-type HandlerMap = { [s: string]: Handler[]; }
+type HandlersMap = { [s: string]: Handler[]; }
 
 export default class EventSource {
 
-  private handlerMap: HandlerMap = {}
+  private handlersMap: HandlersMap = {}
   private delegators: EventSource[] = []
 
   /*
@@ -21,7 +21,7 @@ export default class EventSource {
    * - context
    */
   on(name: string, callback: Function, context?: object): void {
-    var handlers = this.handlerMap[name] || (this.handlerMap[name] = [])
+    var handlers = this.handlersMap[name] || (this.handlersMap[name] = [])
     handlers.push({
       callback,
       context
@@ -51,15 +51,15 @@ export default class EventSource {
    */
   off(name: string, callback?: Function, context?: object) {
     if (!name) {
-      this.handlerMap = {}
+      this.handlersMap = {}
       return
     }
 
     if (!callback && !context) {
-      delete this.handlerMap[name]
+      delete this.handlersMap[name]
     }
 
-    var handlers: Handler[] = this.handlerMap[name]
+    var handlers: Handler[] = this.handlersMap[name]
     if (!handlers) {
       return
     }
@@ -84,7 +84,7 @@ export default class EventSource {
     })
 
     if (handlers.length == 0)
-      delete this.handlerMap[name]
+      delete this.handlersMap[name]
   }
 
   delegate_on(delegator: EventSource) {
@@ -107,15 +107,15 @@ export default class EventSource {
   delegate(name: string, ...rest) {
     this.delegateEvents(name, ...rest)
 
-    if (isEmpty(this.handlerMap)) {
+    if (isEmpty(this.handlersMap)) {
       return
     }
 
     // change deliverer hint
     rest[rest.length - 1] = { ...rest[rest.length - 1], deliverer: this }
 
-    var handlers: Handler[] = this.handlerMap[name]
-    var handlersForAll: Handler[] = this.handlerMap['(all)']
+    var handlers: Handler[] = this.handlersMap[name]
+    var handlersForAll: Handler[] = this.handlersMap['(all)']
 
     if (handlers) {
       this.triggerEvents(handlers, ...rest)

@@ -2,12 +2,20 @@ import Component from './component'
 import Container from './container'
 import { warn, error, clonedeep } from '../util'
 import { compile } from '../main'
+import { debounce } from 'lodash'
+import EventEngine from '../event/event-engine';
+
+var refresh_mapping_debouncer = debounce(function mapper(comp: Component) {
+  comp.executeMappings()
+  comp.isContainer && (comp as Container).components.forEach(child => mapper(child))
+}, 1000)
 
 export default class RootContainer extends Container {
 
   private indexMap: Object = {}
   private templateMap: Object = {}
   private templatePrefixes: string[] = []
+  private eventEngine: EventEngine = new EventEngine(this)
 
   get isRoot() {
     return true
@@ -87,6 +95,90 @@ export default class RootContainer extends Container {
     }
 
     return component
+  }
+
+  refreshMappings() {
+    if (this.disposed)
+      return
+
+    refresh_mapping_debouncer(this)
+  }
+
+  get eventMap() {
+    return {
+      '(root)': {
+        '(descendant)': {
+          added: this._onadded,
+          removed: this._onremoved,
+          change: this._onchanged
+        }
+      }
+    }
+  }
+
+  private _onadded(container​​, component) {
+    this._addTraverse(component)
+    this.refreshMappings()
+    // this.invalidate()
+  }
+
+  private _onremoved(container, component) {
+    this._removeTraverse(component)
+    // this.invalidate()
+  }
+
+  private _onchanged(after, before, hint) {
+    if (before.templatePrefix)
+      this.removeTemplate(before.templatePrefix, hint.origin)
+
+    if (after.templatePrefix)
+      this.addTemplate(after.templatePrefix, hint.origin)
+
+
+    if (before.id)
+      this.removeIndex(before.id, hint.origin)
+
+    if (after.id)
+      this.addIndex(after.id, hint.origin)
+
+    if (before.id != after.id || before.class != after.class)
+      this.refreshMappings()
+  }
+
+  private _addTraverse(component: Component) {
+    if (component.isContainer) {
+      (component as Container).components.forEach(child => this._addTraverse(child))
+    }
+
+    var {
+      id, templatePrefix
+    } = component.model;
+
+    if (id)
+      this.addIndex(id, component)
+
+    if (templatePrefix)
+      this.addTemplate(templatePrefix, component)
+
+    // var eventMap = merge({}, component.eventMap, component.model.eventMap)
+    this.eventEngine.add(component, component.eventMap)
+  }
+
+  private _removeTraverse(component: Component) {
+    if (component.isContainer)
+      (component as Container).components.forEach(child => this._removeTraverse(child))
+
+    var {
+      id, templatePrefix
+    } = component.model;
+
+    if (id)
+      this.removeIndex(id, component)
+
+    if (templatePrefix)
+      this.removeTemplate(templatePrefix, component)
+
+    this.eventEngine.remove(component)
   }
 }
 

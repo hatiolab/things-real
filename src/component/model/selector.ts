@@ -97,12 +97,8 @@ export function select(selector, component, self?) {
   var matcher;
   switch (selector.charAt(0)) {
     case '#':
-      let selected = component.root.findById(selector.substr(1));
-      if (selected)
-        return [selected];
-      else
-        return [];
-      break;
+      let selected = component.findById(selector.substr(1));
+      return selected ? [selected] : []
     case '.':
       matcher = match_by_class
       break;
