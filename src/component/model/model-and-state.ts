@@ -29,18 +29,18 @@ export class ModelAndState extends EventSource implements ComponentModel {
   /**
    * state가 변경된 후에 호출된다.
    */
-  onchange(after: Object, before: Object) { };
+  onchange: (after: Object, before: Object) => void
 
   /**
    * get / set 함수는 모델을 변경하거나 가져오는 기능을 하도록 정의되어있으나 (기존 things-scene의 관례에 따라)
    * 실질적으로 State를 변경하거나 가져오는 기능으로 바꾸는 것이 사용 빈도에 있어서 효율적일 것 같다. 또는 아예 제거하는 것이 좋다.
    */
   get(prop: string) {
-    return this._model[prop];
+    return this.getState(prop)
   }
 
   set(props: Object | string, value?: any) {
-    this.setModel(props, value);
+    this.setState(props, value);
   }
 
   getModel(prop: string) {
@@ -84,12 +84,13 @@ export class ModelAndState extends EventSource implements ComponentModel {
      * state속성이 제거되면, state에도 영향을 미치며, onchange 이벤트를 발생시킬 수 있다. 
      */
     if (changed) {
-      this.onchange(after, before);
+      this.onchange && this.onchange(after, before);
+      this.trigger('change', after, before)
     }
   }
 
   getState(prop: string) {
-    return (prop in this._state) ? this._state[prop] : this.get(prop)
+    return (prop in this._state) ? this._state[prop] : this.getModel(prop)
   }
 
   clearState(props: string[] | string) {
@@ -116,7 +117,8 @@ export class ModelAndState extends EventSource implements ComponentModel {
     })
 
     if (changed) {
-      this.onchange(after, before);
+      this.onchange && this.onchange(after, before);
+      this.trigger('change', after, before)
     }
   }
 
@@ -149,10 +151,9 @@ export class ModelAndState extends EventSource implements ComponentModel {
     })
 
     if (changed) {
-      this.onchange(after, before);
+      this.onchange && this.onchange(after, before);
+      this.trigger('change', after, before)
     }
-
-    return this
   }
 
   /**

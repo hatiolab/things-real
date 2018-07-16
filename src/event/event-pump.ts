@@ -61,7 +61,7 @@ export default class EventPump {
     this.deliverer.off('(all)', event_handler_fn);
   }
 
-  on(listener, handlers) {
+  addEventHandlers(listener, handlers) {
     var cloned_handlers = Object.assign({}, handlers); // clone object
 
     var selectors = Object.keys(cloned_handlers)
@@ -87,7 +87,7 @@ export default class EventPump {
     })
   }
 
-  off(listener, handlers?) {
+  removeEventHandlers(listener, handlers?) {
     for (let i = 0; i < this.listeners.length; i++) {
       let item = this.listeners[i]
       if (item.listener === listener && (!handlers || item.handlers === handlers))

@@ -116,7 +116,7 @@ describe('EventPump', function () {
       };
 
       // pump on ( Listener : computer ) - listener means the owner of the event handlers
-      pump.on(computer, computer_listener);
+      pump.addEventHandlers(computer, computer_listener);
 
       var folder_listener = {
         // self means event deliverer : computer
@@ -129,7 +129,7 @@ describe('EventPump', function () {
       };
 
       // pump on ( Listener : folder1 ) - listener means the owner of the event handlers
-      pump.on(folder1, folder_listener);
+      pump.addEventHandlers(folder1, folder_listener);
 
       pump.start();
 
@@ -152,7 +152,7 @@ describe('EventPump', function () {
 
       // /* Remove Subscriber */
 
-      pump.off(folder1);
+      pump.removeEventHandlers(folder1);
 
       file111.trigger('event');
       computer.trigger('event');
@@ -188,10 +188,10 @@ describe('EventPump', function () {
         this.should.be.equal(e.listener);
       }
 
-      computer.set({
+      computer.setModel({
         'var1': '#file31'
       });
-      computer.set({
+      computer.setModel({
         'var2': '#link22'
       });
 
@@ -207,7 +207,7 @@ describe('EventPump', function () {
       var pump = new EventPump(computer);
       pump.start();
 
-      pump.on(computer, computer_listener);
+      pump.addEventHandlers(computer, computer_listener);
 
       file31.trigger('event');
       link22.trigger('event');
@@ -242,7 +242,7 @@ describe('EventPump', function () {
       var pump_on_folder11 = new EventPump(folder11); // deliverer ==> folder11
       pump_on_folder11.start();
 
-      pump_on_folder11.on(this, listener); // listener ==> this
+      pump_on_folder11.addEventHandlers(this, listener); // listener ==> this
 
       computer.trigger('event'); // triggered at root (computor가 deliverer의 서브가 아니므로 받지 못한다.)
       file111.trigger('event'); // triggered at sub
@@ -251,7 +251,7 @@ describe('EventPump', function () {
       root_count.should.be.equal(0); // 루트는 하위가 아니므로, 하나도 받을 수 없다.
       all_count.should.be.equal(1); // 바로 하위(file111)에서 트리거링 된 이벤트만 받는다.
 
-      pump_on_folder11.off(this);
+      pump_on_folder11.removeEventHandlers(this);
 
       /* reset counters */
       root_count = 0;
@@ -260,7 +260,7 @@ describe('EventPump', function () {
       var pump_on_computer = new EventPump(computer); // deliverer ==> computer root
       pump_on_computer.start();
 
-      pump_on_computer.on(this, listener); // listener ==> this
+      pump_on_computer.addEventHandlers(this, listener); // listener ==> this
 
       computer.trigger('event'); // triggered at root
       file111.trigger('event'); // triggered at sub

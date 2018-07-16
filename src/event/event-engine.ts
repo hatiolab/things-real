@@ -52,7 +52,7 @@ export default class EventEngine {
 
       deliverers.forEach(deliverer => {
         var eventPump = new EventPump(deliverer)
-        eventPump.on(listener, handlers)
+        eventPump.addEventHandlers(listener, handlers)
         eventPump.start()
 
         this.eventMaps.push({

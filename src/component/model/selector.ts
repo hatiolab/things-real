@@ -2,21 +2,19 @@
  * Copyright © HatioLab Inc. All rights reserved.
  */
 
-function match_by_id(selector, component, listener, root) {
+function match_by_id(selector: string, component, listener, root) {
   return selector.substr(1) == component.get('id')
 }
 
-function match_by_class(selector, component, listener, root) {
-  var str_class = component.get('class')
-  if (!str_class)
+function match_by_class(selector: string, component, listener, root) {
+  var classes = component.get('class')
+  if (!classes)
     return false;
 
-  var classes = str_class.split(' ') || []
-
-  return classes.indexOf(selector.substr(1)) >= 0
+  return (classes.split(' ') || []).indexOf(selector.substr(1).split(/\s/)[0]) >= 0
 }
 
-function match_relatives(selector, component, listener, root) {
+function match_relatives(selector: string, component, listener, root) {
   switch (selector) {
     case '(all)':
       return true
@@ -33,12 +31,12 @@ function match_relatives(selector, component, listener, root) {
   }
 }
 
-function match_by_type(selector, component, listener, root) {
+function match_by_type(selector: string, component, listener, root) {
   return (selector == component.get('type'))
 }
 
 // match의 self는 root 이다.
-export function match(selector, component, listener?, root?) {
+export function match(selector: string, component, listener?, root?) {
   if (selector == '(all)')
     return true
 
@@ -54,12 +52,12 @@ export function match(selector, component, listener?, root?) {
   }
 }
 
-function select_recurse(matcher, selector, component, self, root, result) {
+function select_recurse(matcher, selector: string, component, self, root, result) {
 
   if (matcher(selector, component, self, root))
     result.push(component)
 
-  component.components && component.components.forEach(child => {
+  component.isContainer && component.components.forEach(child => {
     select_recurse(matcher, selector, child, self, root, result)
   })
 
@@ -87,7 +85,7 @@ function match_relatives_for_select(selector, component, self, root) {
 }
 
 // select의 self는 self 이다.
-export function select(selector, component, self?) {
+export function select(selector: string, component, self?) {
 
   if (selector == '(root)')
     return [component]

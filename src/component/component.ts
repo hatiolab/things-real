@@ -55,9 +55,8 @@ export default class Component extends ModelAndState implements LifeCycleCallbac
     return this.container.root
   }
 
-  get eventMap() {
-    return null
-  }
+  /* Event */
+  public eventMap
 
   /*
    * 조건에 맞는 컴포넌트를 찾기 위한 기능들

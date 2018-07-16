@@ -2,7 +2,7 @@
  * Copyright © HatioLab Inc. All rights reserved.
  */
 
-import { error } from '../../util/logger'
+import { error } from '../../util'
 import DataMapping from './data-mapping'
 
 export function executeMappings() {
