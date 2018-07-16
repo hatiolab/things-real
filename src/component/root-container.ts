@@ -8,7 +8,7 @@ import EventEngine from '../event/event-engine';
 var refresh_mapping_debouncer = debounce(function mapper(comp: Component) {
   comp.executeMappings()
   comp.isContainer && (comp as Container).components.forEach(child => mapper(child))
-}, 1000)
+}, 500)
 
 export default class RootContainer extends Container {
 
@@ -101,9 +101,9 @@ export default class RootContainer extends Container {
     // if (this.disposed)
     //   return
 
-    this.executeMappings();
+    // this.executeMappings();
 
-    // refresh_mapping_debouncer(this)
+    refresh_mapping_debouncer(this)
   }
 
   get eventMap() {

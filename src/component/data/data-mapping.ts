@@ -30,14 +30,15 @@ export default class DataMapping {
   dispose() {
     delete this._model
     delete this.owner
-    delete this.evaluator
-    delete this.accessor
+    delete this._evaluator
+    delete this._accessor
   }
 
-  private _model = {}
   private owner
-  private evaluator
-  private accessor
+
+  private _model = {}
+  private _evaluator
+  private _accessor
 
   get model() {
     return this._model
@@ -48,8 +49,8 @@ export default class DataMapping {
 
     this._model = model
 
-    this.evaluator = buildEvaluator(this, this.owner, rule, param, propType(property))
-    this.accessor = buildAccessor(accessor)
+    this._evaluator = buildEvaluator(this, this.owner, rule, param, propType(property))
+    this._accessor = buildAccessor(accessor)
   }
 
   get target() {
@@ -62,5 +63,13 @@ export default class DataMapping {
 
   get param() {
     return this.model.param
+  }
+
+  get accessor() {
+    return this._accessor
+  }
+
+  get evaluator() {
+    return this._evaluator
   }
 }

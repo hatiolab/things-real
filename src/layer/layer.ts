@@ -2,8 +2,7 @@
  * Copyright © HatioLab Inc. All rights reserved.
  */
 
-import Component from '../components/component'
-import Container from '../components/container'
+import { Component, Container } from '../component'
 import * as Const from '../const'
 
 export default class Layer extends Container {

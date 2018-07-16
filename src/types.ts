@@ -6,6 +6,14 @@ export interface ThreeDimension {
   z: number
 }
 
+export interface DataMappingModel {
+  accessor?: string,
+  target: string,
+  property: string,
+  rule: 'value' | 'map' | 'range' | 'eval',
+  param?: any
+}
+
 export interface ComponentModel {
   type?: string,
   id?: string,
@@ -18,6 +26,7 @@ export interface ComponentModel {
   color?: any,
   style?: any,
   components?: ComponentModel[],
+  mappings?: DataMappingModel[],
   [propName: string]: any;
 }
 

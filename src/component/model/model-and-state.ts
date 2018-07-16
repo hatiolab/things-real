@@ -1,9 +1,10 @@
-import { ThreeDimension, ComponentModel } from '../../types'
+import { ThreeDimension, ComponentModel, DataMappingModel } from '../../types'
+import EventCallback from '../callback/event-callback'
 import { EventSource } from '../../event'
 import { clonedeep } from '../../util'
 import { isEqual } from 'lodash'
 
-export class ModelAndState extends EventSource implements ComponentModel {
+export abstract class ModelAndState extends EventSource implements ComponentModel, EventCallback {
 
   constructor(model: Object) {
     super();
@@ -27,9 +28,16 @@ export class ModelAndState extends EventSource implements ComponentModel {
   }
 
   /**
-   * state가 변경된 후에 호출된다.
+   * component의 state변경시 호출되는 callback
+   * @param after 
+   * @param before 
    */
-  onchange: (after: Object, before: Object) => void
+  onchange(after: object, before: object) {
+    Object.keys(after).forEach(key => {
+      let handler = `onchange${key}`
+      this[handler] && this[handler](after[key], before[key])
+    })
+  }
 
   /**
    * get / set 함수는 모델을 변경하거나 가져오는 기능을 하도록 정의되어있으나 (기존 things-scene의 관례에 따라)
@@ -166,11 +174,12 @@ export class ModelAndState extends EventSource implements ComponentModel {
   public color: any;
   public style: any;
   public data: any;
+  public mappings: DataMappingModel[];
 }
 
 /* 단순한 state 속성의 getter/setter 정의 방법. */
 [
-  'text', 'translate', 'scale', 'rotate', 'scale', 'color', 'style', 'data'
+  'text', 'translate', 'scale', 'rotate', 'scale', 'color', 'style', 'data', 'mappings'
 ].forEach(property => Object.defineProperty(ModelAndState.prototype, property, {
   get() {
     return this.getState(property);
