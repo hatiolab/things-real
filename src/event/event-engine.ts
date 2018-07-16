@@ -2,6 +2,7 @@
  * Copyright © HatioLab Inc. All rights reserved.
  */
 
+import EventSource from './event-source'
 import EventPump from './event-pump'
 import { select } from '../component/model'
 

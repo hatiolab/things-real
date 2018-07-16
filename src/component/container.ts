@@ -57,8 +57,8 @@ export default class Container extends Component {
 
     // this.trigger('add', this, component, index)
 
-    // component.delegate_on(this)
-    // component.trigger('added', this, component, index)
+    component.delegate_on(this)
+    component.trigger('added', this, component, index)
 
     // this.root && this.root.isReady && component.ready()
   }
@@ -82,8 +82,8 @@ export default class Container extends Component {
 
     // this.trigger('add', this, component, index)
 
-    // component.delegate_on(this)
-    // component.trigger('added', this, component, index)
+    component.delegate_on(this)
+    component.trigger('added', this, component, index)
   }
 
   removeComponent(component: Component) {
@@ -99,8 +99,8 @@ export default class Container extends Component {
 
     // this.trigger('remove', this, component)
 
-    // component.trigger('removed', this, component)
-    // component.delegate_off(this)
+    component.trigger('removed', this, component)
+    component.delegate_off(this)
   }
 
   moveChildAt(index, child) {

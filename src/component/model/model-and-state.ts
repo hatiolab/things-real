@@ -1,10 +1,13 @@
 import { ThreeDimension, ComponentModel } from '../../types'
+import { EventSource } from '../../event'
 import { clonedeep } from '../../util'
 import { isEqual } from 'lodash'
 
-export class ModelAndState implements ComponentModel {
+export class ModelAndState extends EventSource implements ComponentModel {
 
   constructor(model: Object) {
+    super();
+
     this._model = clonedeep(model);
     delete this._model.components;
   }

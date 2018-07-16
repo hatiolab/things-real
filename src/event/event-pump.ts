@@ -2,8 +2,11 @@
  * Copyright © HatioLab Inc. All rights reserved.
  */
 
+import EventSource from './event-source'
 import { match } from '../component/model'
 import { warn } from '../util'
+
+type HandlerMap = { [s: string]: Function; }
 
 function control(root, listener, handlers, event, args) {
   for (let selector in handlers) {
@@ -36,20 +39,16 @@ function event_handler_fn() {
 
 export default class EventPump {
 
-  private deliverer
-  private listeners
+  private deliverer: EventSource
+  private listeners: HandlerMap[] = []
 
   /*
    * Construct a new event pump.
    *
-   * param [Object] deliverer target object to listen events that the object fires or delegates
+   * @param [EventSource] deliverer target object to listen events that the object fires or delegates
    */
-  constructor(deliverer) {
-    if (typeof deliverer.on === 'undefined')
-      throw new Error('Deliverer should be a event handlable object.')
-
+  constructor(deliverer: EventSource) {
     this.deliverer = deliverer;
-    this.listeners = [];
   }
 
   start() {

@@ -111,6 +111,9 @@ export default class EventSource {
       return
     }
 
+    // change deliverer hint
+    rest[rest.length - 1] = { ...rest[rest.length - 1], deliverer: this }
+
     var handlers: Handler[] = this.handlerMap[name]
     var handlersForAll: Handler[] = this.handlerMap['(all)']
 
