@@ -199,7 +199,6 @@ describe('(data-binding) evaluated data spread', function () {
         idxs.forEach(idx => {
           let component = newbees[idx]
           let text = component.get('id') + ' : ' + 'value-0' + idx
-          console.log('text', text);
 
           expect(newbees[idx].text).to.equal(text)
         })

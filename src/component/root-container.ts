@@ -14,8 +14,17 @@ export default class RootContainer extends Container {
 
   private indexMap: Object = {}
   private templateMap: Object = {}
+  /**
+   * 알파벳 역순으로 템플릿 ID인덱스를 유지함.
+   */
   private templatePrefixes: string[] = []
   private eventEngine: EventEngine = new EventEngine(this)
+
+  constructor(model) {
+    super(model)
+
+    this.refreshMappings()
+  }
 
   get isRoot() {
     return true
@@ -32,6 +41,7 @@ export default class RootContainer extends Container {
       error('Template replaced (duplicated)', prefix, component, old)
 
     this.templateMap[prefix] = component
+
     delete this.templatePrefixes
   }
 

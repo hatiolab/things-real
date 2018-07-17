@@ -11,7 +11,7 @@ export interface DataMappingModel {
   target: string,
   property: string,
   rule: 'value' | 'map' | 'range' | 'eval',
-  param?: any
+  param?: string | { [propName: string]: string }
 }
 
 export interface ComponentModel {
@@ -25,6 +25,7 @@ export interface ComponentModel {
   data?: any,
   color?: any,
   style?: any,
+  templatePrefix?: string,
   components?: ComponentModel[],
   mappings?: DataMappingModel[],
   [propName: string]: any;

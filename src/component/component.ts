@@ -86,8 +86,8 @@ export default class Component extends ModelAndState implements LifeCycleCallbac
   private _compiledMappings: DataMapping[]
 
   get compiledMappings() {
-    /* 제거된 상태가 아니면(this.container), 매핑을 다시 빌드한다. */
-    if (!this._compiledMappings && this.container)
+    /* 매핑을 다시 빌드한다. */
+    if (!this._compiledMappings)
       this.buildMappings()
 
     return this._compiledMappings
@@ -95,7 +95,6 @@ export default class Component extends ModelAndState implements LifeCycleCallbac
 
   executeMappings() {
     this.compiledMappings && this.compiledMappings.forEach(mapping => {
-
       try {
 
         var accessor = mapping.accessor(this.data)
@@ -108,10 +107,7 @@ export default class Component extends ModelAndState implements LifeCycleCallbac
         if (target == '(key)') {
 
           let targets = Object.keys(accessor || {}).map(key => this.root.findOrCreate(key)).filter(t => !!t);
-
-          if (targets.length > 0) {
-            targets.forEach(component => component[property] = mapping.evaluator(accessor[component.get('id')], [component]))
-          }
+          targets.forEach(component => component[property] = mapping.evaluator(accessor[component.get('id')], [component]))
         } else if (target.startsWith('[')) {
           if (!target.endsWith(']'))
             throw String("mapping target should end with ']' to designate property-id.(" + target + ")")

@@ -1,6 +1,6 @@
 const SELF = o => o
 
-export default function buildAccessor(accessor) {
+export default function buildAccessor(accessor?) {
   if (!accessor)
     return SELF;
 

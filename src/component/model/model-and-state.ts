@@ -173,13 +173,14 @@ export abstract class ModelAndState extends EventSource implements ComponentMode
   public rotate: ThreeDimension;
   public color: any;
   public style: any;
+  public templatePrefix: string;
   public data: any;
   public mappings: DataMappingModel[];
 }
 
 /* 단순한 state 속성의 getter/setter 정의 방법. */
 [
-  'text', 'translate', 'scale', 'rotate', 'scale', 'color', 'style', 'data', 'mappings'
+  'text', 'translate', 'scale', 'rotate', 'scale', 'color', 'style', 'templatePrefix', 'data', 'mappings'
 ].forEach(property => Object.defineProperty(ModelAndState.prototype, property, {
   get() {
     return this.getState(property);

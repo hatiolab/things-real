@@ -92,7 +92,6 @@ describe('EventPump', function () {
       var listener = {}
 
       function handler(e) {
-        console.log('listener, origin, deliverer', this.get('id'), e.origin.get('type'), e.deliverer.get('type'))
         eval("origin_" + e.origin.get('type') + "_count++");
         eval("deliverer_" + e.deliverer.get('type') + "_count++");
 
