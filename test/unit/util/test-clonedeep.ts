@@ -7,17 +7,17 @@ import { cloneDeep } from 'lodash'
 
 import { expect } from 'chai'
 
-describe('clonedeep', function () {
+describe('clonedeep', () => {
 
-  describe('test for simple object', function () {
+  describe('test for simple object', () => {
 
     var source;
 
-    beforeEach(function () {
+    beforeEach(() => {
       source = { a: 32, b: 'abc' };
     });
 
-    it('복사된 오브젝트의 Key의 종류와 값, 그리고 갯수가 같아야 한다.', function () {
+    it('복사된 오브젝트의 Key의 종류와 값, 그리고 갯수가 같아야 한다.', () => {
       var cloned = clonedeep(source);
 
       expect(cloned.a).to.equal(32);
@@ -29,7 +29,7 @@ describe('clonedeep', function () {
       expect(Object.keys(cloned).length).to.equal(2);
     });
 
-    it('Object.assign()을 사용한 방법보다 빨라야한다.', function () {
+    it('Object.assign()을 사용한 방법보다 빨라야한다.', () => {
       var t0 = Date.now();
       for (let i = 0; i < 50000; i++) {
         let cloned = clonedeep(source);
@@ -52,11 +52,11 @@ describe('clonedeep', function () {
 
   });
 
-  describe('test for complex object', function () {
+  describe('test for complex object', () => {
 
     var source;
 
-    beforeEach(function () {
+    beforeEach(() => {
       source = {
         a: 32,
         b: 'abc',
@@ -74,7 +74,7 @@ describe('clonedeep', function () {
       };
     });
 
-    it('복사된 오브젝트의 Key의 종류와 값, 그리고 갯수가 같아야 한다.', function () {
+    it('복사된 오브젝트의 Key의 종류와 값, 그리고 갯수가 같아야 한다.', () => {
       var cloned = clonedeep(source);
 
       expect(cloned.d.aa).to.equal(36);
@@ -88,7 +88,7 @@ describe('clonedeep', function () {
       expect(Object.keys(cloned).length).to.equal(4);
     });
 
-    it('Object.assign()을 사용한 방법보다 빨라야한다.', function () {
+    it('Object.assign()을 사용한 방법보다 빨라야한다.', () => {
       var t0 = Date.now();
       for (let i = 0; i < 50000; i++) {
         let cloned = clonedeep(source);

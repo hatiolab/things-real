@@ -6,17 +6,17 @@ import { RootContainer, Container, Component } from '../../../src/component'
 
 import { expect } from 'chai'
 
-const DELAY = 1100
+const PENDING = 600
 
-describe('(data-binding) evaluated data spread', function () {
+describe('(data-binding) evaluated data spread', () => {
   var root;
 
-  beforeEach(function () {
+  beforeEach(() => {
     root = new RootContainer({});
   });
 
-  describe('Primitive Value Data Spread', function () {
-    it('Primitive Value Data Spread 시에는 (key) 타겟을 설정할 수 없다.', function (done) {
+  describe('Primitive Value Data Spread', () => {
+    it('Primitive Value Data Spread 시에는 (key) 타겟을 설정할 수 없다.', (done) => {
       var component = new Component({
         mappings: [{
           accessor: '',
@@ -38,13 +38,13 @@ describe('(data-binding) evaluated data spread', function () {
 
       root.addComponent(newbee);
 
-      setTimeout(function () {
+      setTimeout(() => {
         expect(newbee.text).to.equal('NO-VALUE')
         done()
-      }, DELAY)
+      }, PENDING)
     })
 
-    it('Primitive Value Data Spread 시에는 [property] 타겟을 설정할 수 없다.', function (done) {
+    it('Primitive Value Data Spread 시에는 [property] 타겟을 설정할 수 없다.', (done) => {
       var component = new Component({
         mappings: [{
           accessor: '',
@@ -66,13 +66,13 @@ describe('(data-binding) evaluated data spread', function () {
 
       root.addComponent(newbee);
 
-      setTimeout(function () {
+      setTimeout(() => {
         expect(newbee.text).to.equal('NO-VALUE')
         done()
-      }, DELAY)
+      }, PENDING)
     })
 
-    it('Primitive Value Data Spread 시에는 accessor를 설정할 수 없다.', function (done) {
+    it('Primitive Value Data Spread 시에는 accessor를 설정할 수 없다.', (done) => {
       var component = new Component({
         mappings: [{
           accessor: 'result',
@@ -94,13 +94,13 @@ describe('(data-binding) evaluated data spread', function () {
 
       root.addComponent(newbee);
 
-      setTimeout(function () {
+      setTimeout(() => {
         expect(newbee.text).to.equal('NO-VALUE')
         done()
-      }, DELAY)
+      }, PENDING)
     })
 
-    it('Primitive Value Data Spread', function (done) {
+    it('Primitive Value Data Spread', (done) => {
       var component = new Component({
         mappings: [{
           accessor: '',
@@ -122,15 +122,15 @@ describe('(data-binding) evaluated data spread', function () {
 
       root.addComponent(newbee);
 
-      setTimeout(function () {
+      setTimeout(() => {
         expect(newbee.text).to.equal('PRIMITIVE-VALUE')
         done()
-      }, DELAY)
+      }, PENDING)
     })
   })
 
-  describe('Object Data Spread', function () {
-    it('Object Data Spread : accessor를 설정할 수 있다.', function (done) {
+  describe('Object Data Spread', () => {
+    it('Object Data Spread : accessor를 설정할 수 있다.', (done) => {
       var component = new Component({
         mappings: [{
           accessor: 'result',
@@ -154,13 +154,13 @@ describe('(data-binding) evaluated data spread', function () {
 
       root.addComponent(newbee);
 
-      setTimeout(function () {
+      setTimeout(() => {
         expect(newbee.data).to.equal('OBJECT-VALUE')
         done()
-      }, DELAY)
+      }, PENDING)
     })
 
-    it('Object Data Spread : (key) 타겟을 설정하면, 오브젝트의 key들에 해당하는 id를 가진 컴포넌트들로 스프레드된다.', function (done) {
+    it('Object Data Spread : (key) 타겟을 설정하면, 오브젝트의 key들에 해당하는 id를 가진 컴포넌트들로 스프레드된다.', (done) => {
       var component = new Component({
         mappings: [{
           accessor: 'result',
@@ -195,7 +195,7 @@ describe('(data-binding) evaluated data spread', function () {
         return newbee
       })
 
-      setTimeout(function () {
+      setTimeout(() => {
         idxs.forEach(idx => {
           let component = newbees[idx]
           let text = component.get('id') + ' : ' + 'value-0' + idx
@@ -204,10 +204,10 @@ describe('(data-binding) evaluated data spread', function () {
         })
 
         done()
-      }, DELAY)
+      }, PENDING)
     })
 
-    it('Object Data Spread : [property] 타겟을 설정할 수 있으며, 오브젝트의 property에 해당하는 id를 가진 컴포넌트로 스프레드된다.(이 경우 타겟 컴포넌트는 하나이다)', function (done) {
+    it('Object Data Spread : [property] 타겟을 설정할 수 있으며, 오브젝트의 property에 해당하는 id를 가진 컴포넌트로 스프레드된다.(이 경우 타겟 컴포넌트는 하나이다)', (done) => {
       var component = new Component({
         mappings: [{
           accessor: 'result',
@@ -241,16 +241,16 @@ describe('(data-binding) evaluated data spread', function () {
 
       root.addComponent(newbee)
 
-      setTimeout(function () {
+      setTimeout(() => {
         expect(newbee.text).to.equal('spread-value')
 
         done()
-      }, DELAY)
+      }, PENDING)
     })
   })
 
-  describe('Array Data Spread', function () {
-    it('Array Data Spread : index형 accessor를 설정할 수 있다.', function (done) {
+  describe('Array Data Spread', () => {
+    it('Array Data Spread : index형 accessor를 설정할 수 있다.', (done) => {
       var component = new Component({
         mappings: [{
           accessor: '1',
@@ -265,14 +265,14 @@ describe('(data-binding) evaluated data spread', function () {
 
       component.data = ['ARRAY-VALUE', 'ARRAY-VALUE-2', 'ARRAY-VALUE-3'];
 
-      setTimeout(function () {
+      setTimeout(() => {
         expect(component.text).to.equal('ARRAY-VALUE-2')
 
         done()
-      }, DELAY)
+      }, PENDING)
     })
 
-    it('Array Data Spread 시에는 (key) 타겟을 설정할 수 없다.', function (done) {
+    it('Array Data Spread 시에는 (key) 타겟을 설정할 수 없다.', (done) => {
       var component = new Component({
         mappings: [{
           accessor: 'result',
@@ -296,13 +296,13 @@ describe('(data-binding) evaluated data spread', function () {
 
       root.addComponent(newbee);
 
-      setTimeout(function () {
+      setTimeout(() => {
         expect(newbee.text).to.equal('NO-VALUE')
         done()
-      }, DELAY)
+      }, PENDING)
     })
 
-    it('Array Data Spread : [property] 타겟을 설정하면, 각 엘리먼트는 오브젝트 타입이어야 하며, 각 오브젝트의 property에 해당하는 id를 가진 컴포넌트들로 스프레드된다.', function (done) {
+    it('Array Data Spread : [property] 타겟을 설정하면, 각 엘리먼트는 오브젝트 타입이어야 하며, 각 오브젝트의 property에 해당하는 id를 가진 컴포넌트들로 스프레드된다.', (done) => {
       var component = new Component({
         mappings: [{
           accessor: 'result',
@@ -352,7 +352,7 @@ describe('(data-binding) evaluated data spread', function () {
 
       root.addComponent(template);
 
-      setTimeout(function () {
+      setTimeout(() => {
         [1, 2, 3, 4, 5, 6].forEach(idx => {
           let comp = root.findById('spread-0' + idx)
           let text = comp.get('id') + ' : ' + 'spread-value-0' + idx
@@ -360,7 +360,7 @@ describe('(data-binding) evaluated data spread', function () {
           expect(comp.text).to.equal(text)
         })
         done()
-      }, DELAY)
+      }, PENDING)
     })
   })
 

@@ -6,15 +6,15 @@ import { RootContainer, Container, Component } from '../../../src/component'
 
 import { expect } from 'chai'
 
-describe('(data-mapping)relative target', function () {
+describe('(data-mapping)relative target', () => {
 
   var root;
 
-  beforeEach(function () {
+  beforeEach(() => {
     root = new RootContainer({});
   });
 
-  it('컴포넌트의 데이타 매핑정보에 (self) 타겟이 있는 경우, data가 변경되면 컴포넌트 자신의 속성이 변경되어야 한다.', function () {
+  it('컴포넌트의 데이타 매핑정보에 (self) 타겟이 있는 경우, data가 변경되면 컴포넌트 자신의 속성이 변경되어야 한다.', () => {
     var component = new Component({
       mappings: [{
         accessor: '',
@@ -31,7 +31,7 @@ describe('(data-mapping)relative target', function () {
     expect(component.text).to.equal('TEST-DATA')
   });
 
-  it('컴포넌트의 데이타 매핑정보에 (parent) 타겟이 있는 경우, data가 변경되면 컴포넌트 부모의 속성이 변경되어야 한다.', function () {
+  it('컴포넌트의 데이타 매핑정보에 (parent) 타겟이 있는 경우, data가 변경되면 컴포넌트 부모의 속성이 변경되어야 한다.', () => {
     var component = new Component({
       mappings: [{
         accessor: '',
@@ -48,7 +48,7 @@ describe('(data-mapping)relative target', function () {
     expect(root.text).to.equal('TEST-DATA')
   });
 
-  it('컴포넌트의 데이타 매핑정보에 (child) 타겟이 있는 경우, data가 변경되면 컴포넌트 자식들의 속성이 변경되어야 한다.', function () {
+  it('컴포넌트의 데이타 매핑정보에 (child) 타겟이 있는 경우, data가 변경되면 컴포넌트 자식들의 속성이 변경되어야 한다.', () => {
     var parent = new Container({
       mappings: [{
         accessor: '',
@@ -73,7 +73,7 @@ describe('(data-mapping)relative target', function () {
     })
   });
 
-  it('컴포넌트의 데이타 매핑정보에 (sibling) 타겟이 있는 경우, data가 변경되면 컴포넌트 형제들의 속성이 변경되어야 한다.', function () {
+  it('컴포넌트의 데이타 매핑정보에 (sibling) 타겟이 있는 경우, data가 변경되면 컴포넌트 형제들의 속성이 변경되어야 한다.', () => {
     var brother = new Container({
       mappings: [{
         accessor: '',

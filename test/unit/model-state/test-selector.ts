@@ -5,11 +5,11 @@
 import * as selector from '../../../src/component/model/selector'
 import { Component, Container, RootContainer } from '../../../src/component'
 
-describe('Selector', function () {
+describe('Selector', () => {
 
-  describe('match', function () {
+  describe('match', () => {
 
-    it('should match selector with component type', function () {
+    it('should match selector with component type', () => {
 
       var component = new Component({ type: 'sample' });
 
@@ -18,9 +18,9 @@ describe('Selector', function () {
     });
   });
 
-  describe('select', function () {
+  describe('select', () => {
 
-    it('should find components matched with selector', function () {
+    it('should find components matched with selector', () => {
       var root = new RootContainer({});
 
       var computer = new Container({ type: 'computer', id: 'id_computer', class: 'white' });

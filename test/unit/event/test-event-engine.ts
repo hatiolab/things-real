@@ -7,7 +7,7 @@ import EventEngine from '../../../src/event/event-engine'
 
 import { expect } from 'chai'
 
-describe('EventEngine', function () {
+describe('EventEngine', () => {
 
   var root;
 
@@ -40,7 +40,7 @@ describe('EventEngine', function () {
   var deliverer_file_count;
   var deliverer_link_count;
 
-  beforeEach(function () {
+  beforeEach(() => {
     origin_computer_count = 0;
     origin_folder_count = 0;
     origin_file_count = 0;
@@ -81,13 +81,13 @@ describe('EventEngine', function () {
     [file31, link32].forEach(file => folder3.addComponent(file));
   });
 
-  afterEach(function () {
+  afterEach(() => {
     root.dispose()
   });
 
-  describe('constructor/add/remove', function () {
+  describe('constructor/add/remove', () => {
 
-    it('(root) deliverer, (all) origin 조합은 하위의 모든 이벤트를 다 받을 수 있다.', function () {
+    it('(root) deliverer, (all) origin 조합은 하위의 모든 이벤트를 다 받을 수 있다.', () => {
       var engine = new EventEngine(root);
 
       function handler(e) {
@@ -119,7 +119,7 @@ describe('EventEngine', function () {
 
     });
 
-    it('리스너가 이벤트 객체가 아닌 경우 (self) 지시자를 사용하면 예외가 발생해야 한다.', function () {
+    it('리스너가 이벤트 객체가 아닌 경우 (self) 지시자를 사용하면 예외가 발생해야 한다.', () => {
       var engine = new EventEngine(root);
 
       function handler(e) {

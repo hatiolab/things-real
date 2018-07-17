@@ -6,16 +6,16 @@ import { RootContainer, Container, Component } from '../../../src/component'
 
 import { expect } from 'chai'
 
-const DELAY = 1100
+const PENDING = 600
 
-describe('(data-mapping)dynamic mapping', function () {
+describe('(data-mapping)dynamic mapping', () => {
   var root;
 
-  beforeEach(function () {
+  beforeEach(() => {
     root = new RootContainer({});
   });
 
-  it('동적으로 추가되는 컴포넌트도 생성시 바로 매핑이 실행되어야 한다.', function (done) {
+  it('동적으로 추가되는 컴포넌트도 생성시 바로 매핑이 실행되어야 한다.', (done) => {
     var component = new Component({
       mappings: [{
         accessor: '',
@@ -35,13 +35,13 @@ describe('(data-mapping)dynamic mapping', function () {
 
     root.addComponent(newbee);
 
-    setTimeout(function () {
+    setTimeout(() => {
       expect(newbee.text).to.equal('TEST-DATA')
       done()
-    }, DELAY)
+    }, PENDING)
   });
 
-  it('동적으로 추가되는 컴포넌트의 매핑 정보도 생성시 바로 실행되어야 한다.', function (done) {
+  it('동적으로 추가되는 컴포넌트의 매핑 정보도 생성시 바로 실행되어야 한다.', (done) => {
     var component = new Component({
       class: 'dynamic'
     });
@@ -60,13 +60,13 @@ describe('(data-mapping)dynamic mapping', function () {
 
     root.addComponent(newbee);
 
-    setTimeout(function () {
+    setTimeout(() => {
       expect(component.text).to.equal('TEST-DATA')
       done()
-    }, DELAY)
+    }, PENDING)
   });
 
-  it('동적으로 class가 변경되는 경우에도 컴포넌트의 매핑 정보도 생성시 바로 실행되어야 한다.', function (done) {
+  it('동적으로 class가 변경되는 경우에도 컴포넌트의 매핑 정보도 생성시 바로 실행되어야 한다.', (done) => {
     var component1 = new Component({
       class: 'dynamic1'
     });
@@ -97,14 +97,14 @@ describe('(data-mapping)dynamic mapping', function () {
 
     component1.setState('class', 'dynamic2')
 
-    setTimeout(function () {
+    setTimeout(() => {
       expect(component1.text).to.equal('TEST-DATA-2')
       done()
-    }, DELAY)
+    }, PENDING)
 
   });
 
-  it('동적으로 id가 변경되는 경우에도 컴포넌트의 매핑 정보도 생성시 바로 실행되어야 한다.', function (done) {
+  it('동적으로 id가 변경되는 경우에도 컴포넌트의 매핑 정보도 생성시 바로 실행되어야 한다.', (done) => {
     var component1 = new Component({
       id: 'dynamic1'
     });
@@ -135,14 +135,14 @@ describe('(data-mapping)dynamic mapping', function () {
 
     component1.setState('id', 'dynamic2')
 
-    setTimeout(function () {
+    setTimeout(() => {
       expect(component1.text).to.equal('TEST-DATA-2')
       done()
-    }, DELAY)
+    }, PENDING)
 
   });
 
-  it('동적으로 생성되는 경우에도 relative target에 대한 컴포넌트의 매핑도 생성시 바로 반영되어야 한다.', function (done) {
+  it('동적으로 생성되는 경우에도 relative target에 대한 컴포넌트의 매핑도 생성시 바로 반영되어야 한다.', (done) => {
     var component1 = new Component({
       data: 'TEST-DATA-1',
       mappings: [{
@@ -159,7 +159,7 @@ describe('(data-mapping)dynamic mapping', function () {
     root.addComponent(component1);
     root.addComponent(component2);
 
-    setTimeout(function () {
+    setTimeout(() => {
       expect(component2.text).to.equal('TEST-DATA-1')
       done()
     }, 1000)

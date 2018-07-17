@@ -6,15 +6,15 @@ import { RootContainer, Container, Component } from '../../../src/component'
 
 import { expect } from 'chai'
 
-describe('Template Component', function () {
-  describe('findTemplateFor(id)', function () {
+describe('Template Component', () => {
+  describe('findTemplateFor(id)', () => {
     var root;
 
-    beforeEach(function () {
+    beforeEach(() => {
       root = new RootContainer({});
     });
 
-    it('모델에 templatePrefix가 설정된 컴포넌트가 추가되는 경우 템플릿 레퍼런스 맵에 추가되어야 한다.', function () {
+    it('모델에 templatePrefix가 설정된 컴포넌트가 추가되는 경우 템플릿 레퍼런스 맵에 추가되어야 한다.', () => {
       var component = new Component({
         templatePrefix: 'XXX-'
       });
@@ -24,7 +24,7 @@ describe('Template Component', function () {
       expect(root.findTemplateFor('XXX-123')).to.equal(component)
     });
 
-    it('모델에 templatePrefix가 설정된 컴포넌트가 삭제되는 경우 템플릿 레퍼런스 맵에서 제거되어야 한다.', function () {
+    it('모델에 templatePrefix가 설정된 컴포넌트가 삭제되는 경우 템플릿 레퍼런스 맵에서 제거되어야 한다.', () => {
       var component = new Component({
         templatePrefix: 'XXX-'
       });
@@ -34,7 +34,7 @@ describe('Template Component', function () {
       expect(root.findTemplateFor('XXX-123')).to.equal(undefined)
     });
 
-    it('컴포넌트 모델의 templatePrefix 속성이 변경되는 경우 템플릿 레퍼런스 맵에서도 변경되어야 한다.', function () {
+    it('컴포넌트 모델의 templatePrefix 속성이 변경되는 경우 템플릿 레퍼런스 맵에서도 변경되어야 한다.', () => {
       var component = new Component({
         templatePrefix: 'XXX-'
       });
@@ -49,7 +49,7 @@ describe('Template Component', function () {
       expect(root.findTemplateFor('YYY-123')).to.equal(component)
     });
 
-    it('findTemplateFor(id) ID와 매칭되는 templatePrefix를 가진 템플릿중에서 가장 긴 템플릿부터 적용된다.', function () {
+    it('findTemplateFor(id) ID와 매칭되는 templatePrefix를 가진 템플릿중에서 가장 긴 템플릿부터 적용된다.', () => {
       var component1 = new Component({
         templatePrefix: 'XXX-'
       });

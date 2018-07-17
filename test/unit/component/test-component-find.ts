@@ -5,11 +5,11 @@
 import { expect } from 'chai';
 import { RootContainer, Component, Container } from '../../../src'
 
-describe('Component', function () {
+describe('Component', () => {
 
-  describe('findAll', function () {
+  describe('findAll', () => {
 
-    it('select에 매칭되는 컴포넌트를 찾을 수 있다.', function () {
+    it('select에 매칭되는 컴포넌트를 찾을 수 있다.', () => {
       var root = new RootContainer({ type: 'root', id: 'root', class: 'top' });
 
       var computer = new Container({ type: 'computer', id: 'id_computer', class: 'white' });

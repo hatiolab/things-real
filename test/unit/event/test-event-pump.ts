@@ -7,7 +7,7 @@ import EventPump from '../../../src/event/event-pump'
 
 import { expect } from 'chai'
 
-describe('EventPump', function () {
+describe('EventPump', () => {
 
   var root;
 
@@ -40,7 +40,7 @@ describe('EventPump', function () {
   var deliverer_file_count;
   var deliverer_link_count;
 
-  beforeEach(function () {
+  beforeEach(() => {
     origin_computer_count = 0;
     origin_folder_count = 0;
     origin_file_count = 0;
@@ -81,13 +81,13 @@ describe('EventPump', function () {
     [file31, link32].forEach(file => folder3.addComponent(file));
   });
 
-  afterEach(function () {
+  afterEach(() => {
     root.dispose()
   });
 
-  describe('on/off', function () {
+  describe('on/off', () => {
 
-    it('should be able to use id, type and special(self, all) selector', function () {
+    it('should be able to use id, type and special(self, all) selector', () => {
 
       var listener = {}
 
@@ -172,7 +172,7 @@ describe('EventPump', function () {
       pump.dispose();
     });
 
-    it('should be able to use variable selector', function () {
+    it('should be able to use variable selector', () => {
 
       var file_count = 0;
       var link_count = 0;
@@ -215,7 +215,7 @@ describe('EventPump', function () {
       link_count.should.be.equal(1);
     });
 
-    it('should recognize synonyms with parenthesys', function () {
+    it('should recognize synonyms with parenthesys', () => {
       var root_count = 0;
       var all_count = 0;
 

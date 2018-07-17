@@ -6,9 +6,9 @@ import { EventSource, EventTracker, StandAloneTracker } from '../../../src/event
 
 import { expect } from 'chai'
 
-describe('StandAloneTracker', function () {
+describe('StandAloneTracker', () => {
 
-  describe('on/off', function () {
+  describe('on/off', () => {
     class EventSourceTest extends EventSource {
 
       test(e) {
@@ -26,11 +26,11 @@ describe('StandAloneTracker', function () {
 
     var evsource;
 
-    beforeEach(function () {
+    beforeEach(() => {
       evsource = new EventSourceTest();
     });
 
-    it('should execute belonging event handlers on the bound events', function () {
+    it('should execute belonging event handlers on the bound events', () => {
       var startcount = 0;
       var movecount = 0;
       var endcount = 0;
@@ -66,7 +66,7 @@ describe('StandAloneTracker', function () {
       tracker.dispose();
     });
 
-    it('should bind on the specified object when handlers call-backed', function () {
+    it('should bind on the specified object when handlers call-backed', () => {
       var self = {
         a: 'a'
       };
@@ -85,7 +85,7 @@ describe('StandAloneTracker', function () {
       tracker.dispose();
     });
 
-    it('should bind target object when handlers call-backed if bind object is not specified', function () {
+    it('should bind target object when handlers call-backed if bind object is not specified', () => {
       var calc = 1;
 
       var tracker = new StandAloneTracker(evsource, {

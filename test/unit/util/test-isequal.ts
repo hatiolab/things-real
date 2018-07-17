@@ -6,32 +6,32 @@ import { isEqual } from 'lodash'
 
 import { expect } from 'chai'
 
-describe('isEqual', function () {
+describe('isEqual', () => {
 
-  describe('test for simple object', function () {
+  describe('test for simple object', () => {
 
     var obj1, obj2, obj3;
 
-    beforeEach(function () {
+    beforeEach(() => {
       obj1 = { a: 32, b: 'abc' };
       obj2 = { a: 32, b: 'abc' };
       obj3 = { a: '32', b: 'abc' };
     });
 
-    it('key의 종류와 값이 같은 오브젝트의 비교는 결과가 true이어야 한다.', function () {
+    it('key의 종류와 값이 같은 오브젝트의 비교는 결과가 true이어야 한다.', () => {
       var equality = isEqual(obj1, obj2);
 
       expect(equality).to.be.true;
     });
 
-    it('key의 값 타입이 다른 오브젝트의 비교는 결과가 false이어야 한다.', function () {
+    it('key의 값 타입이 다른 오브젝트의 비교는 결과가 false이어야 한다.', () => {
       var equality = isEqual(obj1, obj3);
 
       expect(equality).to.be.false;
     });
 
 
-    // it('JSON을 사용한 방법보다 빨라야한다.', function () {
+    // it('JSON을 사용한 방법보다 빨라야한다.', () => {
     //   var t0 = Date.now();
     //   for(let i = 0;i < 10000;i++) {
     //     let equality = JSON.stringify(obj1) == JSON.stringify(obj2);
