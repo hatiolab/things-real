@@ -1,13 +1,15 @@
 import { SceneConfig, SceneModel, SceneMode, FitMode } from '../types'
-import { Component, Container, RootContainer } from '../component'
+import { Component, RootContainer } from '../component'
+import { clonedeep } from '../util'
 import { compile } from '../main'
-import { select } from '../component/model';
 
 export default class Scene {
   private _sceneMode: SceneMode
   private _fitMode: FitMode
   private _targetEl: HTMLElement
-  private _sceneModel: SceneModel
+
+  private _width: number
+  private _height: number
 
   private _rootContainer: RootContainer
 
@@ -29,9 +31,10 @@ export default class Scene {
       this._targetEl.style.overflow = "hidden"
     }
 
+    this._width = config.model.width
+    this._height = config.model.height
     this._sceneMode = config.mode | SceneMode.VIEW
     this._fitMode = config.fit | FitMode.RATIO
-    this._sceneModel = config.model
 
     this._rootContainer = compile({
       type: 'root',
@@ -43,15 +46,34 @@ export default class Scene {
     return this._sceneMode
   }
 
-  get fitMode() {
+  get sceneModel(): SceneModel {
+    return {
+      width: this.width,
+      height: this.height,
+      components: this.rootContainer.hierarchy.components
+    }
+  }
+
+  get width(): number {
+    return this._width
+  }
+
+  get height(): number {
+    return this._height
+  }
+
+  get fitMode(): FitMode {
     return this._fitMode
   }
 
-  get rootContainer​​() {
+  get rootContainer​​(): RootContainer {
     return this._rootContainer
   }
 
-  fit(mode: FitMode): void { }
+  fit(mode: FitMode): void {
+    this._fitMode = mode
+    // TODO implement
+  }
 
   findAll(selector: string): Component[] {
     return this.rootContainer.findAll(selector)
@@ -59,5 +81,14 @@ export default class Scene {
 
   findById(id: string): Component {
     return this.rootContainer.findById(id)
+  }
+
+  setProperties(target: string, properties: string | object, value?: any) {
+    var components = this.findAll(target)
+    components.forEach(component => component.setState(clonedeep(properties), value ? clonedeep(value) : value))
+  }
+
+  setData(targets: string, value: any) {
+    this.setProperties(targets, 'data', value)
   }
 }
