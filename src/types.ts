@@ -41,10 +41,9 @@ export enum FitMode {
   RATIO
 }
 
-export interface SceneModel {
+export interface SceneModel extends ComponentModel {
   width: number,
-  height: number,
-  components?: ComponentModel[]
+  height: number
 }
 
 export interface SceneConfig {

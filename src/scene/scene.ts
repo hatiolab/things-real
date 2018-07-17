@@ -1,5 +1,6 @@
 import { SceneConfig, SceneModel, SceneMode, FitMode } from '../types'
 import { Component, RootContainer } from '../component'
+import { SnapshotCommander } from '../command'
 import { clonedeep } from '../util'
 import { compile } from '../main'
 
@@ -7,9 +8,7 @@ export default class Scene {
   private _sceneMode: SceneMode
   private _fitMode: FitMode
   private _targetEl: HTMLElement
-
-  private _width: number
-  private _height: number
+  private _snapshotCommander: SnapshotCommander
 
   private _rootContainer: RootContainer
 
@@ -31,15 +30,15 @@ export default class Scene {
       this._targetEl.style.overflow = "hidden"
     }
 
-    this._width = config.model.width
-    this._height = config.model.height
     this._sceneMode = config.mode | SceneMode.VIEW
     this._fitMode = config.fit | FitMode.RATIO
 
-    this._rootContainer = compile({
-      type: 'root',
-      components: config.model.components
-    }) as RootContainer
+    this.sceneModel = config.model
+
+    this._snapshotCommander = new SnapshotCommander({
+      take: () => { return this.sceneModel },
+      putback: model => { this.sceneModel = model as SceneModel }
+    })
   }
 
   get sceneMode() {
@@ -47,19 +46,14 @@ export default class Scene {
   }
 
   get sceneModel(): SceneModel {
-    return {
-      width: this.width,
-      height: this.height,
-      components: this.rootContainer.hierarchy.components
-    }
+    return this.rootContainer.hierarchy
   }
 
-  get width(): number {
-    return this._width
-  }
-
-  get height(): number {
-    return this._height
+  set sceneModel(model) {
+    this._rootContainer = compile({
+      ...model,
+      type: 'root'
+    }) as RootContainer
   }
 
   get fitMode(): FitMode {

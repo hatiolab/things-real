@@ -1,5 +1,6 @@
 import Component from './component'
 import Container from './container'
+import { SceneModel } from '../types'
 import { warn, error, clonedeep } from '../util'
 import { compile } from '../main'
 import { debounce } from 'lodash'
@@ -20,7 +21,7 @@ export default class RootContainer extends Container {
   private templatePrefixes: string[] = []
   private eventEngine: EventEngine = new EventEngine(this)
 
-  constructor(model) {
+  constructor(model: SceneModel) {
     super(model)
 
     this.refreshMappings()
@@ -32,6 +33,14 @@ export default class RootContainer extends Container {
 
   get root() {
     return this
+  }
+
+  get width() {
+    return this.getState('width')
+  }
+
+  get height() {
+    return this.getState('height')
   }
 
   addTemplate(prefix, component) {
