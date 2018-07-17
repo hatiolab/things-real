@@ -1,7 +1,7 @@
 import { SceneConfig, SceneModel, SceneMode, FitMode } from '../types'
 import { Component, RootContainer } from '../component'
 import { SnapshotCommander } from '../command'
-import { clonedeep } from '../util'
+import { clonedeep, error } from '../util'
 import { compile } from '../main'
 
 export default class Scene {
@@ -85,4 +85,46 @@ export default class Scene {
   setData(targets: string, value: any) {
     this.setProperties(targets, 'data', value)
   }
+
+  add(components) {
+
+  }
+
+  remove() {
+
+  }
+
+  get selected() {
+    return []
+  }
+
+  copy() {
+
+    var copied = this.selected.filter(component => !component.isRootModel)
+      .map(component => component.hierarchy)
+
+    if (copied.length == 0)
+      return;
+
+    return JSON.stringify(copied, null, 2);
+  }
+
+  cut() {
+    var copied = this.copy()
+    this.remove()
+
+    return copied
+  }
+
+  paste(copied) {
+    if (!copied)
+      return
+
+    try {
+      this.add(JSON.parse(copied))
+    } catch (e) {
+      error(e, copied)
+    }
+  }
+
 }
