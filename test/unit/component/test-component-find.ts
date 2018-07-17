@@ -24,14 +24,14 @@ describe('Component', () => {
       folder.addComponent(file2);
       folder.addComponent(link);
 
-      // var files = selector.select('file', computer);
-      // files.length.should.equal(2);
-      // file1.should.be.oneOf(files);
-      // file2.should.be.oneOf(files);
-      // link.should.not.be.oneOf(files);
+      var files = root.findAll('file', computer);
+      files.length.should.equal(2);
+      file1.should.be.oneOf(files);
+      file2.should.be.oneOf(files);
+      link.should.not.be.oneOf(files);
 
-      var links = root.findById('id_link');
-      // links.length.should.equal(1);
+      var links = root.findAll('#id_link');
+      links.length.should.equal(1);
     });
 
   });

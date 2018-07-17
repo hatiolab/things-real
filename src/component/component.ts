@@ -43,7 +43,7 @@ export default class Component extends ModelAndState implements LifeCycleCallbac
     return clonedeep(this.model);
   }
 
-  public container: Container
+  public parent: Container
 
   get isContainer(): boolean {
     return false
@@ -54,7 +54,7 @@ export default class Component extends ModelAndState implements LifeCycleCallbac
   }
 
   get root(): RootContainer {
-    return this.container.root
+    return this.parent.root
   }
 
   /* Event */

@@ -20,7 +20,7 @@ describe('Container', () => {
     const parent: Container = compile(parentModel) as Container;
     const child = parent.components[0];
 
-    child.container.should.equal(parent);
+    child.parent.should.equal(parent);
   });
 
 });

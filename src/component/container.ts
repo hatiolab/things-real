@@ -41,7 +41,7 @@ export default class Container extends Component {
   }
 
   addComponent(component: Component) {
-    var oldContainer = component.container
+    var oldContainer = component.parent
 
     if (oldContainer) {
       if (this === oldContainer)
@@ -52,7 +52,7 @@ export default class Container extends Component {
 
     var index = (this._components.push(component) - 1)
 
-    component.container = this
+    component.parent = this
     component.added(this) /* callback */
 
     // this.trigger('add', this, component, index)
@@ -64,7 +64,7 @@ export default class Container extends Component {
   }
 
   insertComponentAt(component, index) {
-    var oldContainer = component.container
+    var oldContainer = component.parent
 
     if (oldContainer) {
       oldContainer.removeComponent(component)
@@ -77,7 +77,7 @@ export default class Container extends Component {
     // 실제 적용된 인덱스를 다시 구한다.
     index = this._components.indexOf(component)
 
-    component.container = this
+    component.parent = this
     component.added(this) /* callback */
 
     // this.trigger('add', this, component, index)
@@ -94,7 +94,7 @@ export default class Container extends Component {
 
     this.components.splice(idx, 1)
 
-    component.container = null
+    component.parent = null
     component.removed(this) /* callback */
 
     // this.trigger('remove', this, component)
