@@ -2,36 +2,39 @@
  * Copyright © HatioLab Inc. All rights reserved.
  */
 
-import Component from '../components/component'
-import ModelLayer from './model-layer'
-import ObjectComponentBridge from './threed/object-component-bridge'
+import { Component } from '../component'
+// import ModelLayer from './model-layer'
+import Layer from './layer'
+import ObjectComponentBridge from '../threed/object-component-bridge'
 import './threed/controls/editor-controls'
-import TransformControls from './threed/controls/transform-controls'
+import TransformControls from '../threed/controls/transform-controls'
 
 import CommandChange from '../command/command-change'
 
-export default class Scene3DLayer extends ModelLayer {
+export default class Scene3DLayer extends Layer {
 
-  static support(dimension = '2d') {
-    return String(dimension).toLowerCase() === '3d';
-  }
+  private _transformControls: TransformControls
+  private _scene: THREE.Scene
+  private _raycaster: THREE.Raycaster
+  private _editorControls = THREE.EditorControls
 
-  constructor(x, y) {
-    super(x, y)
-  }
+  private onmousedown
+  private ondragmove
+  private onmousemove
 
   dispose() {
     this._transformControls && this._transformControls.dispose();
 
     this.scene.children.slice().forEach(child => {
-      if (child.dispose)
-        child.dispose();
-      if (child.geometry && child.geometry.dispose)
-        child.geometry.dispose();
-      if (child.material && child.material.dispose)
-        child.material.dispose();
-      if (child.texture && child.texture.dispose)
-        child.texture.dispose();
+      if (child['dispose'])
+        child['dispose']();
+      if (child['geometry'] && child['geometry']['dispose'])
+        child['geometry']['dispose']();
+      if (child['material'] && child['material']['dispose'])
+        child['material']['dispose']();
+      if (child['texture'] && child['texture']['dispose'])
+        child['texture']['dispose']();
+
       this.remove(child)
     });
 
@@ -42,11 +45,11 @@ export default class Scene3DLayer extends ModelLayer {
 
   ready() {
 
-    if (this.app.isEditMode) {
-      this.onmousedown = this.transformControls.onPointerDown.bind(this.transformControls);
-      this.ondragmove = this.transformControls.onPointerDragMove.bind(this.transformControls);
-      this.onmousemove = this.transformControls.onPointerHover.bind(this.transformControls);
-    }
+    // if (this.app.isEditMode) {
+    this.onmousedown = this.transformControls.onPointerDown.bind(this.transformControls);
+    this.ondragmove = this.transformControls.onPointerDragMove.bind(this.transformControls);
+    this.onmousemove = this.transformControls.onPointerHover.bind(this.transformControls);
+    // }
   }
 
   get raycaster() {
@@ -77,7 +80,7 @@ export default class Scene3DLayer extends ModelLayer {
       this._transformControls.addEventListener('objectChange', () => {
         let object = this._transformControls.object;
 
-        object && CommandChange.around(this.app.commander, function () {
+        object && CommandChange.around(this.rootContainer.commander, function () {
           // object의 변화를 component에 반영한다.
           object.updateReverse();
         });

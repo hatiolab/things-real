@@ -100,14 +100,10 @@ export default class Layer extends EventSource {
     return this.element
   }
 
-  // dispose() {
-  //   // TODO Dispose를 효율적으로 처리할 수 있는 방법을 고안한다.
-  //   super.dispose()
-  //   // window.removeEventListener('resize', this._onresize);
-
-  //   this.target = null;
-  //   this.element = null;
-  // }
+  dispose() {
+    this.target = null;
+    this.element = null;
+  }
 
   // get selected() {
 
