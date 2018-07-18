@@ -1,3 +1,7 @@
+/*
+ * Copyright © HatioLab Inc. All rights reserved.
+ */
+
 import { SceneConfig, SceneModel, SceneMode, FitMode } from '../types'
 import { Component, RootContainer } from '../component'
 import { SnapshotCommander } from '../command'
@@ -60,7 +64,7 @@ export default class Scene {
     return this._fitMode
   }
 
-  get rootContainer​​(): RootContainer {
+  get rootContainer(): RootContainer {
     return this._rootContainer
   }
 

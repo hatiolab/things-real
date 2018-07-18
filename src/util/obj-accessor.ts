@@ -1,3 +1,7 @@
+/*
+ * Copyright © HatioLab Inc. All rights reserved.
+ */
+
 const SELF = o => o
 
 export default function buildAccessor(accessor?) {

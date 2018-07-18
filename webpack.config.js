@@ -1,3 +1,7 @@
+/*
+ * Copyright © HatioLab Inc. All rights reserved.
+ */
+
 const NodePackage = require('./package.json');
 const path = require('path');
 const webpack = require('webpack');

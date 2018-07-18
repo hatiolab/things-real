@@ -1,3 +1,7 @@
+/*
+ * Copyright © HatioLab Inc. All rights reserved.
+ */
+
 import { SceneConfig } from '../types'
 import { Scene } from '../scene';
 

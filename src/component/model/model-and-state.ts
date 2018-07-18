@@ -1,3 +1,7 @@
+/*
+ * Copyright © HatioLab Inc. All rights reserved.
+ */
+
 import { ThreeDimension, ComponentModel, DataMappingModel } from '../../types'
 import EventCallback from '../callback/event-callback'
 import { EventSource } from '../../event'

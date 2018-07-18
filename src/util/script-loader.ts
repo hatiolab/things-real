@@ -1,4 +1,8 @@
 /*
+ * Copyright © HatioLab Inc. All rights reserved.
+ */
+
+/*
  * 1. SCRIPTS, STYLES 에는 각 소스별 상태를 관리한다.
  * SCRIPTS, STYLES : {
  *   'http://echarts.baidu.com/dist/echarts.min.js': true | false (true means loaded, false means not loaded yet)

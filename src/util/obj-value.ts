@@ -1,3 +1,7 @@
+/*
+ * Copyright © HatioLab Inc. All rights reserved.
+ */
+
 export default function objToVal(value) {
   while (value && typeof (value) === 'object') {
     let backup = value

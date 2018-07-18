@@ -1,3 +1,7 @@
+/*
+ * Copyright © HatioLab Inc. All rights reserved.
+ */
+
 export type Class = { new(...args: any[]): any; }
 
 export interface ThreeDimension {

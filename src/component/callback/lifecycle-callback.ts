@@ -1,3 +1,7 @@
+/*
+ * Copyright © HatioLab Inc. All rights reserved.
+ */
+
 import Component from '../component'
 
 export default interface LifeCycleCallback {

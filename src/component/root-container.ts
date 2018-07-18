@@ -1,3 +1,7 @@
+/*
+ * Copyright © HatioLab Inc. All rights reserved.
+ */
+
 import Component from './component'
 import Container from './container'
 import { SceneModel } from '../types'
@@ -137,7 +141,7 @@ export default class RootContainer extends Container {
     }
   }
 
-  private _onadded(container​​, component) {
+  private _onadded(container, component) {
     this._addTraverse(component)
     this.refreshMappings()
     // this.invalidate()

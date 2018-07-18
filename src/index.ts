@@ -1,3 +1,7 @@
+/*
+ * Copyright © HatioLab Inc. All rights reserved.
+ */
+
 export * from './types'
 export * from './main'
 export * from './scene'
