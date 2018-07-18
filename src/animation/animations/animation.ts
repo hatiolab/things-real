@@ -31,7 +31,7 @@ export default abstract class Animation {
   private delta
   private _raf
 
-  protected step(delta): void { }
+  protected abstract step(delta): void
 
   constructor(client, config) {
     this.client = client

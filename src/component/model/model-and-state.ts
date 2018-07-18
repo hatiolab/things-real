@@ -8,7 +8,7 @@ import { EventSource } from '../../event'
 import { clonedeep } from '../../util'
 import { isEqual } from 'lodash'
 
-export abstract class ModelAndState extends EventSource implements ComponentModel, EventCallback {
+export class ModelAndState extends EventSource implements ComponentModel, EventCallback {
 
   constructor(model: Object) {
     super();
