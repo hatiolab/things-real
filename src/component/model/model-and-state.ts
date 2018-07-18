@@ -2,7 +2,7 @@
  * Copyright © HatioLab Inc. All rights reserved.
  */
 
-import { ThreeDimension, ComponentModel, DataMappingModel } from '../../types'
+import { ThreeDimension, ComponentModel, DataSpreadModel } from '../../types'
 import EventCallback from '../callback/event-callback'
 import { EventSource } from '../../event'
 import { clonedeep } from '../../util'
@@ -179,7 +179,7 @@ export class ModelAndState extends EventSource implements ComponentModel, EventC
   public style: any;
   public templatePrefix: string;
   public data: any;
-  public mappings: DataMappingModel[];
+  public mappings: DataSpreadModel[];
 }
 
 /* 단순한 state 속성의 getter/setter 정의 방법. */

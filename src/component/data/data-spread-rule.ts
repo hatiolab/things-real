@@ -21,17 +21,10 @@ function propType(property) {
   }
 }
 
-export default class DataMapping {
+export default class DataSpreadRule {
   constructor(model, owner) {
     this.owner = owner
     this.model = model
-  }
-
-  dispose() {
-    delete this._model
-    delete this.owner
-    delete this._evaluator
-    delete this._accessor
   }
 
   private owner
@@ -45,7 +38,7 @@ export default class DataMapping {
   }
 
   set model(model: any) {
-    var { target, property, rule, param, accessor } = model
+    var { property, rule, param, accessor } = model
 
     this._model = model
 

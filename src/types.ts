@@ -10,7 +10,7 @@ export interface ThreeDimension {
   z: number
 }
 
-export interface DataMappingModel {
+export interface DataSpreadModel {
   accessor?: string,
   target: string,
   property: string,
@@ -31,7 +31,7 @@ export interface ComponentModel {
   style?: any,
   templatePrefix?: string,
   components?: ComponentModel[],
-  mappings?: DataMappingModel[],
+  mappings?: DataSpreadModel[],
   [propName: string]: any;
 }
 

@@ -2,39 +2,35 @@
  * Copyright © HatioLab Inc. All rights reserved.
  */
 
-import { Component, Container } from '../component'
-import * as Const from '../const'
+import { EventSource } from '../event'
+import { Component, Container, RootContainer } from '../component'
 
-export default class Layer extends Container {
+export default class Layer extends EventSource {
 
-  static support(dimension = '2d') {
-    return String(dimension).toLowerCase() === '2d';
+  private _rootContainer: RootContainer
+  private _target: HTMLElement
+  private element: HTMLCanvasElement
+
+  private draw_reserved: boolean = false
+
+  private throttle_render() {
+    if (!this.draw_reserved) {
+      requestAnimationFrame(() => {
+        this.draw_reserved = false;
+
+        this.trigger('redraw');
+        this.render();
+      })
+    }
+    this.draw_reserved = true;
   }
 
-  constructor(model, context) {
-    super(model, context)
+  get rootContainer​​() {
+    return this._rootContainer
+  }
 
-    model.translate = {
-      x: 0,
-      y: 0,
-      ...model.translate
-    }
-
-    this._draw_reserved = false;
-
-    this.__draw__ = () => {
-      this._draw_reserved = false;
-
-      this.trigger('redraw');
-      this.reflow();
-      this.draw();
-    }
-
-    this.throttle_render = () => {
-      if (!this._draw_reserved)
-        requestAnimationFrame(this.__draw__)
-      this._draw_reserved = true;
-    }
+  set rootContainer(rootContainer) {
+    this._rootContainer = rootContainer
   }
 
   fitSize(element) {
@@ -46,8 +42,8 @@ export default class Layer extends Container {
     let width = style ? parseFloat(style.getPropertyValue('width')) : this.target.offsetWidth
     let height = style ? parseFloat(style.getPropertyValue('height')) : this.target.offsetHeight
 
-    element.setAttribute('width', width * Const.DPPX);
-    element.setAttribute('height', height * Const.DPPX);
+    element.setAttribute('width', width);
+    element.setAttribute('height', height);
 
     element.style.width = width + 'px';
     element.style.height = height + 'px';
@@ -61,8 +57,11 @@ export default class Layer extends Container {
     return true;
   }
 
-  createElement() {
-    var element = Component.createCanvas(1, 1);
+  private createElement() {
+    var element = document.createElement('canvas');
+    element.width = this.rootContainer.width;
+    element.height = this.rootContainer.height;
+
     element.style.position = 'absolute';
 
     return element;
@@ -101,52 +100,53 @@ export default class Layer extends Container {
     return this.element
   }
 
-  dispose() {
-    // TODO Dispose를 효율적으로 처리할 수 있는 방법을 고안한다.
-    super.dispose()
-    // window.removeEventListener('resize', this._onresize);
+  // dispose() {
+  //   // TODO Dispose를 효율적으로 처리할 수 있는 방법을 고안한다.
+  //   super.dispose()
+  //   // window.removeEventListener('resize', this._onresize);
 
-    this.target = null;
-    this.element = null;
-  }
+  //   this.target = null;
+  //   this.element = null;
+  // }
 
-  get selected() {
+  // get selected() {
 
-    return this.root.selected
-  }
+  //   return this.root.selected
+  // }
 
-  set selected(sels) {
+  // set selected(sels) {
 
-    this.root.selected = sels
-  }
+  //   this.root.selected = sels
+  // }
 
-  get focused() {
+  // get focused() {
 
-    return this.root.focused
-  }
+  //   return this.root.focused
+  // }
 
-  set focused(container) {
+  // set focused(container) {
 
-    this.root.focused = container
-  }
+  //   this.root.focused = container
+  // }
 
   getContext() {
-    if (!this._context2D)
-      this._context2D = this.canvas && this.canvas.getContext('2d');
+    return this.element.getContext('2d');
+    // if (!this._context2D)
+    //   this._context2D = this.canvas && this.canvas.getContext('2d');
 
-    return this._context2D;
+    // return this._context2D;
   }
 
   /* 레어어의 draw는 외부에서 context를 제공하지 않으면, 자신의 캔바스의 컨텍스트를 이용해서 그린다. */
-  draw(context) {
-    if (!this.canvas)
+  render(context?) {
+    if (!this.element)
       return;
 
     context = context || this.getContext();
     if (!context)
       return;
 
-    super.draw(context);
+    this.rootContainer.render(context)
   }
 
   prerender(context) {
@@ -158,13 +158,13 @@ export default class Layer extends Container {
         y: 1
       },
       rotation
-    } = this.state;
+    } = this.rootContainer.state;
 
     context.clearRect(0, 0, context.canvas.width, context.canvas.height);
 
-    translate && context.translate(translate.x * Const.DPPX, translate.y * Const.DPPX);
+    translate && context.translate(translate.x, translate.y);
 
-    context.scale(scale.x * Const.DPPX, scale.y * Const.DPPX);
+    context.scale(scale.x, scale.y);
     rotation && context.rotate(rotation);
   }
 
@@ -188,17 +188,5 @@ export default class Layer extends Container {
      * 빈번히 반복되는 invalidate()에 대해 비효율적으로 render()가 호출되는 것을 방지하기 위함
      */
     this.throttle_render();
-  }
-
-  move(toward) {
-
-    var translate = this.get('translate') || { x: 0, y: 0 }
-
-    this.set({
-      translate: {
-        x: translate.x + toward.x,
-        y: translate.y + toward.y
-      }
-    })
   }
 }
