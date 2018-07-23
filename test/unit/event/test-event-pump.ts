@@ -51,7 +51,12 @@ describe('EventPump', () => {
     deliverer_file_count = 0;
     deliverer_link_count = 0;
 
-    root = computer = new RootContainer({ type: 'computer', id: 'computer1' });
+    root = computer = new RootContainer({
+      width: 100,
+      height: 100,
+      type: 'computer',
+      id: 'computer1'
+    });
 
     folder1 = new Container({ type: 'folder', id: 'folder1' });
     folder2 = new Container({ type: 'folder', id: 'folder2' });

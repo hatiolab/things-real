@@ -11,7 +11,10 @@ describe('(data-mapping)relative target', () => {
   var root;
 
   beforeEach(() => {
-    root = new RootContainer({});
+    root = new RootContainer({
+      width: 100,
+      height: 100
+    });
   });
 
   it('컴포넌트의 데이타 매핑정보에 (self) 타겟이 있는 경우, data가 변경되면 컴포넌트 자신의 속성이 변경되어야 한다.', () => {

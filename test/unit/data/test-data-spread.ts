@@ -13,7 +13,10 @@ describe('(data-binding) data spread', () => {
   var root;
 
   beforeEach(() => {
-    root = new RootContainer({});
+    root = new RootContainer({
+      width: 100,
+      height: 100
+    });
   });
 
   describe('Primitive Value Data Spread', () => {

@@ -68,6 +68,10 @@ export default class Scene {
     return this._rootContainer
   }
 
+  get commander(): SnapshotCommander {
+    return this._snapshotCommander
+  }
+
   fit(mode: FitMode): void {
     this._fitMode = mode
     // TODO implement

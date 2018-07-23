@@ -10,7 +10,7 @@ describe('Component', () => {
   describe('findAll', () => {
 
     it('select에 매칭되는 컴포넌트를 찾을 수 있다.', () => {
-      var root = new RootContainer({ type: 'root', id: 'root', class: 'top' });
+      var root = new RootContainer({ width: 100, height: 100, type: 'root', id: 'root', class: 'top' });
 
       var computer = new Container({ type: 'computer', id: 'id_computer', class: 'white' });
       var folder = new Container({ type: 'folder', id: 'id_folder', class: 'white blue' });

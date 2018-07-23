@@ -8,7 +8,11 @@ import { SceneModel } from '../types'
 import { warn, error, clonedeep } from '../util'
 import { compile } from '../main'
 import { debounce } from 'lodash'
-import EventEngine from '../event/event-engine';
+import EventEngine from '../event/event-engine'
+
+import Layer from '../layer/layer'
+
+import * as THREE from 'three'
 
 var refresh_mapping_debouncer = debounce(function mapper(comp: Component) {
   comp.dataSpreadEngine.execute()
@@ -25,8 +29,17 @@ export default class RootContainer extends Container {
   private templatePrefixes: string[] = []
   private eventEngine: EventEngine = new EventEngine(this)
 
-  constructor(model: SceneModel) {
+  public renderer: Layer
+
+  /**
+   * three.js related
+   */
+  private scene3D: THREE.Scene
+
+  constructor(model: SceneModel, renderer) {
     super(model)
+
+    this.renderer = renderer
 
     this.refreshMappings()
   }
@@ -37,6 +50,13 @@ export default class RootContainer extends Container {
 
   get root() {
     return this
+  }
+
+  get object3D() {
+    if (!this.scene3D) {
+      this.scene3D = new THREE.Scene()
+    }
+    return this.scene3D
   }
 
   get width() {

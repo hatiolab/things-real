@@ -5,7 +5,7 @@
 import * as THREE from 'three'
 
 import CoverObject3D from './cover-object-3d'
-import tinycolor from 'tinycolor2'
+// import * as tinycolor from 'tinycolor2'
 
 import BoundUVGenerator from './bound-uv-generator'
 
@@ -25,6 +25,8 @@ const SIDE_EXTRUDE_OPTIONS = {
 }
 
 export default class Extrude extends CoverObject3D {
+
+  private _boundUVGenerator
 
   initialize() {
   }
@@ -153,7 +155,8 @@ export default class Extrude extends CoverObject3D {
     }
 
     if (strokeStyle && strokeStyle != 'transparent' && lineWidth > 0) {
-      var sideMesh = this.createSideMesh(geometry, shape, options)
+      // var sideMesh = this.createSideMesh(geometry, shape, options)
+      var sideMesh = this.createSideMesh(geometry, shape)
 
       this.add(sideMesh)
     }
@@ -185,9 +188,9 @@ export default class Extrude extends CoverObject3D {
 
     var material;
     if (fillStyle.type == 'pattern' && fillStyle.image) {
-      var texture = this._visualizer._textureLoader.load(this._visualizer.app.url(fillStyle.image), texture => {
+      var texture = this.component.renderer._textureLoader.load(this.component.renderer.app.url(fillStyle.image), texture => {
         texture.minFilter = THREE.LinearFilter
-        this._visualizer.render_threed()
+        this.component.renderer.render_threed()
       })
 
       material = [
@@ -201,7 +204,7 @@ export default class Extrude extends CoverObject3D {
         })
       ]
     } else {
-      let params = {};
+      let params: { color?} = {};
 
       if (fillStyle && fillStyle !== 'transparent') {
         params.color = fillStyle;

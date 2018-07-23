@@ -4,6 +4,10 @@ import * as THREE from 'three'
 
 export default class BoundUVGenerator {
 
+  private extrudedShape
+  private extrudedOptions
+  private bb
+
   setShape({
     extrudedShape,
     extrudedOptions

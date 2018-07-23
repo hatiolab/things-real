@@ -21,7 +21,10 @@ describe('Selector', () => {
   describe('select', () => {
 
     it('should find components matched with selector', () => {
-      var root = new RootContainer({});
+      var root = new RootContainer({
+        width: 100,
+        height: 100
+      });
 
       var computer = new Container({ type: 'computer', id: 'id_computer', class: 'white' });
       var folder = new Container({ type: 'folder', id: 'id_folder', class: 'white blue' });

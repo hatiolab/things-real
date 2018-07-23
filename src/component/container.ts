@@ -5,6 +5,7 @@
 import { ComponentModel } from '../types'
 import Component from './component'
 import { select } from './model'
+import { AbsoluteLayout } from '../layout'
 import { clonedeep } from '../util'
 
 export default class Container extends Component {
@@ -38,6 +39,10 @@ export default class Container extends Component {
 
   get isContainer() {
     return true
+  }
+
+  get layout() {
+    return AbsoluteLayout
   }
 
   addComponent(component: Component) {

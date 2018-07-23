@@ -2,25 +2,36 @@
  * Copyright © HatioLab Inc. All rights reserved.
  */
 
-import { Component } from '../component'
-// import ModelLayer from './model-layer'
+import { Scene } from '../scene'
 import Layer from './layer'
-import ObjectComponentBridge from '../threed/object-component-bridge'
-import './threed/controls/editor-controls'
+import CoverObject3D from '../component/threed/cover-object-3d'
+import EditorControls from '../threed/controls/editor-controls'
 import TransformControls from '../threed/controls/transform-controls'
-
 import CommandChange from '../command/command-change'
 
-export default class Scene3DLayer extends Layer {
+import * as THREE from 'three'
+
+export default class ModelerLayer extends Layer {
 
   private _transformControls: TransformControls
   private _scene: THREE.Scene
   private _raycaster: THREE.Raycaster
-  private _editorControls = THREE.EditorControls
+  private _camera: THREE.PerspectiveCamera
+  private _lights: THREE.Light[]
+  private _editorControls: EditorControls
+  private _renderer: THREE.WebGLRenderer
+  private _gridHelper: THREE.GridHelper
+  private _attention: THREE.Vector3
 
-  private onmousedown
-  private ondragmove
-  private onmousemove
+  private _textureLoader: THREE.TextureLoader
+
+  constructor(owner: Scene) {
+    super(owner);
+
+    this._textureLoader = new THREE.TextureLoader(THREE.DefaultLoadingManager)
+    this._textureLoader.withCredentials = 'true'
+    this._textureLoader.crossOrigin = 'use-credentials'
+  }
 
   dispose() {
     this._transformControls && this._transformControls.dispose();
@@ -35,7 +46,7 @@ export default class Scene3DLayer extends Layer {
       if (child['texture'] && child['texture']['dispose'])
         child['texture']['dispose']();
 
-      this.remove(child)
+      this.scene.remove(child)
     });
 
     this.renderer.dispose();
@@ -43,13 +54,17 @@ export default class Scene3DLayer extends Layer {
     super.dispose();
   }
 
+  private onmousedown
+  private ondragmove
+  private onmousemove
+
   ready() {
 
-    // if (this.app.isEditMode) {
-    this.onmousedown = this.transformControls.onPointerDown.bind(this.transformControls);
-    this.ondragmove = this.transformControls.onPointerDragMove.bind(this.transformControls);
-    this.onmousemove = this.transformControls.onPointerHover.bind(this.transformControls);
-    // }
+    /* modeler case begin */
+    // this.onmousedown = this.transformControls.onPointerDown.bind(this.transformControls);
+    // this.ondragmove = this.transformControls.onPointerDragMove.bind(this.transformControls);
+    // this.onmousemove = this.transformControls.onPointerHover.bind(this.transformControls);
+    /* modeler case end */
   }
 
   get raycaster() {
@@ -62,7 +77,7 @@ export default class Scene3DLayer extends Layer {
 
   get editorControls() {
     if (!this._editorControls) {
-      this._editorControls = new THREE.EditorControls(this.camera);
+      this._editorControls = new EditorControls(this.camera);
     }
 
     return this._editorControls;
@@ -70,7 +85,7 @@ export default class Scene3DLayer extends Layer {
 
   get transformControls() {
     if (!this._transformControls) {
-      this._transformControls = new TransformControls(this.camera, this.target, this.scene);
+      this._transformControls = new TransformControls(this.camera, this.target);
       this.scene.add(this._transformControls);
 
       this._transformControls.addEventListener('change', () => {
@@ -80,7 +95,7 @@ export default class Scene3DLayer extends Layer {
       this._transformControls.addEventListener('objectChange', () => {
         let object = this._transformControls.object;
 
-        object && CommandChange.around(this.rootContainer.commander, function () {
+        object && CommandChange.around(this.owner.commander, () => {
           // object의 변화를 component에 반영한다.
           object.updateReverse();
         });
@@ -93,9 +108,9 @@ export default class Scene3DLayer extends Layer {
   }
 
   get renderer() {
-    if (!this._renderer && this.canvas) {
+    if (!this._renderer && this.element) {
       this._renderer = new THREE.WebGLRenderer({
-        canvas: this.canvas,
+        canvas: (this.element as HTMLCanvasElement),
         precision: "highp",
         antialias: true,
         alpha: true
@@ -109,7 +124,7 @@ export default class Scene3DLayer extends Layer {
 
   get camera() {
     if (!this._camera) {
-      let { width, height } = this.state;
+      let { width, height } = this.rootContainer.state;
 
       this._camera = new THREE.PerspectiveCamera();
 
@@ -142,9 +157,10 @@ export default class Scene3DLayer extends Layer {
     if (!this._scene) {
       this._scene = new THREE.Scene();
 
-      if (this.app.isEditMode) {
-        this._scene.add(this.gridHelper);
-      }
+      /* modeler case begin */
+      this._scene.add(this.gridHelper);
+      /* modeler case end */
+
       this._scene.add(...this.lights);
     }
 
@@ -153,7 +169,7 @@ export default class Scene3DLayer extends Layer {
 
   get gridHelper() {
     if (!this._gridHelper) {
-      let { width, height } = this.state;
+      let { width, height } = this.rootContainer.state;
       let size = Math.max(width, height);
       this._gridHelper = new THREE.GridHelper(size, 20);
     }
@@ -170,11 +186,11 @@ export default class Scene3DLayer extends Layer {
     this.render();
   }
 
-  prerender(force) {
+  prerender(force?) {
 
-    this.components.forEach(component => {
-      let object = ObjectComponentBridge.getObject3D(component);
-      object && object.prerender(force);
+    this.rootContainer.components.forEach(component => {
+      let object = component.object3D
+      object instanceof CoverObject3D && (object as CoverObject3D).prerender(force)
     })
   }
 
@@ -187,11 +203,11 @@ export default class Scene3DLayer extends Layer {
   resize() {
     super.resize();
 
-    var { width: w, height: h } = this.state;
+    var { width: w, height: h } = this.rootContainer.state;
     var { offsetWidth: width, offsetHeight: height } = this.target;
 
     // raycaster의 정확성을 위해서 model의 scale을 조정한다.
-    this.setState('scale', {
+    this.rootContainer.setState('scale', {
       x: width / w,
       y: height / h
     });
@@ -220,7 +236,7 @@ export default class Scene3DLayer extends Layer {
 
     // TODO 3D 공간에서 구현해야함..
 
-    var capturables = this.layout.capturables(this)
+    var capturables = this.rootContainer.layout.capturables(this)
 
     for (let i = capturables.length - 1; i >= 0; i--) {
       let capturable = capturables[i]
@@ -239,7 +255,7 @@ export default class Scene3DLayer extends Layer {
     var {
       width,
       height
-    } = this.canvas;
+    } = (this.element as HTMLCanvasElement);
 
     var vector = new THREE.Vector2(
       x / width * 2 - 1,
@@ -248,27 +264,32 @@ export default class Scene3DLayer extends Layer {
 
     this.raycaster.setFromCamera(vector, this.camera);
 
-    if (this.app.isEditMode) {
-      var activePickers = this.transformControls.getActivePickers();
-      var intersects = this.raycaster.intersectObjects(activePickers, true);
+    /* modeler case begin */
+    var activePickers = this.transformControls.activePickers;
+    var intersects = this.raycaster.intersectObjects(activePickers, true);
 
-      if (intersects.length > 0) {
-        return this;
-      }
+    if (intersects.length > 0) {
+      return this;
     }
+    /* modeler case end */
 
     // TUNE-ME 자손들까지의 모든 intersects를 다 포함하는 것이면, capturable component에 해당하는 오브젝트라는 것을 보장할 수 없음.
     // 또한, component에 매핑된 오브젝트라는 것도 보장할 수 없음.
-    var capturables = this.layout.capturables(this);
-    intersects = this.raycaster.intersectObjects(capturables.map(ObjectComponentBridge.getObject3D), true);
+    var capturables = this.rootContainer.layout.capturables(this);
+    intersects = this.raycaster.intersectObjects(capturables.map(component => {
+      return component.object3D
+    }), true);
 
     for (let i = 0; i < intersects.length; i++) {
-      let object = intersects[i].object;
-      let component = ObjectComponentBridge.getComponent(object);
+      let object: THREE.Object3D = intersects[i].object
 
-      while (!component && object !== this.scene) {
-        object = object.parent;
-        component = ObjectComponentBridge.getComponent(object);
+      while (!(object instanceof CoverObject3D) && object !== this.scene) {
+        object = object.parent
+      }
+
+      let component
+      if (object instanceof CoverObject3D) {
+        component = (object as CoverObject3D).component
       }
 
       if (component) {
@@ -293,16 +314,8 @@ export default class Scene3DLayer extends Layer {
     return this._attention;
   }
 
-  // onmousedown(e) {
-  //   this.transformControls.onPointerDown(e);
-  // }
-
   // ondragmove(e) {
   //   this.transformControls.onPointerDragMove(e);
-  // }
-
-  // ontouchstart(e) {
-  //   this.transformControls.onPointerDown(e);
   // }
 
   // onmousemove(e) {
@@ -310,41 +323,45 @@ export default class Scene3DLayer extends Layer {
   //   // this.transformControls.onPointerMove(e);
   // }
 
-  // ontouchmove(e) {
-  //   this.transformControls.onPointerHover(e);
-  //   this.transformControls.onPointerMove(e);
-  // }
-
-  // onmouseup(e) {
-  //   this.transformControls.onPointerUp(e);
-  // }
-
-  // onmouseout(e) {
-  //   this.transformControls.onPointerUp(e);
-  // }
-
-  // ontouchend(e) {
-  //   this.transformControls.onPointerUp(e);
-  // }
-
-  // ontouchcancel(e) {
-  //   this.transformControls.onPointerUp(e);
-  // }
-
-  // ontouchleave(e) {
-  //   this.transformControls.onPointerUp(e);
-  // }
-
-  get eventMap() {
-    return {
-      '(self)': {
-        '(all)': {
-          change: ObjectComponentBridge.onchange,
-          added: ObjectComponentBridge.onadded,
-          removed: ObjectComponentBridge.onremoved,
-        }
-      },
-    }
+  ontouchstart(e) {
+    this.transformControls.onPointerDown(e);
   }
+
+  ontouchmove(e) {
+    this.transformControls.onPointerHover(e);
+    this.transformControls.onPointerMove(e);
+  }
+
+  onmouseup(e) {
+    this.transformControls.onPointerUp(e);
+  }
+
+  onmouseout(e) {
+    this.transformControls.onPointerUp(e);
+  }
+
+  ontouchend(e) {
+    this.transformControls.onPointerUp(e);
+  }
+
+  ontouchcancel(e) {
+    this.transformControls.onPointerUp(e);
+  }
+
+  ontouchleave(e) {
+    this.transformControls.onPointerUp(e);
+  }
+
+  // get eventMap() {
+  //   return {
+  //     '(self)': {
+  //       '(all)': {
+  //         change: ObjectComponentBridge.onchange,
+  //         added: ObjectComponentBridge.onadded,
+  //         removed: ObjectComponentBridge.onremoved,
+  //       }
+  //     },
+  //   }
+  // }
 
 }

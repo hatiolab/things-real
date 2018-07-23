@@ -3,15 +3,23 @@
  */
 
 import { EventSource } from '../event'
-import { Component, Container, RootContainer } from '../component'
+import { RootContainer } from '../component'
+import { Scene } from '../scene'
 
 export default class Layer extends EventSource {
 
-  private _rootContainer: RootContainer
-  private _target: HTMLElement
-  private element: HTMLCanvasElement
+  protected owner: Scene
+  protected _rootContainer: RootContainer
+  protected _target: HTMLElement
+  protected element: HTMLElement
 
   private draw_reserved: boolean = false
+
+  constructor(owner: Scene) {
+    super()
+
+    this.owner = owner
+  }
 
   private throttle_render() {
     if (!this.draw_reserved) {
@@ -57,7 +65,7 @@ export default class Layer extends EventSource {
     return true;
   }
 
-  private createElement() {
+  protected createElement(): HTMLElement {
     var element = document.createElement('canvas');
     element.width = this.rootContainer.width;
     element.height = this.rootContainer.height;
@@ -126,11 +134,7 @@ export default class Layer extends EventSource {
   // }
 
   getContext() {
-    return this.element.getContext('2d');
-    // if (!this._context2D)
-    //   this._context2D = this.canvas && this.canvas.getContext('2d');
-
-    // return this._context2D;
+    return (this.element as HTMLCanvasElement).getContext('2d');
   }
 
   /* 레어어의 draw는 외부에서 context를 제공하지 않으면, 자신의 캔바스의 컨텍스트를 이용해서 그린다. */

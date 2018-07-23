@@ -2,11 +2,17 @@
  * Copyright © HatioLab Inc. All rights reserved.
  */
 
+import * as THREE from 'three'
+import Container from '../container'
+
 export default class CoverObject3D extends THREE.Object3D {
+  protected _component
+  private updating: boolean
+
   constructor(component) {
     super();
 
-    this.component = component;
+    this._component = component;
 
     this.initialize();
 
@@ -19,30 +25,36 @@ export default class CoverObject3D extends THREE.Object3D {
     this.clearChildren();
   }
 
+  get component() {
+    return this._component
+  }
+
   clearChildren() {
     this.children.slice().forEach(child => {
-      if (child.dispose)
-        child.dispose();
-      if (child.geometry && child.geometry.dispose)
-        child.geometry.dispose();
-      if (child.material && child.material.dispose)
-        child.material.dispose();
-      if (child.texture && child.texture.dispose)
-        child.texture.dispose();
+      if (child['dispose'])
+        child['dispose']();
+      if (child['geometry'] && child['geometry']['dispose'])
+        child['geometry']['dispose']();
+      if (child['material'] && child['material']['dispose'])
+        child['material']['dispose']();
+      if (child['texture'] && child['texture']['dispose'])
+        child['texture']['dispose']();
       this.remove(child)
     })
   }
 
-  prerender() {
+  prerender(force?) {
     this.update();
 
-    this.component.children && this.component.children.forEach(child => {
-      let object = ObjectComponentBridge.getObject3D(component);
-      object.prerender();
-    })
+    if (this.component.isContainer) {
+      (this.component as Container).components.forEach(child => {
+        let object = child.object3D as CoverObject3D
+        object.prerender(force)
+      })
+    }
   }
 
-  update(force) {
+  update(force?) {
 
     var { theta, tx, ty, sx, sy, fade } = this.component.deltas
     if (!force && !(theta || tx || ty || sx != 1 || sy != 1 || fade != 0)) {
@@ -106,14 +118,14 @@ export default class CoverObject3D extends THREE.Object3D {
   }
 
   onchange(after, before) {
-    if (this._updating) {
+    if (this.updating) {
       return;
     }
-    this._updating = true;
+    this.updating = true;
 
     requestAnimationFrame(() => {
       this.update(true);
-      this._updating = false;
+      this.updating = false;
     })
   }
 }

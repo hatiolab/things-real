@@ -12,7 +12,10 @@ describe('(data-mapping)dynamic mapping', () => {
   var root;
 
   beforeEach(() => {
-    root = new RootContainer({});
+    root = new RootContainer({
+      width: 100,
+      height: 100
+    });
   });
 
   it('동적으로 추가되는 컴포넌트도 생성시 바로 매핑이 실행되어야 한다.', (done) => {

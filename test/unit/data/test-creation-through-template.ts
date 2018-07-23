@@ -11,6 +11,8 @@ describe('Component Generation Through Template', () => {
 
   beforeEach(() => {
     root = new RootContainer({
+      width: 100,
+      height: 100,
       mappings: [{
         accessor: '',
         target: '(key)',

@@ -11,7 +11,10 @@ describe('Template Component', () => {
     var root;
 
     beforeEach(() => {
-      root = new RootContainer({});
+      root = new RootContainer({
+        width: 100,
+        height: 100
+      });
     });
 
     it('모델에 templatePrefix가 설정된 컴포넌트가 추가되는 경우 템플릿 레퍼런스 맵에 추가되어야 한다.', () => {

@@ -23,7 +23,7 @@ export default class CommandChange extends Command {
     commander.execute(null, false)
   }
 
-  static around(commander, changeFunc, self) {
+  static around(commander, changeFunc, self?) {
     changeFunc.call(self)
 
     commander.execute(null, false)
