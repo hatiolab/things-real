@@ -16,7 +16,6 @@ export default class ViewerLayer extends Layer {
   private _lights: THREE.Light[]
   private _editorControls: EditorControls
   private _renderer: THREE.WebGLRenderer
-  private _gridHelper: THREE.GridHelper
   private _attention: THREE.Vector3
 
   private _textureLoader: THREE.TextureLoader
@@ -54,12 +53,11 @@ export default class ViewerLayer extends Layer {
   private onmousemove
 
   ready() {
+    this._editorControls = new EditorControls(this.camera, this.element);
 
-    /* modeler case begin */
-    // this.onmousedown = this.transformControls.onPointerDown.bind(this.transformControls);
-    // this.ondragmove = this.transformControls.onPointerDragMove.bind(this.transformControls);
-    // this.onmousemove = this.transformControls.onPointerHover.bind(this.transformControls);
-    /* modeler case end */
+    this.editorControls.on('change', () => {
+      this.render()
+    })
   }
 
   get raycaster() {
@@ -127,25 +125,10 @@ export default class ViewerLayer extends Layer {
   get scene() {
     if (!this._scene) {
       this._scene = new THREE.Scene();
-
-      /* modeler case begin */
-      this._scene.add(this.gridHelper);
-      /* modeler case end */
-
       this._scene.add(...this.lights);
     }
 
     return this._scene;
-  }
-
-  get gridHelper() {
-    if (!this._gridHelper) {
-      let { width, height } = this.rootContainer.state;
-      let size = Math.max(width, height);
-      this._gridHelper = new THREE.GridHelper(size, 20);
-    }
-
-    return this._gridHelper;
   }
 
   draw() {

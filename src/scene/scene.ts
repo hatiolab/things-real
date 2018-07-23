@@ -49,8 +49,6 @@ export default class Scene {
       new ViewerLayer​​(this) : new ModelerLayer​​(this)
 
     layer.target = this._targetEl
-
-    layer.render()
   }
 
   get sceneMode() {

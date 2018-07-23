@@ -5,6 +5,7 @@
  * @author WestLangley / http://github.com/WestLangley
  */
 
+import { EventSource } from '../../event'
 import * as THREE from 'three'
 
 var changeEvent = { type: 'change' }
@@ -21,7 +22,8 @@ enum STATE {
 	PAN
 }
 
-export default class EditorControls extends THREE.EventDispatcher {
+export default class EditorControls extends EventSource {
+	// export default class EditorControls extends THREE.EventDispatcher {
 
 	private domElement
 
@@ -92,7 +94,8 @@ export default class EditorControls extends THREE.EventDispatcher {
 
 		this.object.position.copy(this.center).add(delta);
 
-		this.dispatchEvent(changeEvent);
+		this.trigger('change');
+		// this.dispatchEvent(changeEvent);
 	}
 
 	pan(delta) {
@@ -105,8 +108,8 @@ export default class EditorControls extends THREE.EventDispatcher {
 		this.object.position.add(delta);
 		this.center.add(delta);
 
-		this.dispatchEvent(changeEvent);
-
+		this.trigger('change');
+		// this.dispatchEvent(changeEvent);
 	}
 
 	zoom(delta) {
@@ -121,9 +124,9 @@ export default class EditorControls extends THREE.EventDispatcher {
 
 		this.object.position.add(delta);
 
-		this.dispatchEvent(changeEvent);
-
-	};
+		this.trigger('change');
+		// this.dispatchEvent(changeEvent);
+	}
 
 	rotate(delta) {
 
@@ -137,8 +140,10 @@ export default class EditorControls extends THREE.EventDispatcher {
 		vector.setFromSpherical(spherical);
 		this.object.position.copy(this.center).add(vector);
 		this.object.lookAt(this.center);
-		this.dispatchEvent(changeEvent);
-	};
+
+		this.trigger('change');
+		// this.dispatchEvent(changeEvent);
+	}
 
 	// mouse
 
@@ -244,14 +249,11 @@ export default class EditorControls extends THREE.EventDispatcher {
 				touches[1].set(event.touches[1].pageX, event.touches[1].pageY, 0);
 				this.prevDistance = touches[0].distanceTo(touches[1]);
 				break;
-
 		}
 
 		this.prevTouches[0].copy(touches[0]);
 		this.prevTouches[1].copy(touches[1]);
-
 	}
-
 
 	touchMove(event) {
 
@@ -266,13 +268,10 @@ export default class EditorControls extends THREE.EventDispatcher {
 			var closest = touches[0];
 
 			for (var i in touches) {
-
 				if (closest.distanceTo(touch) > touches[i].distanceTo(touch)) closest = touches[i];
-
 			}
 
 			return closest;
-
 		}
 
 		switch (event.touches.length) {

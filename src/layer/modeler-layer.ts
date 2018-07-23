@@ -60,6 +60,12 @@ export default class ModelerLayer extends Layer {
 
   ready() {
 
+    this._editorControls = new EditorControls(this.camera, this.element);
+
+    this.editorControls.on('change', () => {
+      this.render()
+    })
+
     /* modeler case begin */
     // this.onmousedown = this.transformControls.onPointerDown.bind(this.transformControls);
     // this.ondragmove = this.transformControls.onPointerDragMove.bind(this.transformControls);
@@ -77,7 +83,7 @@ export default class ModelerLayer extends Layer {
 
   get editorControls() {
     if (!this._editorControls) {
-      this._editorControls = new EditorControls(this.camera);
+      this._editorControls = new EditorControls(this.camera, this.element);
     }
 
     return this._editorControls;
@@ -136,7 +142,7 @@ export default class ModelerLayer extends Layer {
       // this._camera.position.set(0, frustum * 2, frustum * 2);
       // this._camera.position.set(0, 0, frustum * 2);
 
-      this._camera.lookAt(new THREE.Vector3(0, 0, 0));
+      this._camera.lookAt(new THREE.Vector3(0, 0, 0))
     }
 
     return this._camera;
@@ -155,10 +161,11 @@ export default class ModelerLayer extends Layer {
 
   get scene() {
     if (!this._scene) {
-      this._scene = new THREE.Scene();
+      this._scene = new THREE.Scene()
 
-      this._scene.add(this.gridHelper);
-      this._scene.add(...this.lights);
+      // this._scene.add(this.editorControls)
+      this._scene.add(this.gridHelper)
+      this._scene.add(...this.lights)
     }
 
     return this._scene;

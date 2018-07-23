@@ -23,6 +23,10 @@ export default class Layer extends EventSource {
     this._rootContainer = owner.rootContainer
   }
 
+  ready() {
+    /** Target Element에 attach된 후, render() 전에 호출됨. */
+  }
+
   private throttle_render() {
     if (!this.draw_reserved) {
       requestAnimationFrame(() => {
@@ -103,7 +107,11 @@ export default class Layer extends EventSource {
 
     this.resize()
 
-    target.appendChild(this.element);
+    target.appendChild(this.element)
+
+    this.ready()
+
+    this.render()
   }
 
   get canvas(): HTMLCanvasElement {
