@@ -5,6 +5,7 @@
 import { EventSource } from '../event'
 import { RootContainer } from '../component'
 import { Scene } from '../scene'
+import * as THREE from 'three'
 
 export default class Layer extends EventSource {
 
@@ -19,6 +20,7 @@ export default class Layer extends EventSource {
     super()
 
     this.owner = owner
+    this._rootContainer = owner.rootContainer
   }
 
   private throttle_render() {
@@ -104,8 +106,8 @@ export default class Layer extends EventSource {
     target.appendChild(this.element);
   }
 
-  get canvas() {
-    return this.element
+  get canvas(): HTMLCanvasElement {
+    return this.element as HTMLCanvasElement
   }
 
   dispose() {
@@ -139,14 +141,16 @@ export default class Layer extends EventSource {
 
   /* 레어어의 draw는 외부에서 context를 제공하지 않으면, 자신의 캔바스의 컨텍스트를 이용해서 그린다. */
   render(context?) {
-    if (!this.element)
-      return;
+    // if (!this.element)
+    //   return;
 
-    context = context || this.getContext();
-    if (!context)
-      return;
+    // this.renderer.render(this.rootContainer.object3D, this.camera);
 
-    this.rootContainer.render(context)
+    // context = context || this.getContext();
+    // if (!context)
+    //   return;
+
+    // this.rootContainer.render(context)
   }
 
   prerender(context) {

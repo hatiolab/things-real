@@ -1,0 +1,40 @@
+<html>
+
+<head>
+  <style>
+  #scene {
+    width: 100%;
+    height: 500px;
+  }
+  </style>
+  <script src="../../things-real.js"></script>
+</head>
+
+<body>
+  <h1>3D Modeling Library - REAL</h1>
+  <div id="scene"></div>
+
+  <script type="module">
+    import { html, render } from '../../node_modules/lit-html/lit-html.js';
+
+    var {
+      Scene,
+      SceneMode,
+      FitMode
+    } = REAL;
+
+    new Scene({
+      targetEl: 'scene',
+      mode: SceneMode.EDIT,
+      model: {
+        width: 200,
+        height: 300,
+        components: []
+      },
+      fit: FitMode.BOTH
+    })
+
+  </script>
+</body>
+
+</html>

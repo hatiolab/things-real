@@ -157,10 +157,7 @@ export default class ModelerLayer extends Layer {
     if (!this._scene) {
       this._scene = new THREE.Scene();
 
-      /* modeler case begin */
       this._scene.add(this.gridHelper);
-      /* modeler case end */
-
       this._scene.add(...this.lights);
     }
 
@@ -196,7 +193,7 @@ export default class ModelerLayer extends Layer {
 
   render() {
     // TODO transformControls가 update될 필요가 있을 때만, update 하도록 개선.
-    this._transformControls && this._transformControls.update();
+    this.transformControls.update();
     this.renderer.render(this.scene, this.camera);
   }
 

@@ -29,7 +29,7 @@ export default class RootContainer extends Container {
   private templatePrefixes: string[] = []
   private eventEngine: EventEngine = new EventEngine(this)
 
-  public renderer: Layer
+  private _renderer: Layer
 
   /**
    * three.js related
@@ -39,7 +39,7 @@ export default class RootContainer extends Container {
   constructor(model: SceneModel, renderer) {
     super(model)
 
-    this.renderer = renderer
+    this._renderer = renderer
 
     this.refreshMappings()
   }

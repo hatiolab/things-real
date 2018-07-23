@@ -5,6 +5,7 @@
 import { SceneConfig, SceneModel, SceneMode, FitMode } from '../types'
 import { Component, RootContainer } from '../component'
 import { SnapshotCommander } from '../command'
+import { ModelerLayer​​, ViewerLayer } from '../layer'
 import { clonedeep, error } from '../util'
 import { compile } from '../main'
 
@@ -43,6 +44,13 @@ export default class Scene {
       take: () => { return this.sceneModel },
       putback: model => { this.sceneModel = model as SceneModel }
     })
+
+    var layer = this.sceneMode == SceneMode.VIEW ?
+      new ViewerLayer​​(this) : new ModelerLayer​​(this)
+
+    layer.target = this._targetEl
+
+    layer.render()
   }
 
   get sceneMode() {
