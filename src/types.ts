@@ -4,10 +4,16 @@
 
 export type Class = { new(...args: any[]): any; }
 
-export interface ThreeDimension {
+export interface Vector3 {
   x: number,
   y: number,
   z: number
+}
+
+export interface Dimension {
+  width: number,
+  height: number,
+  depth: number
 }
 
 export interface DataSpreadModel {
@@ -23,9 +29,10 @@ export interface ComponentModel {
   id?: string,
   class?: string,
   text?: string,
-  translate?: ThreeDimension,
-  scale?: ThreeDimension,
-  rotate?: ThreeDimension,
+  dimension?: Dimension,
+  translate?: Vector3,
+  scale?: Vector3,
+  rotate?: Vector3,
   data?: any,
   color?: any,
   style?: any,

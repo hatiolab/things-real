@@ -55,8 +55,17 @@ export default abstract class RealObjectMesh extends THREE.Mesh implements RealO
     this.build()
   }
 
+  public abstract setDimension(dimension)
   protected abstract buildGeometry(): THREE.Geometry | THREE.BufferGeometry
-  protected abstract buildMaterial(): THREE.MeshMaterialType | THREE.MeshMaterialType[]
+
+  buildMaterial(): THREE.MeshMaterialType | THREE.MeshMaterialType[] {
+
+    var {
+      color = 0x000000
+    } = this.component.state
+
+    return new THREE.MeshBasicMaterial({ color })
+  }
 
   clear() {
     if (this.geometry) {

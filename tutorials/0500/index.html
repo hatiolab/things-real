@@ -23,39 +23,52 @@
       FitMode
     } = REAL;
 
-    var scale = {
-      x: 10,
-      y: 10,
-      z: 10
+    var dimension = {
+      width: 10,
+      height: 10,
+      depth: 10
     }
+
+    var scale = {
+      x: 1,
+      y: 1,
+      z: 1
+    }
+
     var translate = {
       x: 50,
       y: 1,
       z: 1
     }
+
     var rotate = {
       x: 0.1,
       y: 0.2,
       z: 0.3
     }
 
+    var colors = ['red', 'cyan', 'blue', 'green', 'yellow']
+
     var scene = new Scene({
       targetEl: 'scene',
       mode: SceneMode.EDIT,
       model: {
-        width: 200,
+        width: 700,
         height: 300,
         components: [{
           id: 'first-cube',
-          type: 'cube'
+          type: 'cube',
+          color: 'navy',
+          dimension,
+          scale,
+          translate,
+          rotate
         }].concat(Array.from(Array(100).keys()).map(idx => {
           return {
             type: 'cube',
-            scale: {
-              x: 2,
-              y: 2,
-              z: 2
-            },
+            color: colors[idx % colors.length],
+            dimension,
+            scale,
             translate: {
               x: Number(idx) * 10 - 500,
               y: Number(idx) * 10 - 500,
@@ -69,20 +82,22 @@
           }
         }))
       },
-      fit: FitMode.BOTH
+      fit: FitMode.RATIO
     })
 
-    setInterval(() => {
-      scene.findAll('cube').forEach(cube => {
-        let r = cube.state.rotate || rotate
+    // setInterval(() => {
+    //   scene.findAll('cube').forEach(cube => {
+    //     let r = cube.state.rotate || rotate
 
-        cube.set('rotate', {
-          x: r.x + 0.01,
-          y: r.y + 0.01,
-          z: r.z + 0.01
-        })
-      })
-    }, 1)
+    //     cube.set({
+    //       rotate: {
+    //         x: r.x + 0.01,
+    //         y: r.y + 0.01,
+    //         z: r.z + 0.01
+    //       }
+    //     })
+    //   })
+    // }, 1)
 
   </script>
 </body>
