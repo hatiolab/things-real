@@ -31,13 +31,7 @@ export default abstract class RealObjectMesh extends THREE.Mesh implements RealO
       } = { x: 0, y: 0, z: 0 }
     } = component.state
 
-    // var {
-    //   x: sx = 1,
-    //   y: sy = 1,
-    //   z: sz = 1
-    // } = scale
-
-    this.position.set(sx, sy, sz);
+    this.position.set(tx, ty, tz);
     this.rotation.set(rx, ry, rz);
     this.scale.set(sx, sy, sz);
   }

@@ -15,7 +15,6 @@ export default class ObjectCube extends RealObjectMesh {
       z: depth = 1
     } = this.component.state.scale || { x: 1, y: 1, z: 1 }
 
-    // var { x, y, z } = this.component.state.translate
     return new THREE.CubeGeometry(width, height, depth)
   }
 

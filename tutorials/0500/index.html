@@ -29,7 +29,7 @@
       z: 10
     }
     var translate = {
-      x: 1,
+      x: 50,
       y: 1,
       z: 1
     }
@@ -48,20 +48,39 @@
         components: [{
           id: 'first-cube',
           type: 'cube'
-        }]
+        }].concat(Array.from(Array(100).keys()).map(idx => {
+          return {
+            type: 'cube',
+            scale: {
+              x: 2,
+              y: 2,
+              z: 2
+            },
+            translate: {
+              x: Number(idx) * 10 - 500,
+              y: Number(idx) * 10 - 500,
+              z: Number(idx) * 10 - 500
+            },
+            rotate: {
+              x: 0.1,
+              y: 0.2,
+              z: 0.3
+            }
+          }
+        }))
       },
       fit: FitMode.BOTH
     })
 
     setInterval(() => {
-      rotate.x += 0.01
-      rotate.y += 0.01
-      rotate.z += 0.01
+      scene.findAll('cube').forEach(cube => {
+        let r = cube.state.rotate || rotate
 
-      scene.setProperties('#first-cube', {
-        translate,
-        scale,
-        rotate
+        cube.set('rotate', {
+          x: r.x + 0.01,
+          y: r.y + 0.01,
+          z: r.z + 0.01
+        })
       })
     }, 1)
 
