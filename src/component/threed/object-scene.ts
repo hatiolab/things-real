@@ -11,22 +11,18 @@ export default class ObjectScene extends THREE.Scene implements RealObject3D {
   constructor(component) {
     super();
 
-    this._component = component;
+    this.component = component;
   }
 
   dispose() { }
 
-  clear() { }
-
-  build() { }
+  setDimension() { }
 
   get component() {
     return this._component
   }
 
   set component(component) {
-    this.clear()
     this._component = component
-    this.build()
   }
 }

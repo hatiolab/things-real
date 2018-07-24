@@ -12,8 +12,6 @@ import RootContainer from './root-container'
 import RealObject3D from './threed/real-object-3d'
 import { clonedeep, mixin, error } from '../util'
 
-import ObjectCube from './threed/object-cube'
-
 type EventMap = { [selector: string]: { [delegator: string]: { [event: string]: Function } } }
 
 export default class Component extends ModelAndState implements LifeCycleCallback {
@@ -74,7 +72,7 @@ export default class Component extends ModelAndState implements LifeCycleCallbac
   }
 
   protected buildObject3D(): THREE.Object3D {
-    return new ObjectCube(this)
+    return
   }
 
   /* Event */

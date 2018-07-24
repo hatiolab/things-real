@@ -7,3 +7,6 @@ export { default as Container } from './container'
 export { default as RootContainer } from './root-container'
 
 export { default as Cube } from './cube'
+export { default as Cylinder } from './cylinder'
+export { default as Cone } from './cone'
+export { default as Sphere } from './sphere'
