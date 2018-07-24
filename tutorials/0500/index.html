@@ -23,23 +23,47 @@
       FitMode
     } = REAL;
 
-    new Scene({
+    var scale = {
+      x: 10,
+      y: 10,
+      z: 10
+    }
+    var translate = {
+      x: 1,
+      y: 1,
+      z: 1
+    }
+    var rotate = {
+      x: 0.1,
+      y: 0.2,
+      z: 0.3
+    }
+
+    var scene = new Scene({
       targetEl: 'scene',
       mode: SceneMode.EDIT,
       model: {
         width: 200,
         height: 300,
         components: [{
-          type: 'cube',
-          scale: {
-            x: 10,
-            y: 10,
-            z: 10
-          }
+          id: 'first-cube',
+          type: 'cube'
         }]
       },
       fit: FitMode.BOTH
     })
+
+    setInterval(() => {
+      rotate.x += 0.01
+      rotate.y += 0.01
+      rotate.z += 0.01
+
+      scene.setProperties('#first-cube', {
+        translate,
+        scale,
+        rotate
+      })
+    }, 1)
 
   </script>
 </body>

@@ -21,6 +21,10 @@ export default class Layer extends EventSource {
 
     this.owner = owner
     this._rootContainer = owner.rootContainer
+
+    this._rootContainer.on('render', () => {
+      this.render()
+    })
   }
 
   ready() {
@@ -119,6 +123,9 @@ export default class Layer extends EventSource {
   }
 
   dispose() {
+
+    this._rootContainer.off('render')
+
     this.target = null;
     this.element = null;
   }

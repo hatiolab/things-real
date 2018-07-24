@@ -133,6 +133,22 @@ export default class Component extends ModelAndState implements LifeCycleCallbac
   onchangemappings(after, before) {
     this.dataSpreadEngine.reset()
   }
+
+  /* 아래 로직들은 모두 prerender로 들어가는 것이 좋겠다. */
+  onchangetranslate(after, before) {
+    var { x = 0, y = 0, z = 0 } = after
+    this.object3D.position.set(x, y, z);
+  }
+
+  onchangerotate(after, before) {
+    var { x = 0, y = 0, z = 0 } = after
+    this.object3D.rotation.set(x, y, z)
+  }
+
+  onchangescale(after, before) {
+    var { x = 1, y = 1, z = 1 } = after
+    this.object3D.scale.set(x, y, z)
+  }
 }
 
 /* Method Object mixin 방법. */

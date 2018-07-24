@@ -359,6 +359,21 @@ export default class ModelerLayer extends Layer {
 
   // get eventMap() {
   //   return {
+  //     '#root': {
+  //       '(all)': {
+  //         change: this.onchangeGlobal
+  //       }
+  //     }
+  //   }
+  // }
+
+  onchangeGlobal() {
+    console.log('onchange-global')
+    this.render()
+  }
+
+  // get eventMap() {
+  //   return {
   //     '(self)': {
   //       '(all)': {
   //         change: ObjectComponentBridge.onchange,

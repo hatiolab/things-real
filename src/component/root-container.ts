@@ -11,10 +11,6 @@ import { compile } from '../main'
 import { debounce } from 'lodash'
 import EventEngine from '../event/event-engine'
 
-import Layer from '../layer/layer'
-
-import * as THREE from 'three'
-
 var refresh_mapping_debouncer = debounce(function mapper(comp: Component) {
   comp.dataSpreadEngine.execute()
   comp.isContainer && (comp as Container).components.forEach(child => mapper(child))
@@ -30,17 +26,13 @@ export default class RootContainer extends Container {
   private templatePrefixes: string[] = []
   private eventEngine: EventEngine = new EventEngine(this)
 
-  private _renderer: Layer
-
   /**
    * three.js related
    */
   private scene3D: ObjectScene
 
-  constructor(model: SceneModel, renderer) {
+  constructor(model: SceneModel) {
     super(model)
-
-    this._renderer = renderer
 
     this.refreshMappings()
   }
@@ -162,15 +154,21 @@ export default class RootContainer extends Container {
     }
   }
 
+  invalidate() {
+    this.trigger('render')
+  }
+
   private _onadded(container, component) {
     this._addTraverse(component)
     this.refreshMappings()
-    // this.invalidate()
+
+    this.invalidate()
   }
 
   private _onremoved(container, component) {
     this._removeTraverse(component)
-    // this.invalidate()
+
+    this.invalidate()
   }
 
   private _onchanged(after, before, hint) {
@@ -189,6 +187,8 @@ export default class RootContainer extends Container {
 
     if (before.id != after.id || before.class != after.class)
       this.refreshMappings()
+
+    this.invalidate()
   }
 
   private _addTraverse(component: Component) {
@@ -206,7 +206,6 @@ export default class RootContainer extends Container {
     if (templatePrefix)
       this.addTemplate(templatePrefix, component)
 
-    // var eventMap = merge({}, component.eventMap, component.model.eventMap)
     this.eventEngine.add(component, component.eventMap)
   }
 

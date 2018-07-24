@@ -6,16 +6,14 @@ import * as THREE from 'three'
 import RealObjectMesh from './real-object-mesh'
 
 export default class ObjectCube extends RealObjectMesh {
-  constructor(component) {
-    super(component)
-  }
 
   buildGeometry() {
+
     var {
-      x: width,
-      y: height,
-      z: depth
-    } = this.component.state.scale
+      x: width = 1,
+      y: height = 1,
+      z: depth = 1
+    } = this.component.state.scale || { x: 1, y: 1, z: 1 }
 
     // var { x, y, z } = this.component.state.translate
     return new THREE.CubeGeometry(width, height, depth)
@@ -23,6 +21,7 @@ export default class ObjectCube extends RealObjectMesh {
 
   buildMaterial() {
 
-    return new THREE.MeshBasicMaterial({ color: 0x00ff00 })
+    // return new THREE.MeshBasicMaterial({ color: 0x00ff00 })
+    return new THREE.MeshNormalMaterial()
   }
 }
