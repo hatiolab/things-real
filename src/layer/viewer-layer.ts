@@ -127,8 +127,8 @@ export default class ViewerLayer extends Layer {
 
   get scene() {
     if (!this._scene) {
-      this._scene = new THREE.Scene();
-      this._scene.add(...this.lights);
+      this._scene = this.rootContainer.object3D
+      this._scene.add(...this.lights)
     }
 
     return this._scene;

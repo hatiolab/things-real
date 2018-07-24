@@ -162,7 +162,7 @@ export default class ModelerLayer extends Layer {
 
   get scene() {
     if (!this._scene) {
-      this._scene = new THREE.Scene()
+      this._scene = this.rootContainer.object3D
 
       // this._scene.add(this.editorControls)
       this._scene.add(this.gridHelper)

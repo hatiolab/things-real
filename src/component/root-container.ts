@@ -4,6 +4,7 @@
 
 import Component from './component'
 import Container from './container'
+import ObjectScene from './threed/object-scene'
 import { SceneModel } from '../types'
 import { warn, error, clonedeep } from '../util'
 import { compile } from '../main'
@@ -34,7 +35,7 @@ export default class RootContainer extends Container {
   /**
    * three.js related
    */
-  private scene3D: THREE.Scene
+  private scene3D: ObjectScene
 
   constructor(model: SceneModel, renderer) {
     super(model)
@@ -54,7 +55,7 @@ export default class RootContainer extends Container {
 
   get object3D() {
     if (!this.scene3D) {
-      this.scene3D = new THREE.Scene()
+      this.scene3D = new ObjectScene(this)
     }
     return this.scene3D
   }

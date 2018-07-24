@@ -9,8 +9,10 @@ import { Class, ComponentModel } from '../types'
 import { DataSpreadEngine } from './data'
 import Container from './container'
 import RootContainer from './root-container'
-import CoverObject3D from './threed/cover-object-3d'
+import RealObject3D from './threed/real-object-3d'
 import { clonedeep, mixin, error } from '../util'
+
+import ObjectCube from './threed/object-cube'
 
 type EventMap = { [selector: string]: { [delegator: string]: { [event: string]: Function } } }
 
@@ -24,11 +26,10 @@ export default class Component extends ModelAndState implements LifeCycleCallbac
     return residence.residents;
   }
 
-  private _object3D: CoverObject3D
+  private _object3D: THREE.Object3D
 
   constructor(model: ComponentModel) {
     super(model);
-
 
     residence.put(this);
   }
@@ -63,13 +64,17 @@ export default class Component extends ModelAndState implements LifeCycleCallbac
 
   get object3D(): THREE.Object3D {
     if (!this._object3D) {
-      this._object3D = new CoverObject3D(this)
+      this._object3D = this.buildObject3D()
     }
     return this._object3D
   }
 
   get renderer() {
     return this.root.renderer
+  }
+
+  protected buildObject3D(): THREE.Object3D {
+    return new ObjectCube(this)
   }
 
   /* Event */

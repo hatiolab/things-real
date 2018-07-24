@@ -58,6 +58,7 @@ export default class Container extends Component {
     var index = (this._components.push(component) - 1)
 
     component.parent = this
+    this.object3D.add(component.object3D)
     component.added(this) /* callback */
 
     // this.trigger('add', this, component, index)
@@ -78,6 +79,7 @@ export default class Container extends Component {
     // TODO index가 유효하지 않은 경우(예를 들면, index가 전체 컴포넌트 개수보다 큰 경우)에 대한 검증
     var head = this._components.splice(0, index)
     this._components = head.concat(component, this._components)
+    this.object3D.add(component.object3D)
 
     // 실제 적용된 인덱스를 다시 구한다.
     index = this._components.indexOf(component)
@@ -98,6 +100,7 @@ export default class Container extends Component {
       return
 
     this.components.splice(idx, 1)
+    this.object3D.remove(component.object3D)
 
     component.parent = null
     component.removed(this) /* callback */
