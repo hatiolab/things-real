@@ -35,6 +35,7 @@ export default class ModelerLayer extends Layer {
 
   dispose() {
     this._transformControls && this._transformControls.dispose();
+    this._editorControls && this._editorControls.dispose()
 
     this.scene.children.slice().forEach(child => {
       if (child['dispose'])
@@ -59,12 +60,7 @@ export default class ModelerLayer extends Layer {
   private onmousemove
 
   ready() {
-
-    this._editorControls = new EditorControls(this.camera, this.element);
-
-    this.editorControls.on('change', () => {
-      this.render()
-    })
+    this.setEditorControl(this.camera, this.element)
 
     /* modeler case begin */
     // this.onmousedown = this.transformControls.onPointerDown.bind(this.transformControls);
@@ -73,20 +69,25 @@ export default class ModelerLayer extends Layer {
     /* modeler case end */
   }
 
+  private setEditorControl(camera, element) {
+
+    if (this._editorControls) {
+      this._editorControls.off('change')
+      this._editorControls.dispose()
+    }
+
+    this._editorControls = new EditorControls(camera, element)
+    this._editorControls.on('change', () => {
+      this.render()
+    })
+  }
+
   get raycaster() {
     if (!this._raycaster) {
       this._raycaster = new THREE.Raycaster()
     }
 
     return this._raycaster;
-  }
-
-  get editorControls() {
-    if (!this._editorControls) {
-      this._editorControls = new EditorControls(this.camera, this.element);
-    }
-
-    return this._editorControls;
   }
 
   get transformControls() {

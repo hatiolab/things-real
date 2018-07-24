@@ -30,6 +30,8 @@ export default class ViewerLayer extends Layer {
 
   dispose() {
 
+    this._editorControls && this._editorControls.dispose()
+
     this.scene.children.slice().forEach(child => {
       if (child['dispose'])
         child['dispose']();
@@ -53,9 +55,18 @@ export default class ViewerLayer extends Layer {
   private onmousemove
 
   ready() {
-    this._editorControls = new EditorControls(this.camera, this.element);
+    this.setEditorControl(this.camera, this.element)
+  }
 
-    this.editorControls.on('change', () => {
+  private setEditorControl(camera, element) {
+
+    if (this._editorControls) {
+      this._editorControls.off('change')
+      this._editorControls.dispose()
+    }
+
+    this._editorControls = new EditorControls(camera, element)
+    this._editorControls.on('change', () => {
       this.render()
     })
   }
@@ -66,14 +77,6 @@ export default class ViewerLayer extends Layer {
     }
 
     return this._raycaster;
-  }
-
-  get editorControls() {
-    if (!this._editorControls) {
-      this._editorControls = new EditorControls(this.camera);
-    }
-
-    return this._editorControls;
   }
 
   get renderer() {
