@@ -259,26 +259,26 @@ export default class ViewerLayer extends Layer {
   //   // this.transformControls.onPointerMove(e);
   // }
 
-  ontouchstart(e) {
-  }
+  // ontouchstart(e) {
+  // }
 
-  ontouchmove(e) {
-  }
+  // ontouchmove(e) {
+  // }
 
-  onmouseup(e) {
-  }
+  // onmouseup(e) {
+  // }
 
-  onmouseout(e) {
-  }
+  // onmouseout(e) {
+  // }
 
-  ontouchend(e) {
-  }
+  // ontouchend(e) {
+  // }
 
-  ontouchcancel(e) {
-  }
+  // ontouchcancel(e) {
+  // }
 
-  ontouchleave(e) {
-  }
+  // ontouchleave(e) {
+  // }
 
   // get eventMap() {
   //   return {

@@ -72,6 +72,14 @@ export default class EditorControls extends EventSource {
 		domElement.addEventListener('touchmove', this.boundTouchMove, false);
 	}
 
+	enable() {
+		this.enabled = true
+	}
+
+	disable() {
+		this.enabled = false
+	}
+
 	focus(target) {
 
 		var box = new THREE.Box3().setFromObject(target);

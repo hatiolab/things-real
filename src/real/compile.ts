@@ -12,7 +12,7 @@ export default function compile(model: ComponentModel): Component {
 
   if (!clazz) {
     warn("Class not found", model.type);
-    return null;
+    clazz = Component
   }
 
   var component = new clazz(model);

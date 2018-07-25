@@ -7,7 +7,7 @@ import { Component, RootContainer } from '../component'
 import { SnapshotCommander } from '../command'
 import { ModelerLayer​​, ViewerLayer } from '../layer'
 import { clonedeep, error } from '../util'
-import { compile } from '../main'
+import { compile } from '../real'
 
 export default class Scene {
   private _sceneMode: SceneMode

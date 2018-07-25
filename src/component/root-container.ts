@@ -7,7 +7,7 @@ import Container from './container'
 import RealObjectScene from './threed/real-object-scene'
 import { SceneModel } from '../types'
 import { warn, error, clonedeep } from '../util'
-import { compile } from '../main'
+import { compile } from '../real'
 import { debounce } from 'lodash'
 import EventEngine from '../event/event-engine'
 

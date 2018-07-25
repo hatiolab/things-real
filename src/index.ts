@@ -3,7 +3,7 @@
  */
 
 export * from './types'
-export * from './main'
+export * from './real'
 export * from './scene'
 export * from './component'
 

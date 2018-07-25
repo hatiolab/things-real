@@ -48,6 +48,25 @@ export default class ModelerLayer extends Layer {
   private onmousemove
 
   ready() {
+    this.element.addEventListener('click', event => {
+      let pointer = event['changedTouches'] ? event['changedTouches'][0] : event
+      let component = this.capture(pointer.offsetX, pointer.offsetY)
+
+      if (component === this.rootContainer) {
+        this.transformControls.detach()
+        this._editorControls.enable()
+        this.render()
+        return
+      }
+
+      this.transformControls.attach(component.object3D)
+      this._editorControls.disable()
+      this.render()
+
+      event.preventDefault()
+      event.stopPropagation()
+    })
+
     this.setEditorControl(this.camera, this.element)
 
     /* modeler case begin */
@@ -80,7 +99,7 @@ export default class ModelerLayer extends Layer {
 
   get transformControls() {
     if (!this._transformControls) {
-      this._transformControls = new TransformControls(this.camera, this.target);
+      this._transformControls = new TransformControls(this.camera, this.element);
 
       this._transformControls.addEventListener('change', () => {
         this.render();
@@ -91,7 +110,7 @@ export default class ModelerLayer extends Layer {
 
         object && CommandChange.around(this.owner.commander, () => {
           // object의 변화를 component에 반영한다.
-          object.updateReverse();
+          // object.updateReverse();
         });
 
         object && object.update(true);
@@ -261,13 +280,13 @@ export default class ModelerLayer extends Layer {
     var intersects = this.raycaster.intersectObjects(activePickers, true);
 
     if (intersects.length > 0) {
-      return this;
+      return this.rootContainer;
     }
     /* modeler case end */
 
     // TUNE-ME 자손들까지의 모든 intersects를 다 포함하는 것이면, capturable component에 해당하는 오브젝트라는 것을 보장할 수 없음.
     // 또한, component에 매핑된 오브젝트라는 것도 보장할 수 없음.
-    var capturables = this.rootContainer.layout.capturables(this);
+    var capturables = this.rootContainer.layout.capturables(this.rootContainer);
     intersects = this.raycaster.intersectObjects(capturables.map(component => {
       return component.object3D
     }), true);
@@ -286,7 +305,7 @@ export default class ModelerLayer extends Layer {
 
       if (component) {
         /* [BEGIN] GROUP을 위한 테스트 로직임(제거되어야 함.) */
-        while (component.parent && component.parent !== this) {
+        while (component.parent && component.parent !== this.rootContainer) {
           component = component.parent;
         }
         /* [END] GROUP을 위한 테스트 로직임 */
@@ -295,7 +314,7 @@ export default class ModelerLayer extends Layer {
       }
     }
 
-    return this;
+    return this.rootContainer;
   }
 
   get attention() {
@@ -315,34 +334,34 @@ export default class ModelerLayer extends Layer {
   //   // this.transformControls.onPointerMove(e);
   // }
 
-  ontouchstart(e) {
-    this.transformControls.onPointerDown(e);
-  }
+  // ontouchstart(e) {
+  //   this.transformControls.onPointerDown(e);
+  // }
 
-  ontouchmove(e) {
-    this.transformControls.onPointerHover(e);
-    this.transformControls.onPointerMove(e);
-  }
+  // ontouchmove(e) {
+  //   this.transformControls.onPointerHover(e);
+  //   this.transformControls.onPointerMove(e);
+  // }
 
-  onmouseup(e) {
-    this.transformControls.onPointerUp(e);
-  }
+  // onmouseup(e) {
+  //   this.transformControls.onPointerUp(e);
+  // }
 
-  onmouseout(e) {
-    this.transformControls.onPointerUp(e);
-  }
+  // onmouseout(e) {
+  //   this.transformControls.onPointerUp(e);
+  // }
 
-  ontouchend(e) {
-    this.transformControls.onPointerUp(e);
-  }
+  // ontouchend(e) {
+  //   this.transformControls.onPointerUp(e);
+  // }
 
-  ontouchcancel(e) {
-    this.transformControls.onPointerUp(e);
-  }
+  // ontouchcancel(e) {
+  //   this.transformControls.onPointerUp(e);
+  // }
 
-  ontouchleave(e) {
-    this.transformControls.onPointerUp(e);
-  }
+  // ontouchleave(e) {
+  //   this.transformControls.onPointerUp(e);
+  // }
 
   // get eventMap() {
   //   return {
