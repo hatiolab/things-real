@@ -7,7 +7,7 @@ import { Dimension } from '../../types'
 import * as THREE from 'three'
 
 export default interface RealObject extends THREE.Object3D {
-  component​​: Component
+  component: Component
   isRealObject
 
   dispose()
