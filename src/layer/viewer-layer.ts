@@ -5,7 +5,7 @@
 import { Scene } from '../scene'
 import Layer from './layer'
 import EditorControls from '../threed/controls/editor-controls'
-import CoverObject3D from '../component/threed/cover-object-3d'
+import RealObject from '../component/threed/real-object'
 import * as THREE from 'three'
 
 export default class ViewerLayer extends Layer {
@@ -146,8 +146,8 @@ export default class ViewerLayer extends Layer {
   prerender(force?) {
 
     this.rootContainer.components.forEach(component => {
-      let object = component.object3D
-      object instanceof CoverObject3D && (object as CoverObject3D).prerender(force);
+      let object = component.object3D;
+      (!object['isRealObject']) && object['prerender'](force);
     })
   }
 
@@ -230,13 +230,13 @@ export default class ViewerLayer extends Layer {
     for (let i = 0; i < intersects.length; i++) {
       let object: THREE.Object3D = intersects[i].object
 
-      while (!(object instanceof CoverObject3D) && object !== this.scene) {
+      while (!(object['isRealObject']) && object !== this.scene) {
         object = object.parent
       }
 
       let component
-      if (object instanceof CoverObject3D) {
-        component = (object as CoverObject3D).component
+      if (object['isRealObject']) {
+        component = object['component']
       }
 
       if (component) {

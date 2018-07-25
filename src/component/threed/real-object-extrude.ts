@@ -2,10 +2,11 @@
  * Copyright © HatioLab Inc. All rights reserved.
  */
 
-import * as THREE from 'three'
+import AbstractRealObject from './abstract-real-object'
+import Shape from '../shape'
 
-import CoverObject3D from './cover-object-3d'
-// import * as tinycolor from 'tinycolor2'
+import * as THREE from 'three'
+import * as tinycolor from 'tinycolor2'
 
 import BoundUVGenerator from './bound-uv-generator'
 
@@ -24,119 +25,28 @@ const SIDE_EXTRUDE_OPTIONS = {
   bevelSizeSegments: 5
 }
 
-export default class Extrude extends CoverObject3D {
+export default class RealObjectExtrude extends AbstractRealObject {
 
   private _boundUVGenerator
 
-  initialize() {
-  }
-
-  update(force) {
-
-    var { theta, tx, ty, sx, sy, sz = 1, fade } = this.component.deltas
-    if (!force && !(theta || tx || ty || sx != 1 || sy != 1 || fade != 0)) {
-      return;
-    }
-
-    this.clearChildren();
-    this.updateObject();
-
-    // TODO face delta 에 대한 처리가 별도로 필요함.
-    // material들을 다 찾아서 alpha 처리를 해준다 ??
-
-    var {
-      rotation: ry = 0, rotationX: rx = 0, rotationY: rz = 0,
-      depth = 0, zPos: z = 0,
-      scale = {}
-    } = this.component.state;
-
-    var {
-      x: scalex = 1,
-      y: scaley = 1,
-      z: scalez = 1
-    } = scale;
-
-    var {
-      x, y
-    } = this.component.center;
-
-    var {
-      width: fwidth,
-      height: fheight
-    } = this.component.rootModel.bounds
-
-    x -= fwidth / 2 + tx;
-    y -= fheight / 2 + ty;
-    z += depth / 2;
-
-    this.position.set(x, z, y);
-    this.rotation.set(
-      -rx,
-      -ry + theta,
-      -rz
-    );
-    this.scale.set(
-      scalex * sx, scalez * sz, scaley * sy
-    );
-
-  }
-
-  updateReverse() {
-    var rotation = this.rotation;
-    var position = this.position;
-    var scale = this.scale;
-
-    var { theta, tx, ty, sx, sy, sz = 1, fade } = this.component.deltas
-
-    var {
-      width: fwidth,
-      height: fheight
-    } = this.component.rootModel.bounds
-
-    var {
-      depth = 0
-    } = this.component.state;
-
-    // TODO 두번의 set event를 한번으로 끝내야 함.
-    // 방안.0 center 속성에 zPos를 포함해야 한다.
-    // 방안.1 트랜잭션처럼 묶는 기능이 필요하다.
-    this.component.center = {
-      x: position.x + fwidth / 2 - tx,
-      y: position.z + fheight / 2,
-      z: position.y - ty
-    };
-
-    this.component.set({
-      zPos: position.y - depth / 2,
-      rotationX: - rotation.x,
-      rotation: - rotation.y - theta,
-      rotationY: - rotation.z,
-      scale: {
-        x: scale.x / sx,
-        y: scale.z / sy,
-        z: scale.y / sz
-      }
-    });
-  }
-
-  createShape() {
-    throw 'Not Implemented Yet.';
-  }
-
-  updateObject() {
+  build() {
     var {
       fillStyle,
       strokeStyle = 0x636363,
       lineWidth = 1,
       alpha = 1,
-      depth = 1
+      dimension
     } = this.component.state;
 
-    var shape = this.createShape();
+    var {
+      depth = 1
+    } = dimension
+
+    var shape = (this.component as Shape).createShape();
 
     var options = {
       ...EXTRUDE_OPTIONS,
-      depth: depth,
+      depth,
       UVGenerator: this.boundUVGenerator
     };
 
@@ -234,10 +144,14 @@ export default class Extrude extends CoverObject3D {
   createSideMesh(geometry, shape) {
     var {
       strokeStyle = 0x000000,
-      depth = 0,
+      dimension,
       lineWidth = 0,
       alpha = 1
     } = this.component.state;
+
+    var {
+      depth = 1
+    } = dimension
 
     var hole = new THREE.Path();
     hole.setFromPoints(shape.getPoints());
@@ -259,7 +173,7 @@ export default class Extrude extends CoverObject3D {
 
     var options = {
       ...SIDE_EXTRUDE_OPTIONS,
-      depth: depth,
+      depth,
       bevelSize: lineWidth,
     };
 

@@ -2,10 +2,11 @@
  * Copyright © HatioLab Inc. All rights reserved.
  */
 
-import * as THREE from 'three'
-import RealObject3D from './real-object-3d'
+import RealObject from './real-object'
 
-export default abstract class RealObjectMesh extends THREE.Mesh implements RealObject3D {
+import * as THREE from 'three'
+
+export default abstract class RealObjectMesh extends THREE.Mesh implements RealObject {
   protected _component
 
   constructor(component) {
@@ -36,6 +37,10 @@ export default abstract class RealObjectMesh extends THREE.Mesh implements RealO
     this.scale.set(sx, sy, sz);
   }
 
+  get isRealObject() {
+    return true
+  }
+
   build() {
     this.geometry = this.buildGeometry()
     this.material = this.buildMaterial()
@@ -54,6 +59,8 @@ export default abstract class RealObjectMesh extends THREE.Mesh implements RealO
     this._component = component
     this.build()
   }
+
+  prerender() { }
 
   public abstract setDimension(dimension)
   protected abstract buildGeometry(): THREE.Geometry | THREE.BufferGeometry

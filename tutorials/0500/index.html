@@ -26,7 +26,7 @@
     var dimension = {
       width: 10,
       height: 10,
-      depth: 30
+      depth: 10
     }
 
     var scale = {
@@ -48,7 +48,7 @@
     }
 
     var colors = ['red', 'cyan', 'blue', 'green', 'yellow']
-    var types = ['cube', 'cylinder', 'sphere', 'cone']
+    var types = ['cube', 'cylinder', 'sphere', 'cone', 'rect', 'path']
 
     var scene = new Scene({
       targetEl: 'scene',
@@ -79,7 +79,21 @@
               x: 0.1,
               y: 0.2,
               z: 0.3
-            }
+            },
+            path: [{
+              x: -3,
+              y: -3
+            }, {
+              x: 0,
+              y: 3
+            }, {
+              x: 3,
+              y: -3
+            }],
+            round: 10,
+            lineWidth: 2,
+            fillStyle: colors[(idx + 1) % colors.length],
+            strokeStyle: colors[(idx + 2) % colors.length]
           }
         }))
       },

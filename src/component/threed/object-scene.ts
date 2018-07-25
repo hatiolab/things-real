@@ -3,9 +3,9 @@
  */
 
 import * as THREE from 'three'
-import RealObject3D from './real-object-3d'
+import RealObject from './real-object'
 
-export default class ObjectScene extends THREE.Scene implements RealObject3D {
+export default class ObjectScene extends THREE.Scene implements RealObject {
   protected _component
 
   constructor(component) {
@@ -17,6 +17,12 @@ export default class ObjectScene extends THREE.Scene implements RealObject3D {
   dispose() { }
 
   setDimension() { }
+
+  prerender() { }
+
+  get isRealObject() {
+    return true
+  }
 
   get component() {
     return this._component

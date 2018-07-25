@@ -9,7 +9,6 @@ import { Class, ComponentModel } from '../types'
 import { DataSpreadEngine } from './data'
 import Container from './container'
 import RootContainer from './root-container'
-import RealObject3D from './threed/real-object-3d'
 import { clonedeep, mixin, error } from '../util'
 
 type EventMap = { [selector: string]: { [delegator: string]: { [event: string]: Function } } }
