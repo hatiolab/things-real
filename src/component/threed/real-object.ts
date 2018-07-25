@@ -13,6 +13,4 @@ export default interface RealObject extends THREE.Object3D {
   dispose()
 
   prerender(force?: boolean)
-
-  setDimension(dimension: Dimension)
 }

@@ -4,7 +4,7 @@
 
 import { Scene } from '../scene'
 import Layer from './layer'
-import RealObject from '../component/threed/real-object'
+import RealObjectScene from '../component/threed/real-object-scene'
 import EditorControls from '../threed/controls/editor-controls'
 import TransformControls from '../threed/controls/transform-controls'
 import CommandChange from '../command/command-change'
@@ -14,7 +14,7 @@ import * as THREE from 'three'
 export default class ModelerLayer extends Layer {
 
   private _transformControls: TransformControls
-  private _scene: THREE.Scene
+  private _scene: RealObjectScene
   private _raycaster: THREE.Raycaster
   private _camera: THREE.PerspectiveCamera
   private _lights: THREE.Light[]
@@ -37,19 +37,7 @@ export default class ModelerLayer extends Layer {
     this._transformControls && this._transformControls.dispose();
     this._editorControls && this._editorControls.dispose()
 
-    this.scene.children.slice().forEach(child => {
-      if (child['dispose'])
-        child['dispose']();
-      if (child['geometry'] && child['geometry']['dispose'])
-        child['geometry']['dispose']();
-      if (child['material'] && child['material']['dispose'])
-        child['material']['dispose']();
-      if (child['texture'] && child['texture']['dispose'])
-        child['texture']['dispose']();
-
-      this.scene.remove(child)
-    });
-
+    this.scene.dispose()
     this.renderer.dispose();
 
     super.dispose();
@@ -93,7 +81,6 @@ export default class ModelerLayer extends Layer {
   get transformControls() {
     if (!this._transformControls) {
       this._transformControls = new TransformControls(this.camera, this.target);
-      this.scene.add(this._transformControls);
 
       this._transformControls.addEventListener('change', () => {
         this.render();
@@ -162,11 +149,11 @@ export default class ModelerLayer extends Layer {
 
   get scene() {
     if (!this._scene) {
-      this._scene = this.rootContainer.object3D
+      this._scene = this.rootContainer.object3D as RealObjectScene
 
-      // this._scene.add(this.editorControls)
       this._scene.add(this.gridHelper)
       this._scene.add(...this.lights)
+      this._scene.add(this.transformControls)
     }
 
     return this._scene;

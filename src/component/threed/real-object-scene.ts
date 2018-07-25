@@ -5,7 +5,7 @@
 import * as THREE from 'three'
 import RealObject from './real-object'
 
-export default class ObjectScene extends THREE.Scene implements RealObject {
+export default class RealObjectScene extends THREE.Scene implements RealObject {
   protected _component
 
   constructor(component) {
@@ -14,9 +14,14 @@ export default class ObjectScene extends THREE.Scene implements RealObject {
     this.component = component;
   }
 
-  dispose() { }
+  dispose() {
+    this.children.forEach(child => {
+      (child as RealObject).dispose()
+      this.remove(child)
+    })
+  }
 
-  setDimension() { }
+  // setDimension() { }
 
   prerender() { }
 

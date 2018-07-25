@@ -10,6 +10,7 @@ import { DataSpreadEngine } from './data'
 import Container from './container'
 import RootContainer from './root-container'
 import { clonedeep, mixin, error } from '../util'
+import RealObjectDummy from './threed/real-object-dummy';
 
 type EventMap = { [selector: string]: { [delegator: string]: { [event: string]: Function } } }
 
@@ -71,7 +72,7 @@ export default class Component extends ModelAndState implements LifeCycleCallbac
   }
 
   protected buildObject3D(): THREE.Object3D {
-    return
+    return new RealObjectDummy(this)
   }
 
   /* Event */

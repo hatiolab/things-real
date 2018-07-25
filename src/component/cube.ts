@@ -10,14 +10,14 @@ import * as THREE from 'three'
 
 class ObjectCube extends RealObjectMesh {
 
-  setDimension(dimension: Dimension) {
-    var old = (this.geometry as THREE.CubeGeometry).parameters;
+  // setDimension(dimension: Dimension) {
+  //   var old = (this.geometry as THREE.CubeGeometry).parameters;
 
-    (this.geometry as THREE.CubeGeometry).parameters = {
-      ...old,
-      ...dimension
-    }
-  }
+  //   (this.geometry as THREE.CubeGeometry).parameters = {
+  //     ...old,
+  //     ...dimension
+  //   }
+  // }
 
   buildGeometry() {
 

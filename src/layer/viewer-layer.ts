@@ -5,12 +5,12 @@
 import { Scene } from '../scene'
 import Layer from './layer'
 import EditorControls from '../threed/controls/editor-controls'
-import RealObject from '../component/threed/real-object'
+import RealObjectScene from '../component/threed/real-object-scene'
 import * as THREE from 'three'
 
 export default class ViewerLayer extends Layer {
 
-  private _scene: THREE.Scene
+  private _scene: RealObjectScene
   private _raycaster: THREE.Raycaster
   private _camera: THREE.PerspectiveCamera
   private _lights: THREE.Light[]
@@ -32,18 +32,7 @@ export default class ViewerLayer extends Layer {
 
     this._editorControls && this._editorControls.dispose()
 
-    this.scene.children.slice().forEach(child => {
-      if (child['dispose'])
-        child['dispose']();
-      if (child['geometry'] && child['geometry']['dispose'])
-        child['geometry']['dispose']();
-      if (child['material'] && child['material']['dispose'])
-        child['material']['dispose']();
-      if (child['texture'] && child['texture']['dispose'])
-        child['texture']['dispose']();
-
-      this.scene.remove(child)
-    });
+    this.scene.dispose()
 
     this.renderer.dispose();
 

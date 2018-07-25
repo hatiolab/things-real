@@ -10,22 +10,22 @@ import * as THREE from 'three'
 
 class ObjectCone extends RealObjectMesh {
 
-  setDimension(dimension: Dimension) {
-    var old = (this.geometry as THREE.ConeGeometry).parameters;
+  // setDimension(dimension: Dimension) {
+  //   var old = (this.geometry as THREE.ConeGeometry).parameters;
 
-    var {
-      width, height, depth
-    } = dimension
+  //   var {
+  //     width, height, depth
+  //   } = dimension
 
-    var radius = Math.min(dimension.width, dimension.depth) / 2;
+  //   var radius = Math.min(dimension.width, dimension.depth) / 2;
 
-    (this.geometry as THREE.ConeGeometry).parameters = {
-      ...old,
-      radiusTop: 0,
-      radiusBottom: radius,
-      height
-    }
-  }
+  //   (this.geometry as THREE.ConeGeometry).parameters = {
+  //     ...old,
+  //     radiusTop: 0,
+  //     radiusBottom: radius,
+  //     height
+  //   }
+  // }
 
   buildGeometry() {
 

@@ -4,7 +4,7 @@
 
 import Component from './component'
 import Container from './container'
-import ObjectScene from './threed/object-scene'
+import RealObjectScene from './threed/real-object-scene'
 import { SceneModel } from '../types'
 import { warn, error, clonedeep } from '../util'
 import { compile } from '../main'
@@ -29,7 +29,7 @@ export default class RootContainer extends Container {
   /**
    * three.js related
    */
-  private scene3D: ObjectScene
+  private scene3D: RealObjectScene
 
   constructor(model: SceneModel) {
     super(model)
@@ -47,7 +47,7 @@ export default class RootContainer extends Container {
 
   get object3D() {
     if (!this.scene3D) {
-      this.scene3D = new ObjectScene(this)
+      this.scene3D = new RealObjectScene(this)
     }
     return this.scene3D
   }

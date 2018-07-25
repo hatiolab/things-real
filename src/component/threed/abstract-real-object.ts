@@ -7,6 +7,10 @@ import RealObject from './real-object'
 
 import * as THREE from 'three'
 
+const SCALE = { x: 1, y: 1, z: 1 }
+const ROTATE = { x: 0, y: 0, z: 0 }
+const TRANSLATE = ROTATE
+
 export default abstract class AbstractRealObject extends THREE.Object3D implements RealObject {
   protected _component: Component
   private updating: boolean
@@ -21,17 +25,17 @@ export default abstract class AbstractRealObject extends THREE.Object3D implemen
         x: sx = 1,
         y: sy = 1,
         z: sz = 1
-      } = { x: 1, y: 1, z: 1 },
+      } = SCALE,
       translate: {
         x: tx = 0,
         y: ty = 0,
         z: tz = 0
-      } = { x: 0, y: 0, z: 0 },
+      } = TRANSLATE,
       rotate: {
         x: rx = 0,
         y: ry = 0,
         z: rz = 0
-      } = { x: 0, y: 0, z: 0 }
+      } = ROTATE
     } = component.state
 
     this.position.set(tx, ty, tz);
@@ -61,10 +65,10 @@ export default abstract class AbstractRealObject extends THREE.Object3D implemen
     this.build()
   }
 
-  setDimension(dimension) {
-    this.clear()
-    this.build()
-  }
+  // setDimension(dimension) {
+  //   this.clear()
+  //   this.build()
+  // }
 
   protected abstract build()
 
