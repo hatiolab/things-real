@@ -38,7 +38,7 @@
   },
   "dependencies": {
     "@types/lodash": "^4.14.111",
-    "@types/three": "^0.92.13",
+    "@types/three": "^0.92.14",
     "@types/tinycolor2": "^1.4.0",
     "lit-html": "^0.10.2",
     "lodash": "^4.17.10",

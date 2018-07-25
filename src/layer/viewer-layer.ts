@@ -39,10 +39,6 @@ export default class ViewerLayer extends Layer {
     super.dispose();
   }
 
-  // private onmousedown
-  // private ondragmove
-  // private onmousemove
-
   ready() {
     this.setEditorControl(this.camera, this.element)
   }
@@ -253,47 +249,4 @@ export default class ViewerLayer extends Layer {
 
     return this._attention;
   }
-
-  // ondragmove(e) {
-  //   this.transformControls.onPointerDragMove(e);
-  // }
-
-  // onmousemove(e) {
-  //   this.transformControls.onPointerHover(e);
-  //   // this.transformControls.onPointerMove(e);
-  // }
-
-  // ontouchstart(e) {
-  // }
-
-  // ontouchmove(e) {
-  // }
-
-  // onmouseup(e) {
-  // }
-
-  // onmouseout(e) {
-  // }
-
-  // ontouchend(e) {
-  // }
-
-  // ontouchcancel(e) {
-  // }
-
-  // ontouchleave(e) {
-  // }
-
-  // get eventMap() {
-  //   return {
-  //     '(self)': {
-  //       '(all)': {
-  //         change: ObjectComponentBridge.onchange,
-  //         added: ObjectComponentBridge.onadded,
-  //         removed: ObjectComponentBridge.onremoved,
-  //       }
-  //     },
-  //   }
-  // }
-
 }

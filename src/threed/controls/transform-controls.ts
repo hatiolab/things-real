@@ -152,6 +152,12 @@ export default class TransformControls extends THREE.Object3D {
 
     this.object = object
     this.visible = true
+
+    this.boundBox.update(object);
+    // this.boundBox.setFromObject(object)
+    this.boundBox.visible = true;
+    // this.boundBox.update()
+
     this.update()
   }
 
@@ -160,6 +166,8 @@ export default class TransformControls extends THREE.Object3D {
     this.object = undefined
     this.visible = false
     this.axis = null
+
+    this.boundBox.visible = false;
   }
 
   get mode() {

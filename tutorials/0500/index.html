@@ -95,19 +95,19 @@
       fit: FitMode.RATIO
     })
 
-    setInterval(() => {
-      scene.findAll('cube').forEach(cube => {
-        let r = cube.state.rotate || rotate
+    // setInterval(() => {
+    //   scene.findAll('cube').forEach(cube => {
+    //     let r = cube.state.rotate || rotate
 
-        cube.set({
-          rotate: {
-            x: r.x + 0.01,
-            y: r.y + 0.01,
-            z: r.z + 0.01
-          }
-        })
-      })
-    }, 1)
+    //     cube.set({
+    //       rotate: {
+    //         x: r.x + 0.01,
+    //         y: r.y + 0.01,
+    //         z: r.z + 0.01
+    //       }
+    //     })
+    //   })
+    // }, 100)
 
   </script>
 </body>
