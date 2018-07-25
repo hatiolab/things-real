@@ -10,7 +10,7 @@ import * as THREE from 'three'
 
 export default class ViewerLayer extends Layer {
 
-  private _scene: RealObjectScene
+  protected _scene: RealObjectScene
   private _raycaster: THREE.Raycaster
   private _camera: THREE.PerspectiveCamera
   private _lights: THREE.Light[]
@@ -39,12 +39,16 @@ export default class ViewerLayer extends Layer {
     super.dispose();
   }
 
-  private onmousedown
-  private ondragmove
-  private onmousemove
+  // private onmousedown
+  // private ondragmove
+  // private onmousemove
 
   ready() {
     this.setEditorControl(this.camera, this.element)
+  }
+
+  get editorControls() {
+    return this._editorControls
   }
 
   private setEditorControl(camera, element) {
