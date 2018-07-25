@@ -12,5 +12,7 @@ export default interface RealObject extends THREE.Object3D {
 
   dispose()
 
+  updateReverse()
+
   prerender(force?: boolean)
 }

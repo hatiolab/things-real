@@ -110,10 +110,10 @@ export default class ModelerLayer extends Layer {
 
         object && CommandChange.around(this.owner.commander, () => {
           // object의 변화를 component에 반영한다.
-          // object.updateReverse();
+          object.updateReverse();
         });
 
-        object && object.update(true);
+        // object && object.update(true);
       });
     }
 

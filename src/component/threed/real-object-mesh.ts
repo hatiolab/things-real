@@ -62,6 +62,30 @@ export default abstract class RealObjectMesh extends THREE.Mesh implements RealO
 
   prerender() { }
 
+  updateReverse() {
+    var rotation = this.rotation;
+    var position = this.position;
+    var scale = this.scale;
+
+    this.component.set({
+      rotate: {
+        x: rotation.x,
+        y: rotation.y,
+        z: rotation.z
+      },
+      translate: {
+        x: position.x,
+        y: position.y,
+        z: position.z
+      },
+      scale: {
+        x: scale.x,
+        y: scale.y,
+        z: scale.z
+      }
+    })
+  }
+
   // public abstract setDimension(dimension)
   protected abstract buildGeometry(): THREE.Geometry | THREE.BufferGeometry
 

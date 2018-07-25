@@ -133,9 +133,27 @@ export default abstract class AbstractRealObject extends THREE.Object3D implemen
   }
 
   updateReverse() {
-    // var rotation = this.rotation;
-    // var position = this.position;
-    // var scale = this.scale;
+    var rotation = this.rotation;
+    var position = this.position;
+    var scale = this.scale;
+
+    this.component.set({
+      rotate: {
+        x: rotation.x,
+        y: rotation.y,
+        z: rotation.z
+      },
+      translate: {
+        x: position.x,
+        y: position.y,
+        z: position.z
+      },
+      scale: {
+        x: scale.x,
+        y: scale.y,
+        z: scale.z
+      }
+    })
 
     // var { theta, tx, ty, sx, sy, sz = 1, fade } = this.component.deltas
 
