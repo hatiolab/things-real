@@ -5,7 +5,7 @@
 import { SceneConfig, SceneModel, SceneMode, FitMode } from '../types'
 import { Component, RootContainer } from '../component'
 import { SnapshotCommander } from '../command'
-import { ModelerLayer​​, ViewerLayer } from '../layer'
+import { ModelerLayer, ViewerLayer } from '../layer'
 import { clonedeep, error } from '../util'
 import { compile } from '../real'
 
@@ -46,9 +46,13 @@ export default class Scene {
     })
 
     var layer = this.sceneMode == SceneMode.VIEW ?
-      new ViewerLayer​​(this) : new ModelerLayer​​(this)
+      new ViewerLayer(this) : new ModelerLayer​​(this)
 
     layer.target = this._targetEl
+  }
+
+  dispose() {
+    // TODO implement
   }
 
   get sceneMode() {
@@ -141,4 +145,15 @@ export default class Scene {
     }
   }
 
+  undo() {
+    // TODO implement
+  }
+
+  redo() {
+    // TODO implement
+  }
+
+  fullscreen(mode?: FitMode) {
+    // TODO implement
+  }
 }

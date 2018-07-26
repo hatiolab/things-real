@@ -14,8 +14,25 @@
   <h1>3D Modeling Library - REAL</h1>
   <div id="scene"></div>
 
+  <p>
+    <button id='create'>Create</button>
+    <button id='dispose'>Dispose</button>
+    <button id='undo'>Undo</button>
+    <button id='redo'>Redo</button>
+    <button id='start'>Start</button>
+    <button id='stop'>Stop</button>
+    <button id='fullscreen'>Full-Screen</button>
+  </p>
+
   <script type="module">
     import { html, render } from '../../node_modules/lit-html/lit-html.js';
+
+    document.querySelectorAll('button').forEach(button => {
+      let id = button.id
+      button.addEventListener('click', e => {
+        eval(id).call()
+      })
+    })
 
     var {
       Scene,
@@ -47,67 +64,98 @@
       z: 0.3
     }
 
-    var path = [{x: -1, y: 0}, {x: -2, y: 1}, {x: -3, y: 3}, {x: 0, y: 5}, {x: 3, y: 3}, {x: 2, y: 1}, {x: 1, y:0},
-    {x: 2, y: -1}, {x: 3, y: -3}, {x: 0, y: -5}, {x: -3, y: -3}, {x: -2, y: -1}]
+    var path = [{x: -1, y: 0}, {x: -2, y: 1}, {x: -3, y: 3}, 
+      {x: 0, y: 5}, {x: 3, y: 3}, {x: 2, y: 1}, {x: 1, y:0},
+      {x: 2, y: -1}, {x: 3, y: -3}, {x: 0, y: -5},
+      {x: -3, y: -3}, {x: -2, y: -1}]
 
     var colors = ['red', 'cyan', 'blue', 'green', 'yellow']
     var types = ['cube', 'cylinder', 'sphere', 'cone', 'rect', 'path']
 
-    var scene = new Scene({
-      targetEl: 'scene',
-      mode: SceneMode.EDIT,
-      model: {
-        width: 700,
-        height: 300,
-        components: [{
-          id: 'first-cube',
-          type: 'cube',
-          color: 'navy',
-          dimension,
-          scale,
-          translate,
-          rotate
-        }].concat(Array.from(Array(100).keys()).map(idx => {
-          return {
-            type: types[idx % types.length],
-            color: colors[idx % colors.length],
+    var scene
+    var interval
+
+    export function create() {
+      scene = new Scene({
+        targetEl: 'scene',
+        mode: SceneMode.EDIT,
+        model: {
+          width: 700,
+          height: 300,
+          components: [{
+            id: 'first-cube',
+            type: 'cube',
+            color: 'navy',
             dimension,
             scale,
-            translate: {
-              x: Number(idx) * 10 - 500,
-              y: Number(idx) * 10 - 500,
-              z: Number(idx) * 10 - 500
-            },
+            translate,
+            rotate
+          }].concat(Array.from(Array(100).keys()).map(idx => {
+            return {
+              type: types[idx % types.length],
+              color: colors[idx % colors.length],
+              dimension,
+              scale,
+              translate: {
+                x: Number(idx) * 10 - 500,
+                y: Number(idx) * 10 - 500,
+                z: Number(idx) * 10 - 500
+              },
+              rotate,
+              path,
+              round: 10,
+              lineWidth: 2,
+              fillStyle: colors[(idx + 1) % colors.length],
+              strokeStyle: colors[(idx + 2) % colors.length],
+              curved: true
+            }
+          }))
+        },
+        fit: FitMode.RATIO
+      })
+    }
+
+    function dispose() {
+      scene && scene.dispose()
+      scene = undefined
+    }
+
+    function undo() {
+      scene && scene.undo()
+    }
+
+    function redo() {
+      scene && scene.redo()
+    }
+
+    function start() {
+      stop()
+
+      interval = setInterval(() => {
+        scene.findAll('cube').forEach(cube => {
+          let r = cube.state.rotate || rotate
+
+          cube.set({
             rotate: {
-              x: 0.1,
-              y: 0.2,
-              z: 0.3
-            },
-            path,
-            round: 10,
-            lineWidth: 2,
-            fillStyle: colors[(idx + 1) % colors.length],
-            strokeStyle: colors[(idx + 2) % colors.length],
-            curved: true
-          }
-        }))
-      },
-      fit: FitMode.RATIO
-    })
+              x: r.x + 0.1,
+              y: r.y + 0.1,
+              z: r.z + 0.1
+            }
+          })
+        })
+      }, 100)
+    }
 
-    // setInterval(() => {
-    //   scene.findAll('cube').forEach(cube => {
-    //     let r = cube.state.rotate || rotate
+    function stop() {
+      clearInterval(interval)
+      interval = undefined
+    }
 
-    //     cube.set({
-    //       rotate: {
-    //         x: r.x + 0.01,
-    //         y: r.y + 0.01,
-    //         z: r.z + 0.01
-    //       }
-    //     })
-    //   })
-    // }, 100)
+    function fullscreen() {
+      scene && scene.fullscreen(FitMode.RATIO)
+    }
+
+    create()
 
   </script>
 </body>
