@@ -152,10 +152,10 @@ export default class ViewerLayer extends Layer {
     var { offsetWidth: width, offsetHeight: height } = this.target;
 
     // raycaster의 정확성을 위해서 model의 scale을 조정한다.
-    this.rootContainer.setState('scale', {
-      x: width / w,
-      y: height / h
-    });
+    // this.rootContainer.setState('scale', {
+    //   x: width / w,
+    //   y: height / h
+    // });
 
     this.camera.near = 1;
     this.camera.far = 10000;
