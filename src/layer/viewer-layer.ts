@@ -16,12 +16,11 @@ export default class ViewerLayer extends Layer {
   private _lights: THREE.Light[]
   private _editorControls: EditorControls
   private _renderer: THREE.WebGLRenderer
-  private _attention: THREE.Vector3
 
   private _textureLoader: THREE.TextureLoader
 
   constructor(owner: Scene) {
-    super(owner);
+    super(owner)
 
     this._textureLoader = new THREE.TextureLoader(THREE.DefaultLoadingManager)
     this._textureLoader.withCredentials = 'true'
@@ -34,9 +33,9 @@ export default class ViewerLayer extends Layer {
 
     this.scene.dispose()
 
-    this.renderer.dispose();
+    this.renderer.dispose()
 
-    super.dispose();
+    super.dispose()
   }
 
   ready() {
@@ -65,7 +64,7 @@ export default class ViewerLayer extends Layer {
       this._raycaster = new THREE.Raycaster()
     }
 
-    return this._raycaster;
+    return this._raycaster
   }
 
   get renderer() {
@@ -77,19 +76,19 @@ export default class ViewerLayer extends Layer {
         alpha: true
       });
 
-      this._renderer.setClearColor(0xffffff, 0);
+      this._renderer.setClearColor(0xffffff, 0)
     }
 
-    return this._renderer;
+    return this._renderer
   }
 
   get camera() {
     if (!this._camera) {
-      let { width, height } = this.rootContainer.state;
+      let { width, height } = this.rootContainer.state
 
-      this._camera = new THREE.PerspectiveCamera();
+      this._camera = new THREE.PerspectiveCamera()
 
-      this._camera.position.set(0, height, height * 3 / 4);
+      this._camera.position.set(0, height, height * 3 / 4)
 
       // let frustum = Math.max(width, height) / 2;
       // this._camera = new THREE.OrthographicCamera(-frustum, frustum, frustum, -frustum, 0, 30000);
@@ -97,10 +96,10 @@ export default class ViewerLayer extends Layer {
       // this._camera.position.set(0, frustum * 2, frustum * 2);
       // this._camera.position.set(0, 0, frustum * 2);
 
-      this._camera.lookAt(new THREE.Vector3(0, 0, 0));
+      this._camera.lookAt(new THREE.Vector3(0, 0, 0))
     }
 
-    return this._camera;
+    return this._camera
   }
 
   get lights() {
@@ -111,7 +110,7 @@ export default class ViewerLayer extends Layer {
       ];
     }
 
-    return this._lights;
+    return this._lights
   }
 
   get scene() {
@@ -120,7 +119,7 @@ export default class ViewerLayer extends Layer {
       this._scene.add(...this.lights)
     }
 
-    return this._scene;
+    return this._scene
   }
 
   draw() {
@@ -128,47 +127,40 @@ export default class ViewerLayer extends Layer {
       return;
     }
 
-    this.prerender();
-    this.render();
+    this.prerender()
+    this.render()
   }
 
   prerender(force?) {
 
     this.rootContainer.components.forEach(component => {
       let object = component.object3D;
-      (!object['isRealObject']) && object['prerender'](force);
+      (!object['isRealObject']) && object['prerender'](force)
     })
   }
 
   render() {
     // TODO transformControls가 update될 필요가 있을 때만, update 하도록 개선.
-    this.renderer.render(this.scene, this.camera);
+    this.renderer.render(this.scene, this.camera)
   }
 
   resize() {
-    super.resize();
+    super.resize()
 
-    var { width: w, height: h } = this.rootContainer.state;
-    var { offsetWidth: width, offsetHeight: height } = this.target;
+    var { offsetWidth: width, offsetHeight: height } = this.target
 
-    // raycaster의 정확성을 위해서 model의 scale을 조정한다.
-    // this.rootContainer.setState('scale', {
-    //   x: width / w,
-    //   y: height / h
-    // });
+    this.camera.near = 1
+    this.camera.far = 10000
+    this.camera.aspect = width / height
 
-    this.camera.near = 1;
-    this.camera.far = 10000;
-    this.camera.aspect = width / height;
-
-    var distance = 1000;
+    var distance = 1000
     var diag = Math.sqrt((height * height) + (width * width))
-    this.camera.fov = 2 * Math.atan(diag / (2 * distance)) * 180 / Math.PI;
+    this.camera.fov = 2 * Math.atan(diag / (2 * distance)) * 180 / Math.PI
 
-    // this.camera.position.set(0, h, h * 3 / 4);
-    this.camera.updateProjectionMatrix();
+    // this.camera.position.set(0, h, h * 3 / 4)
+    this.camera.updateProjectionMatrix()
 
-    this.renderer.setSize(width, height, true);
+    this.renderer.setSize(width, height, true)
   }
 
   /*
@@ -188,7 +180,7 @@ export default class ViewerLayer extends Layer {
       if (!capturable.isContainer())
         continue
 
-      let found = capturable.capturePath(path, excepts);
+      let found = capturable.capturePath(path, excepts)
       if (found)
         return found;
     }
@@ -240,13 +232,5 @@ export default class ViewerLayer extends Layer {
     }
 
     return this;
-  }
-
-  get attention() {
-    if (!this._attention) {
-      this._attention = new THREE.Vector3();
-    }
-
-    return this._attention;
   }
 }
