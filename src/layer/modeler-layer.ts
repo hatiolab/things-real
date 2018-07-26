@@ -14,8 +14,16 @@ export default class ModelerLayer extends ViewerLayer {
   private _transformControls: TransformControls
   private _gridHelper: THREE.GridHelper
 
+  private boundOnclick
+  private boundOnmousedown
+  private boundOnmouseup
+
   dispose() {
     this._transformControls && this._transformControls.dispose();
+
+    this.element.removeEventListener('click', this.boundOnclick)
+    this.element.removeEventListener('mousedown', this.boundOnmousedown)
+    this.element.removeEventListener('mouseup', this.boundOnmouseup)
 
     super.dispose()
   }
@@ -23,24 +31,13 @@ export default class ModelerLayer extends ViewerLayer {
   ready() {
     super.ready()
 
-    this.element.addEventListener('click', event => {
-      let pointer = event['changedTouches'] ? event['changedTouches'][0] : event
-      let component = this.capture(pointer.offsetX, pointer.offsetY)
+    this.boundOnclick = this.onclick.bind(this)
+    this.boundOnmousedown = this.onmousedown.bind(this)
+    this.boundOnmouseup = this.onmouseup.bind(this)
 
-      if (component === this.rootContainer) {
-        this.transformControls.detach()
-        this.editorControls.enable()
-        this.render()
-        return
-      }
-
-      this.transformControls.attach(component.object3D)
-      this.editorControls.disable()
-      this.render()
-
-      event.preventDefault()
-      event.stopPropagation()
-    })
+    this.element.addEventListener('click', this.boundOnclick)
+    this.element.addEventListener('mousedown', this.boundOnmousedown)
+    this.element.addEventListener('mouseup', this.boundOnmouseup)
   }
 
   get transformControls() {
@@ -143,8 +140,29 @@ export default class ModelerLayer extends ViewerLayer {
     return this.rootContainer;
   }
 
-  onchangeGlobal() {
-    console.log('onchange-global')
+  onclick(event) {
+    let pointer = event['changedTouches'] ? event['changedTouches'][0] : event
+    let component = this.capture(pointer.offsetX, pointer.offsetY)
+
+    if (component === this.rootContainer) {
+      this.transformControls.detach()
+      this.editorControls.enable()
+      this.render()
+      return
+    }
+
+    this.transformControls.attach(component.object3D)
+    this.editorControls.disable()
     this.render()
+
+    event.preventDefault()
+    event.stopPropagation()
   }
+
+  onmousedown(event) {
+  }
+
+  onmouseup(event) {
+  }
+
 }
