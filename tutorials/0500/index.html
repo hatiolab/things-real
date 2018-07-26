@@ -2,9 +2,13 @@
 
 <head>
   <style>
-  #scene {
+  #wrapper {
     width: 100%;
     height: 500px;
+  }
+  #scene {
+    width: 100%;
+    height: 100%;
   }
   </style>
   <script src="../../things-real.js"></script>
@@ -12,7 +16,9 @@
 
 <body>
   <h1>3D Modeling Library - REAL</h1>
-  <div id="scene"></div>
+  <div id="wrapper">
+    <div id="scene"></div>
+  </div>
 
   <p>
     <button id='create'>Create</button>

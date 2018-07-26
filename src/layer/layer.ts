@@ -55,16 +55,19 @@ export default class Layer extends EventSource {
     if (!this.target)
       return
 
-    let style = getComputedStyle(this.target)
+    requestAnimationFrame(() => {
 
-    let width = style ? parseFloat(style.getPropertyValue('width')) : this.target.offsetWidth
-    let height = style ? parseFloat(style.getPropertyValue('height')) : this.target.offsetHeight
+      let style = getComputedStyle(this.target)
 
-    element.setAttribute('width', width);
-    element.setAttribute('height', height);
+      let width = style ? parseFloat(style.getPropertyValue('width')) : this.target.offsetWidth
+      let height = style ? parseFloat(style.getPropertyValue('height')) : this.target.offsetHeight
 
-    element.style.width = width + 'px';
-    element.style.height = height + 'px';
+      element.setAttribute('width', width);
+      element.setAttribute('height', height);
+
+      element.style.width = width + 'px';
+      element.style.height = height + 'px';
+    })
   }
 
   resize() {

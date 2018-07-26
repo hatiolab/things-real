@@ -5,8 +5,8 @@
 import { SceneConfig, SceneModel, SceneMode, FitMode } from '../types'
 import { Component, RootContainer } from '../component'
 import { SnapshotCommander } from '../command'
-import { ModelerLayer, ViewerLayer } from '../layer'
-import { clonedeep, error } from '../util'
+import { Layer, ModelerLayer, ViewerLayer } from '../layer'
+import { clonedeep, fullscreen, error } from '../util'
 import { compile } from '../real'
 
 export default class Scene {
@@ -16,6 +16,7 @@ export default class Scene {
   private _snapshotCommander: SnapshotCommander
 
   private _rootContainer: RootContainer
+  private _layer: Layer
 
   constructor(config: SceneConfig) {
 
@@ -45,10 +46,10 @@ export default class Scene {
       putback: model => { this.sceneModel = model as SceneModel }
     })
 
-    var layer = this.sceneMode == SceneMode.VIEW ?
+    this._layer = this.sceneMode == SceneMode.VIEW ?
       new ViewerLayer(this) : new ModelerLayer​​(this)
 
-    layer.target = this._targetEl
+    this._layer.target = this._targetEl
   }
 
   dispose() {
@@ -84,7 +85,7 @@ export default class Scene {
 
   fit(mode: FitMode): void {
     this._fitMode = mode
-    // TODO implement
+    this._layer.resize()
   }
 
   findAll(selector: string): Component[] {
@@ -154,6 +155,8 @@ export default class Scene {
   }
 
   fullscreen(mode?: FitMode) {
-    // TODO implement
+    fullscreen(this._targetEl, () => {
+      this.fit(mode)
+    })
   }
 }
