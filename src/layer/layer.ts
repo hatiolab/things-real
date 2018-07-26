@@ -20,11 +20,13 @@ export default class Layer extends EventSource {
     super()
 
     this.owner = owner
-    this._rootContainer = owner.rootContainer
+    this.setRootContainer(owner.rootContainer)
+  }
 
-    this._rootContainer.on('render', () => {
-      this.render()
-    })
+  dispose() {
+    this.setRootContainer()
+    this.target = null;
+    this.element = null;
   }
 
   ready() {
@@ -43,12 +45,26 @@ export default class Layer extends EventSource {
     this.draw_reserved = true;
   }
 
-  get rootContainer​​() {
+  get rootContainer() {
     return this._rootContainer
   }
 
-  set rootContainer(rootContainer) {
-    this._rootContainer = rootContainer
+  setRootContainer(rootContainer?) {
+    if (this._rootContainer) {
+      this._rootContainer.off('render')
+      this._rootContainer.dispose()
+      delete this._rootContainer
+    }
+
+    if (rootContainer) {
+      this._rootContainer = rootContainer
+
+      this._rootContainer.on('render', () => {
+        this.render()
+      })
+
+      this.invalidate()
+    }
   }
 
   fitSize(element) {
@@ -72,10 +88,6 @@ export default class Layer extends EventSource {
 
   resize() {
     this.fitSize(this.element)
-  }
-
-  isLayer() {
-    return true;
   }
 
   protected createElement(): HTMLElement {
@@ -123,14 +135,6 @@ export default class Layer extends EventSource {
 
   get canvas(): HTMLCanvasElement {
     return this.element as HTMLCanvasElement
-  }
-
-  dispose() {
-
-    this._rootContainer.off('render')
-
-    this.target = null;
-    this.element = null;
   }
 
   // get selected() {

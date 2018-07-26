@@ -32,7 +32,6 @@ export default class ViewerLayer extends Layer {
     this._editorControls && this._editorControls.dispose()
 
     this.scene.dispose()
-
     this.renderer.dispose()
 
     super.dispose()
@@ -40,6 +39,20 @@ export default class ViewerLayer extends Layer {
 
   ready() {
     this.setEditorControl(this.camera, this.element)
+  }
+
+  setRootContainer(rootContainer​​) {
+    if (this._scene) {
+      /* scene이 dispose 될 때, lights 도 같이 dispose 되지 않도록 미리 빼줌 */
+      this._scene.remove(...this.lights)
+    }
+
+    super.setRootContainer(rootContainer)
+
+    if (this._scene) {
+      this._scene.dispose()
+      delete this._scene
+    }
   }
 
   get editorControls() {

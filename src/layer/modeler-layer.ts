@@ -40,6 +40,16 @@ export default class ModelerLayer extends ViewerLayer {
     this.element.addEventListener('mouseup', this.boundOnmouseup)
   }
 
+  setRootContainer(rootContainer​​) {
+    if (this._scene) {
+      /* scene이 dispose 될 때, 같이 dispose 되지 않도록 미리 빼줌 */
+      this._scene.remove(this.gridHelper)
+      this._scene.remove(this.transformControls)
+    }
+
+    super.setRootContainer(rootContainer)
+  }
+
   get transformControls() {
     if (!this._transformControls) {
       this._transformControls = new TransformControls(this.camera, this.element);

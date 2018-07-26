@@ -36,11 +36,19 @@ export default class Scene {
       this._targetEl.style.overflow = "hidden"
     }
 
+    /** root-container */
     this._sceneMode = config.mode | SceneMode.VIEW
     this._fitMode = config.fit | FitMode.RATIO
 
     this.sceneModel = config.model
 
+    /** layer */
+    this._layer = this.sceneMode == SceneMode.VIEW ?
+      new ViewerLayer(this) : new ModelerLayer(this)
+
+    this._layer.target = this._targetEl
+
+    /** commander */
     this._snapshotCommander = new SnapshotCommander({
       take: () => { return this.sceneModel },
       putback: model => { this.sceneModel = model as SceneModel }
@@ -50,6 +58,7 @@ export default class Scene {
   dispose() {
     // TODO implement
     this._layer.dispose()
+    this._rootContainer && this._rootContainer.dispose()
   }
 
   get sceneMode() {
@@ -61,7 +70,6 @@ export default class Scene {
   }
 
   set sceneModel(model) {
-    this._layer && this._layer.dispose()
     this._rootContainer && this._rootContainer.dispose()
 
     this._rootContainer = compile({
@@ -69,10 +77,7 @@ export default class Scene {
       type: 'root'
     }) as RootContainer
 
-    this._layer = this.sceneMode == SceneMode.VIEW ?
-      new ViewerLayer(this) : new ModelerLayer(this)
-
-    this._layer.target = this._targetEl
+    this._layer && (this._layer.setRootContainer(this._rootContainer))
   }
 
   get fitMode(): FitMode {
