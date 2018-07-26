@@ -16,7 +16,8 @@ export default class RealObjectScene extends THREE.Scene implements RealObject {
 
   dispose() {
     this.children.forEach(child => {
-      (child as RealObject).dispose()
+      child['dispose'] && child['dispose']()
+
       this.remove(child)
     })
   }

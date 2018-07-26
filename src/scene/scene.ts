@@ -45,15 +45,11 @@ export default class Scene {
       take: () => { return this.sceneModel },
       putback: model => { this.sceneModel = model as SceneModel }
     })
-
-    this._layer = this.sceneMode == SceneMode.VIEW ?
-      new ViewerLayer(this) : new ModelerLayer​​(this)
-
-    this._layer.target = this._targetEl
   }
 
   dispose() {
     // TODO implement
+    this._layer.dispose()
   }
 
   get sceneMode() {
@@ -65,10 +61,18 @@ export default class Scene {
   }
 
   set sceneModel(model) {
+    this._layer && this._layer.dispose()
+    this._rootContainer && this._rootContainer.dispose()
+
     this._rootContainer = compile({
       ...model,
       type: 'root'
     }) as RootContainer
+
+    this._layer = this.sceneMode == SceneMode.VIEW ?
+      new ViewerLayer(this) : new ModelerLayer(this)
+
+    this._layer.target = this._targetEl
   }
 
   get fitMode(): FitMode {
@@ -147,11 +151,11 @@ export default class Scene {
   }
 
   undo() {
-    // TODO implement
+    this.commander.undo()
   }
 
   redo() {
-    // TODO implement
+    this.commander.redo()
   }
 
   fullscreen(mode?: FitMode) {
