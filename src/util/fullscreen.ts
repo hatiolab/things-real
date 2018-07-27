@@ -2,6 +2,13 @@
  * Copyright © HatioLab Inc. All rights reserved.
  */
 
+const FULLSCREEN_EVENTS = [
+  "fullscreenchange",
+  "mozfullscreenchange",
+  "webkitfullscreenchange",
+  "MSFullscreenChange"
+]
+
 export default function fullscreen(element, callback?) {
   let doc = document as any
 
@@ -9,15 +16,15 @@ export default function fullscreen(element, callback?) {
     callback && callback.call()
 
     if (!doc.fullscreen && !doc.mozFullScreen && !doc.webkitIsFullScreen && !doc.msFullscreenElement) {
-      ["fullscreenchange", "mozfullscreenchange", "webkitfullscreenchange", "MSFullscreenChange"].forEach(
+      FULLSCREEN_EVENTS.forEach(
         event => doc.removeEventListener(event, _fullscreen_callback)
-      );
+      )
     }
   }
 
-  ["fullscreenchange", "mozfullscreenchange", "webkitfullscreenchange", "MSFullscreenChange"].forEach(
+  FULLSCREEN_EVENTS.forEach(
     event => doc.addEventListener(event, _fullscreen_callback)
-  );
+  )
 
   if (element.requestFullScreen)
     element.requestFullScreen();
