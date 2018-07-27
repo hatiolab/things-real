@@ -83,6 +83,8 @@ export default class Layer extends EventSource {
 
       element.style.width = width + 'px';
       element.style.height = height + 'px';
+
+      this.invalidate()
     })
   }
 

@@ -164,8 +164,20 @@ export default class Scene {
   }
 
   fullscreen(mode?: FitMode) {
+    var height = this._targetEl.offsetHeight
+    var interval
+
     fullscreen(this._targetEl, () => {
       this.fit(mode)
+      interval = setInterval(() => {
+
+        if (height !== this._targetEl.offsetHeight) {
+          this.fit(mode)
+          height = this._targetEl.offsetHeight
+        } else {
+          clearInterval(interval)
+        }
+      }, 500)
     })
   }
 }
