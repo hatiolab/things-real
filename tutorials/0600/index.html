@@ -9,7 +9,6 @@
   #scene {
     width: 100%;
     height: 100%;
-    /* background-color: navy; */
     overflow: hidden;
   }
   </style>
@@ -173,6 +172,7 @@
 
     function dispose() {
       scene && scene.dispose()
+      stop()
       scene = undefined
     }
 
@@ -188,7 +188,7 @@
       stop()
 
       interval = setInterval(() => {
-        scene.findAll('dom').forEach(dom => {
+        scene && scene.findAll('dom').forEach(dom => {
           let r = dom.state.rotate || rotate
 
           dom.set({
@@ -197,6 +197,18 @@
               y: r.y + 0.1,
               z: r.z + 0.1
             }
+          })
+        })
+
+        scene && scene.findAll('cube').forEach(cube => {
+          let d = cube.state.dimension
+          let delta = Math.random() * 10 - 5
+          cube.set({
+            dimension: {
+              width: d.width + delta,
+              height: d.height + delta,
+              depth: d.depth + delta
+            }          
           })
         })
       }, 100)

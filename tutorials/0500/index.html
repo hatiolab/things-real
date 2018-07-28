@@ -78,7 +78,7 @@
       {x: -3, y: -3}, {x: -2, y: -1}]
 
     var colors = ['red', 'cyan', 'blue', 'green', 'yellow']
-    var types = ['cube', 'cylinder', 'sphere', 'cone', 'rect', 'path', 'image']
+    var types = ['cube', 'cylinder', 'sphere', 'cone', 'rect', 'path']
     var src = 'http://www.hatiolab.com/assets/img/logo.png'
 
     var scene
@@ -127,6 +127,7 @@
 
     function dispose() {
       scene && scene.dispose()
+      stop()
       scene = undefined
     }
 
@@ -142,7 +143,7 @@
       stop()
 
       interval = setInterval(() => {
-        scene.findAll('cube').forEach(cube => {
+        scene && scene.findAll('cube').forEach(cube => {
           let r = cube.state.rotate || rotate
 
           cube.set({

@@ -9,7 +9,6 @@ import * as THREE from 'three'
 
 export default abstract class AbstractRealObject extends THREE.Object3D implements RealObject {
   protected _component: Component
-  private updating: boolean
 
   constructor(component) {
     super()
@@ -39,10 +38,10 @@ export default abstract class AbstractRealObject extends THREE.Object3D implemen
     this.build()
   }
 
-  // setDimension(dimension) {
-  //   this.clear()
-  //   this.build()
-  // }
+  update() {
+    this.clear()
+    this.build()
+  }
 
   protected abstract build()
 
@@ -59,27 +58,4 @@ export default abstract class AbstractRealObject extends THREE.Object3D implemen
       this.remove(child)
     })
   }
-
-  prerender(force?) {
-    // this.update();
-
-    // if (this.component.isContainer) {
-    //   (this.component as Container).components.forEach(child => {
-    //     let object = child.object3D as AbstractRealObject
-    //     object.prerender(force)
-    //   })
-    // }
-  }
-
-  // onchange(after, before) {
-  //   if (this.updating) {
-  //     return;
-  //   }
-  //   this.updating = true;
-
-  //   requestAnimationFrame(() => {
-  //     this.update();
-  //     this.updating = false;
-  //   })
-  // }
 }

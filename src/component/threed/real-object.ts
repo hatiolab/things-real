@@ -3,7 +3,6 @@
  */
 
 import Component from '../component'
-import { Dimension } from '../../types'
 import * as THREE from 'three'
 
 export default interface RealObject extends THREE.Object3D {
@@ -11,5 +10,9 @@ export default interface RealObject extends THREE.Object3D {
   isRealObject
 
   dispose()
-  prerender(force?: boolean)
+
+  /**
+   * Component의 상태 속성을 3D 오브젝트에 반영한다.
+   */
+  update()
 }
