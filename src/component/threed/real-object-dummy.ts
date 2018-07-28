@@ -8,5 +8,4 @@ export default class RealObjectDummy extends AbstractRealObject {
 
   build() { }
   update() { }
-  prerender() { }
 }

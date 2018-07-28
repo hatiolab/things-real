@@ -39,8 +39,6 @@ export default abstract class RealObjectMesh extends THREE.Mesh implements RealO
     this.build()
   }
 
-  prerender() { }
-
   update() {
     this.clear()
     this.build()
