@@ -1,0 +1,219 @@
+<html>
+
+<head>
+  <style>
+  #wrapper {
+    width: 100%;
+    height: 500px;
+  }
+  #scene {
+    width: 100%;
+    height: 100%;
+    /* background-color: navy; */
+    overflow: hidden;
+  }
+  </style>
+  <script src="../../things-real.js"></script>
+</head>
+
+<body>
+  <h1>3D Modeling Library - REAL</h1>
+  <div id="wrapper">
+    <div id="scene"></div>
+  </div>
+
+  <p>
+    <button id='create'>Create</button>
+    <button id='dispose'>Dispose</button>
+    <button id='undo'>Undo</button>
+    <button id='redo'>Redo</button>
+    <button id='start'>Start</button>
+    <button id='stop'>Stop</button>
+    <button id='fullscreen'>Full-Screen</button>
+  </p>
+
+  <script type="module">
+    import { html, render } from '../../node_modules/lit-html/lit-html.js';
+
+    document.querySelectorAll('button').forEach(button => {
+      let id = button.id
+      button.addEventListener('click', e => {
+        eval(id).call()
+      })
+    })
+
+    var {
+      Scene,
+      SceneMode,
+      FitMode
+    } = REAL;
+
+    var dimension = {
+      width: 200,
+      height: 200
+    }
+
+    var scale = {
+      x: 1,
+      y: 1,
+      z: 1
+    }
+
+    var rotate = {
+      x: 0,
+      y: 0,
+      z: 0
+    }
+
+    var src = 'https://www.w3schools.com/howto/img_paris.jpg'
+
+    var scene
+    var interval
+
+    var textStyle = `
+      color: yellow;
+      margin: 0;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    `
+
+    export function create() {
+      scene = new Scene({
+        targetEl: 'scene',
+        mode: SceneMode.EDIT,
+        model: {
+          width: 700,
+          height: 300,
+          components: [{
+            id: 'first',
+            type: 'dom',
+            tagName: 'div',
+            dimension,
+            translate: {
+              x: -250,
+              y: 100,
+              z: 0
+            },
+            rotate,
+            scale,
+            options: {
+              innerHTML: `
+                <h1 style="${textStyle}">HAHAHA</h1>
+              `,
+              style: 'background-color: red;'
+            }
+          }, {
+            id: 'second',
+            type: 'dom',
+            tagName: 'img',
+            dimension,
+            translate: {
+              x: 0,
+              y: 100,
+              z: 0
+            },
+            rotate,
+            scale,
+            options: {
+              src
+            }
+          }, {
+            id: 'third',
+            type: 'dom',
+            tagName: 'video',
+            dimension,
+            translate: {
+              x: 250,
+              y: 100,
+              z: 0
+            },
+            rotate,
+            scale,
+            options: {
+              src: 'http://techslides.com/demos/sample-videos/small.webm',
+              controls: true,
+              autoplay: true,
+              style: 'background-color: gray;'
+            }
+          }, {
+            id: 'first-cube',
+            type: 'cube',
+            color: 'red',
+            dimension: {
+              width: 100,
+              height: 100,
+              depth: 100
+            },
+            translate: {
+              x: 200,
+              y: 50,
+              z: -150
+            }          
+          }, {
+            id: 'second-cube',
+            type: 'cube',
+            color: 'green',
+            dimension: {
+              width: 100,
+              height: 100,
+              depth: 100
+            },
+            translate: {
+              x: -200,
+              y: 50,
+              z: 150
+            }          
+          }]
+        },
+        fit: FitMode.RATIO
+      })
+    }
+
+    function dispose() {
+      scene && scene.dispose()
+      scene = undefined
+    }
+
+    function undo() {
+      scene && scene.undo()
+    }
+
+    function redo() {
+      scene && scene.redo()
+    }
+
+    function start() {
+      stop()
+
+      interval = setInterval(() => {
+        scene.findAll('dom').forEach(dom => {
+          let r = dom.state.rotate || rotate
+
+          dom.set({
+            rotate: {
+              x: r.x + 0.1,
+              y: r.y + 0.1,
+              z: r.z + 0.1
+            }
+          })
+        })
+      }, 100)
+    }
+
+    function stop() {
+      clearInterval(interval)
+      interval = undefined
+    }
+
+    function fullscreen() {
+      scene && scene.fullscreen(FitMode.RATIO)
+    }
+
+    create()
+
+  </script>
+</body>
+
+</html>

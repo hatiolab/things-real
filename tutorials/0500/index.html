@@ -9,6 +9,8 @@
   #scene {
     width: 100%;
     height: 100%;
+    background-color: navy;
+    overflow: hidden;
   }
   </style>
   <script src="../../things-real.js"></script>
@@ -76,7 +78,8 @@
       {x: -3, y: -3}, {x: -2, y: -1}]
 
     var colors = ['red', 'cyan', 'blue', 'green', 'yellow']
-    var types = ['cube', 'cylinder', 'sphere', 'cone', 'rect', 'path']
+    var types = ['cube', 'cylinder', 'sphere', 'cone', 'rect', 'path', 'image']
+    var src = 'http://www.hatiolab.com/assets/img/logo.png'
 
     var scene
     var interval
@@ -113,7 +116,8 @@
               lineWidth: 2,
               fillStyle: colors[(idx + 1) % colors.length],
               strokeStyle: colors[(idx + 2) % colors.length],
-              curved: true
+              curved: true,
+              src
             }
           }))
         },
