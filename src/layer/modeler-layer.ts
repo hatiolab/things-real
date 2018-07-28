@@ -21,9 +21,9 @@ export default class ModelerLayer extends ViewerLayer {
   dispose() {
     this._transformControls && this._transformControls.dispose();
 
-    this.element.removeEventListener('click', this.boundOnclick)
-    this.element.removeEventListener('mousedown', this.boundOnmousedown)
-    this.element.removeEventListener('mouseup', this.boundOnmouseup)
+    this.canvas.removeEventListener('click', this.boundOnclick)
+    this.canvas.removeEventListener('mousedown', this.boundOnmousedown)
+    this.canvas.removeEventListener('mouseup', this.boundOnmouseup)
 
     super.dispose()
   }
@@ -35,9 +35,9 @@ export default class ModelerLayer extends ViewerLayer {
     this.boundOnmousedown = this.onmousedown.bind(this)
     this.boundOnmouseup = this.onmouseup.bind(this)
 
-    this.element.addEventListener('click', this.boundOnclick)
-    this.element.addEventListener('mousedown', this.boundOnmousedown)
-    this.element.addEventListener('mouseup', this.boundOnmouseup)
+    this.canvas.addEventListener('click', this.boundOnclick)
+    this.canvas.addEventListener('mousedown', this.boundOnmousedown)
+    this.canvas.addEventListener('mouseup', this.boundOnmouseup)
   }
 
   setRootContainer(rootContainer​​) {
@@ -52,21 +52,20 @@ export default class ModelerLayer extends ViewerLayer {
 
   get transformControls() {
     if (!this._transformControls) {
-      this._transformControls = new TransformControls(this.camera, this.element);
+      this._transformControls = new TransformControls(this.camera, this.canvas);
 
       this._transformControls.addEventListener('change', () => {
-        this.render();
+        this.invalidate();
       });
 
       this._transformControls.addEventListener('objectChange', () => {
         let object = this._transformControls.object;
+        let component = object && object.component
 
         object && CommandChange.around(this.owner.commander, () => {
-          // object의 변화를 component에 반영한다.
-          object.updateReverse();
+          // 3d-object의 변화를 component에 반영한다.
+          component.updateTransformReverse(object);
         });
-
-        // object && object.update(true);
       });
     }
 
@@ -99,7 +98,7 @@ export default class ModelerLayer extends ViewerLayer {
     var {
       width,
       height
-    } = (this.element as HTMLCanvasElement);
+    } = this.canvas
 
     var vector = new THREE.Vector2(
       x / width * 2 - 1,

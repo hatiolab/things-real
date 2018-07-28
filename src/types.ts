@@ -39,7 +39,8 @@ export interface ComponentModel {
   templatePrefix?: string,
   components?: ComponentModel[],
   mappings?: DataSpreadModel[],
-  [propName: string]: any;
+  options?: { [propName: string]: any; },
+  [propName: string]: any
 }
 
 export enum SceneMode {

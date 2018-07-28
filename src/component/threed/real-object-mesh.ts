@@ -2,6 +2,7 @@
  * Copyright © HatioLab Inc. All rights reserved.
  */
 
+import Component from '../component'
 import RealObject from './real-object'
 
 import * as THREE from 'three'
@@ -10,31 +11,9 @@ export default abstract class RealObjectMesh extends THREE.Mesh implements RealO
   protected _component
 
   constructor(component) {
-    super();
+    super()
 
-    this.component = component;
-
-    var {
-      scale: {
-        x: sx = 1,
-        y: sy = 1,
-        z: sz = 1
-      } = { x: 1, y: 1, z: 1 },
-      translate: {
-        x: tx = 0,
-        y: ty = 0,
-        z: tz = 0
-      } = { x: 0, y: 0, z: 0 },
-      rotate: {
-        x: rx = 0,
-        y: ry = 0,
-        z: rz = 0
-      } = { x: 0, y: 0, z: 0 }
-    } = component.state
-
-    this.position.set(tx, ty, tz);
-    this.rotation.set(rx, ry, rz);
-    this.scale.set(sx, sy, sz);
+    this.component = component
   }
 
   get isRealObject() {
@@ -61,30 +40,6 @@ export default abstract class RealObjectMesh extends THREE.Mesh implements RealO
   }
 
   prerender() { }
-
-  updateReverse() {
-    var rotation = this.rotation;
-    var position = this.position;
-    var scale = this.scale;
-
-    this.component.set({
-      rotate: {
-        x: rotation.x,
-        y: rotation.y,
-        z: rotation.z
-      },
-      translate: {
-        x: position.x,
-        y: position.y,
-        z: position.z
-      },
-      scale: {
-        x: scale.x,
-        y: scale.y,
-        z: scale.z
-      }
-    })
-  }
 
   // public abstract setDimension(dimension)
   protected abstract buildGeometry(): THREE.Geometry | THREE.BufferGeometry

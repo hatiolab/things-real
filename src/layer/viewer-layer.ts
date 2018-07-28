@@ -5,17 +5,22 @@
 import { Scene } from '../scene'
 import Layer from './layer'
 import EditorControls from '../threed/controls/editor-controls'
+import { CSS3DRenderer } from '../threed/renderers/CSS3DRenderer'
 import RealObjectScene from '../component/threed/real-object-scene'
+
 import * as THREE from 'three'
 
 export default class ViewerLayer extends Layer {
 
   protected _scene: RealObjectScene
+  private _canvas: HTMLCanvasElement
+  private _div: HTMLDivElement
   private _raycaster: THREE.Raycaster
   private _camera: THREE.PerspectiveCamera
   private _lights: THREE.Light[]
   private _editorControls: EditorControls
-  private _renderer: THREE.WebGLRenderer
+  private _glRenderer: THREE.WebGLRenderer
+  private _cssRenderer //: CSS3DRenderer
 
   private _textureLoader: THREE.TextureLoader
 
@@ -29,16 +34,17 @@ export default class ViewerLayer extends Layer {
 
   dispose() {
 
-    this._editorControls && this._editorControls.dispose()
+    this.editorControls && this.editorControls.dispose()
 
     this.scene.dispose()
-    this.renderer.dispose()
+    this.glRenderer.dispose()
+    // this.cssRenderer.dispose()
 
     super.dispose()
   }
 
   ready() {
-    this.setEditorControl(this.camera, this.element)
+    this.setEditorControl(this.camera, this.canvas)
   }
 
   setRootContainer(rootContainer​​) {
@@ -55,6 +61,19 @@ export default class ViewerLayer extends Layer {
     }
   }
 
+  buildOverlays() {
+    this._canvas = document.createElement('canvas')
+    this._canvas.style.position = 'absolute'
+    this._canvas.style.top = '0'
+
+    this.element.appendChild(this.cssRenderer.domElement)
+    this.element.appendChild(this._canvas)
+  }
+
+  get canvas() {
+    return this._canvas
+  }
+
   get editorControls() {
     return this._editorControls
   }
@@ -68,7 +87,7 @@ export default class ViewerLayer extends Layer {
 
     this._editorControls = new EditorControls(camera, element)
     this._editorControls.on('change', () => {
-      this.render()
+      this.invalidate()
     })
   }
 
@@ -80,19 +99,30 @@ export default class ViewerLayer extends Layer {
     return this._raycaster
   }
 
-  get renderer() {
-    if (!this._renderer && this.element) {
-      this._renderer = new THREE.WebGLRenderer({
-        canvas: (this.element as HTMLCanvasElement),
+  get glRenderer() {
+    if (!this._glRenderer && this.canvas) {
+      this._glRenderer = new THREE.WebGLRenderer({
+        canvas: this.canvas,
         precision: "highp",
         antialias: true,
         alpha: true
       });
 
-      this._renderer.setClearColor(0xffffff, 0)
+      this._glRenderer.setClearColor(0xffffff, 0)
     }
 
-    return this._renderer
+    return this._glRenderer
+  }
+
+  get cssRenderer() {
+    if (!this._cssRenderer) {
+      this._cssRenderer = new CSS3DRenderer()
+      this._div = this._cssRenderer.domElement
+      this._div.style.position = 'absolute'
+      this._div.style.top = '0'
+    }
+
+    return this._cssRenderer
   }
 
   get camera() {
@@ -135,15 +165,6 @@ export default class ViewerLayer extends Layer {
     return this._scene
   }
 
-  draw() {
-    if (!this.renderer) {
-      return;
-    }
-
-    this.prerender()
-    this.render()
-  }
-
   prerender(force?) {
 
     this.rootContainer.components.forEach(component => {
@@ -153,14 +174,11 @@ export default class ViewerLayer extends Layer {
   }
 
   render() {
-    // TODO transformControls가 update될 필요가 있을 때만, update 하도록 개선.
-    this.renderer.render(this.scene, this.camera)
+    this.glRenderer.render(this.scene, this.camera)
+    this.cssRenderer.render(this.rootContainer.cssScene3D, this.camera)
   }
 
-  resize() {
-    super.resize()
-
-    var { offsetWidth: width, offsetHeight: height } = this.target
+  onresize(width, height) {
 
     this.camera.near = 1
     this.camera.far = 10000
@@ -173,39 +191,15 @@ export default class ViewerLayer extends Layer {
     // this.camera.position.set(0, h, h * 3 / 4)
     this.camera.updateProjectionMatrix()
 
-    this.renderer.setSize(width, height, true)
-  }
-
-  /*
-   * capturePath(path) 파라미터로 주어진 path를 포함하는 컨테이너를 찾는다.
-   * @path
-   * @excepts 컨테이너를 찾을 때 제외되는 대상이다.
-   */
-
-  capturePath(path, excepts) {
-
-    // TODO 3D 공간에서 구현해야함..
-
-    var capturables = this.rootContainer.layout.capturables(this)
-
-    for (let i = capturables.length - 1; i >= 0; i--) {
-      let capturable = capturables[i]
-      if (!capturable.isContainer())
-        continue
-
-      let found = capturable.capturePath(path, excepts)
-      if (found)
-        return found;
-    }
-
-    return false
+    this.cssRenderer.setSize(width, height)
+    this.glRenderer.setSize(width, height, true)
   }
 
   capture(x, y) {
     var {
       width,
       height
-    } = (this.element as HTMLCanvasElement);
+    } = this.canvas
 
     var vector = new THREE.Vector2(
       x / width * 2 - 1,

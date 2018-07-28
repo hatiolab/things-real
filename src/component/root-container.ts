@@ -11,6 +11,8 @@ import { compile } from '../real'
 import { debounce } from 'lodash'
 import EventEngine from '../event/event-engine'
 
+import * as THREE from 'three'
+
 var refresh_mapping_debouncer = debounce(function mapper(comp: Component) {
   comp.dataSpreadEngine.execute()
   comp.isContainer && (comp as Container).components.forEach(child => mapper(child))
@@ -29,12 +31,18 @@ export default class RootContainer extends Container {
   /**
    * three.js related
    */
-  private scene3D: RealObjectScene
+  private _scene3D: RealObjectScene
+  private _cssScene3D: THREE.Scene
 
   constructor(model: SceneModel) {
     super(model)
 
     this.refreshMappings()
+  }
+
+  dispose() {
+    var children = [...this.cssScene3D.children]
+    children.forEach(child => this.cssScene3D.remove(child))
   }
 
   get isRoot() {
@@ -46,10 +54,17 @@ export default class RootContainer extends Container {
   }
 
   get object3D() {
-    if (!this.scene3D) {
-      this.scene3D = new RealObjectScene(this)
+    if (!this._scene3D) {
+      this._scene3D = new RealObjectScene(this)
     }
-    return this.scene3D
+    return this._scene3D
+  }
+
+  get cssScene3D() {
+    if (!this._cssScene3D) {
+      this._cssScene3D = new THREE.Scene()
+    }
+    return this._cssScene3D
   }
 
   get width() {
@@ -207,6 +222,10 @@ export default class RootContainer extends Container {
       this.addTemplate(templatePrefix, component)
 
     this.eventEngine.add(component, component.eventMap)
+
+    if (component.cssObject3D) {
+      this.cssScene3D.add(component.cssObject3D)
+    }
   }
 
   private _removeTraverse(component: Component) {
@@ -224,6 +243,10 @@ export default class RootContainer extends Container {
       this.removeTemplate(templatePrefix, component)
 
     this.eventEngine.remove(component)
+
+    if (component.cssObject3D) {
+      this.cssScene3D.remove(component.cssObject3D)
+    }
   }
 }
 

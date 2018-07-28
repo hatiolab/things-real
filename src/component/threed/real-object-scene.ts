@@ -23,9 +23,6 @@ export default class RealObjectScene extends THREE.Scene implements RealObject {
   }
 
   // setDimension() { }
-
-  updateReverse() { }
-
   prerender() { }
 
   get isRealObject() {

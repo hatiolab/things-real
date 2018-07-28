@@ -8,7 +8,7 @@ import Shape from '../shape'
 import * as THREE from 'three'
 import * as tinycolor from 'tinycolor2'
 
-import BoundUVGenerator from './bound-uv-generator'
+import BoundUVGenerator from '../../threed/utils/bound-uv-generator'
 
 const EXTRUDE_OPTIONS = {
   steps: 1,
