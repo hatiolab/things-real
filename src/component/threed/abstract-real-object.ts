@@ -39,10 +39,10 @@ export default abstract class AbstractRealObject extends THREE.Object3D implemen
     this.build()
   }
 
-  // setDimension(dimension) {
-  //   this.clear()
-  //   this.build()
-  // }
+  update() {
+    this.clear()
+    this.build()
+  }
 
   protected abstract build()
 

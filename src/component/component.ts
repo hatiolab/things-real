@@ -29,7 +29,6 @@ export default class Component extends ModelAndState implements LifeCycleCallbac
   }
 
   private _object3D: THREE.Object3D
-  private _cssObject3D: THREE.Object3D
 
   constructor(model: ComponentModel) {
     super(model);
@@ -73,13 +72,6 @@ export default class Component extends ModelAndState implements LifeCycleCallbac
     return this._object3D
   }
 
-  get cssObject3D(): THREE.Object3D {
-    if (!this._cssObject3D) {
-      this._cssObject3D = this.buildCSS3DObject()
-    }
-    return this._cssObject3D
-  }
-
   protected buildCSS3DObject(): THREE.Object3D {
     return
   }
@@ -92,7 +84,7 @@ export default class Component extends ModelAndState implements LifeCycleCallbac
     return new RealObjectDummy(this)
   }
 
-  private updateTransform() {
+  protected updateTransform() {
 
     var {
       scale: {
@@ -116,12 +108,6 @@ export default class Component extends ModelAndState implements LifeCycleCallbac
       this.object3D.position.set(tx, ty, tz);
       this.object3D.rotation.set(rx, ry, rz);
       this.object3D.scale.set(sx, sy, sz);
-    }
-
-    if (this.cssObject3D) {
-      this.cssObject3D.position.set(tx, ty, tz);
-      this.cssObject3D.rotation.set(rx, ry, rz);
-      this.cssObject3D.scale.set(sx, sy, sz);
     }
   }
 
@@ -212,24 +198,22 @@ export default class Component extends ModelAndState implements LifeCycleCallbac
   onchangetranslate(after, before) {
     var { x = 0, y = 0, z = 0 } = after
     this.object3D.position.set(x, y, z)
-    this.cssObject3D && this.cssObject3D.position.set(x, y, z)
   }
 
   onchangerotate(after, before) {
     var { x = 0, y = 0, z = 0 } = after
     this.object3D.rotation.set(x, y, z)
-    this.cssObject3D && this.cssObject3D.rotation.set(x, y, z)
   }
 
   onchangescale(after, before) {
     var { x = 1, y = 1, z = 1 } = after
     this.object3D.scale.set(x, y, z)
-    this.cssObject3D && this.cssObject3D.scale.set(x, y, z)
+  }
+
+  onchangedimension(after, before) {
+    (this.object3D as any).update()
   }
 }
-
-/* Method Object mixin 방법. */
-// mixin(Component, Data);
 
 Component.register('component', Component)
 

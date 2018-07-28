@@ -4,6 +4,7 @@
 
 import Component from './component'
 import Container from './container'
+import DOMComponent from './dom';
 import RealObjectScene from './threed/real-object-scene'
 import { SceneModel } from '../types'
 import { warn, error, clonedeep } from '../util'
@@ -223,8 +224,8 @@ export default class RootContainer extends Container {
 
     this.eventEngine.add(component, component.eventMap)
 
-    if (component.cssObject3D) {
-      this.cssScene3D.add(component.cssObject3D)
+    if ((component as DOMComponent).cssObject3D) {
+      this.cssScene3D.add((component as DOMComponent).cssObject3D)
     }
   }
 
@@ -244,8 +245,8 @@ export default class RootContainer extends Container {
 
     this.eventEngine.remove(component)
 
-    if (component.cssObject3D) {
-      this.cssScene3D.remove(component.cssObject3D)
+    if ((component as DOMComponent).cssObject3D) {
+      this.cssScene3D.remove((component as DOMComponent).cssObject3D)
     }
   }
 }

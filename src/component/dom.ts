@@ -8,7 +8,20 @@ import RealObjectDomElement from './threed/real-object-dom-element'
 import { CSS3DObject } from '../threed/renderers/CSS3DRenderer'
 import * as THREE from 'three'
 
+const SCALE = { x: 1, y: 1, z: 1 }
+const ROTATE = { x: 0, y: 0, z: 0 }
+const TRANSLATE = ROTATE
+
 export default class DOMComponent extends Component {
+
+  private _cssObject3D: THREE.Object3D
+
+  get cssObject3D(): THREE.Object3D {
+    if (!this._cssObject3D) {
+      this._cssObject3D = this.buildCSS3DObject()
+    }
+    return this._cssObject3D
+  }
 
   buildObject3D() {
     return new RealObjectDomElement(this)
@@ -39,6 +52,60 @@ export default class DOMComponent extends Component {
     cssObject.rotation.set(rotation.x, rotation.y, rotation.z)
 
     return cssObject
+  }
+
+  protected updateTransform() {
+    super.updateTransform()
+
+    var {
+      scale: {
+        x: sx = 1,
+        y: sy = 1,
+        z: sz = 1
+      } = SCALE,
+      translate: {
+        x: tx = 0,
+        y: ty = 0,
+        z: tz = 0
+      } = TRANSLATE,
+      rotate: {
+        x: rx = 0,
+        y: ry = 0,
+        z: rz = 0
+      } = ROTATE
+    } = this.state
+
+    if (this.cssObject3D) {
+      this.cssObject3D.position.set(tx, ty, tz);
+      this.cssObject3D.rotation.set(rx, ry, rz);
+      this.cssObject3D.scale.set(sx, sy, sz);
+    }
+  }
+
+  onchangetranslate(after, before) {
+    super.onchangetranslate(after, before)
+    var { x = 1, y = 1, z = 1 } = after
+    this.cssObject3D.position.set(x, y, z)
+  }
+
+  onchangerotate(after, before) {
+    super.onchangerotate(after, before)
+    var { x = 1, y = 1, z = 1 } = after
+    this.cssObject3D.rotation.set(x, y, z)
+  }
+
+  onchangescale(after, before) {
+    super.onchangescale(after, before)
+    var { x = 1, y = 1, z = 1 } = after
+    this.cssObject3D.scale.set(x, y, z)
+  }
+
+  onchangedimension(after, before) {
+    super.onchangedimension(after, before)
+    if (this.cssObject3D) {
+      (this.cssObject3D as any).element.style.width = after.width;
+      (this.cssObject3D as any).element.style.height = after.height;
+    }
   }
 }
 
