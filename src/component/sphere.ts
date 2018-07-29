@@ -10,21 +10,6 @@ import * as THREE from 'three'
 
 class ObjectSphere extends RealObjectMesh {
 
-  // setDimension(dimension: Dimension) {
-  //   var old = (this.geometry as THREE.SphereGeometry).parameters;
-
-  //   var {
-  //     width, height, depth
-  //   } = dimension
-
-  //   var radius = Math.min(width, height, depth) / 2;
-
-  //   (this.geometry as THREE.SphereGeometry).parameters = {
-  //     ...old,
-  //     radius
-  //   }
-  // }
-
   buildGeometry() {
 
     var {
