@@ -16,6 +16,14 @@ export default class DOMComponent extends Component {
 
   private _cssObject3D: THREE.Object3D
 
+  /**
+   * property isDomComponent
+   * readonly
+   */
+  get isDomComponent(): boolean {
+    return true
+  }
+
   get cssObject3D(): THREE.Object3D {
     if (!this._cssObject3D) {
       this._cssObject3D = this.buildCSS3DObject()

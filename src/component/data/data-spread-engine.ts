@@ -27,6 +27,11 @@ export default class DataSpreadEngine {
     this.reset()
   }
 
+  dispose() {
+    delete this.spreadRules
+    delete this.owner
+  }
+
   reset() {
     this.spreadRules = buildSpreadRules(this.owner.mappings)
     // this.execute()

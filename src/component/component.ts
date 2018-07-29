@@ -6,11 +6,11 @@ import { registry, residence } from './registry'
 import { LifeCycleCallback } from './callback'
 import { ModelAndState, select } from './model'
 import { Class, ComponentModel } from '../types'
-import { DataSpreadEngine } from './data'
 import Container from './container'
 import RootContainer from './root-container'
-import { clonedeep, mixin, error } from '../util'
+import { DataSpreadEngine } from './data'
 import RealObjectDummy from './threed/real-object-dummy';
+import { clonedeep, error } from '../util'
 
 type EventMap = { [selector: string]: { [delegator: string]: { [event: string]: Function } } }
 
@@ -20,23 +20,39 @@ const TRANSLATE = ROTATE
 
 export default class Component extends ModelAndState implements LifeCycleCallback {
 
+  /**
+   * 컴포넌트 타입을 등록
+   * @param {string} type component type
+   * @param {Class} clazz component class
+   */
   static register(type: string, clazz?: Class): Class {
     return registry.register(type, clazz);
   }
 
+  /**
+   * 현재 어플리케이션에 메모리에 남아있는 모든 컴포넌트 리스트를 조회
+   */
   static get residents(): Object {
     return residence.residents;
   }
 
-  private _object3D: THREE.Object3D
-
+  /**
+   * 새로운 컴포넌트 인스턴스를 모델 정보에 맞게 생성
+   * @param {ComponentModel} model 컴포넌트 모델
+   */
   constructor(model: ComponentModel) {
     super(model);
 
     residence.put(this);
   }
 
-  dispose() { }
+  /**
+   * 컴포넌트 제거
+   */
+  dispose() {
+    this.disposeDataSpreadEngine()
+    this.disposeObject3D()
+  }
 
   /* LifeCycleCallback */
   created() { }
@@ -46,23 +62,69 @@ export default class Component extends ModelAndState implements LifeCycleCallbac
   disposed() { }
 
   /* Component */
+
+  /**
+   * property hierarchy
+   * readonly
+   */
   get hierarchy(): ComponentModel {
-    return clonedeep(this.model);
+    return clonedeep(this.model)
   }
 
-  public parent: Container
-
+  /**
+   * property isContainer
+   * readonly
+   */
   get isContainer(): boolean {
     return false
   }
 
+  /**
+   * property isRoot
+   * readonly
+   */
   get isRoot(): boolean {
     return false
   }
 
+  /**
+   * property isDomComponent
+   * readonly
+   */
+  get isDomComponent(): boolean {
+    return false
+  }
+
+  /**
+   * property root
+   * readonly
+   */
   get root(): RootContainer {
     return this.parent.root
   }
+
+  /**
+   * property parent
+   */
+  private _parent: Container
+
+  get parent() {
+    return this._parent
+  }
+
+  set parent(parent) {
+    this._parent = this.setParent(parent)
+  }
+
+  protected setParent(parent) {
+    return parent
+  }
+
+  /**
+   * property object3D
+   * readonly
+   */
+  private _object3D: THREE.Object3D
 
   get object3D(): THREE.Object3D {
     if (!this._object3D) {
@@ -72,18 +134,25 @@ export default class Component extends ModelAndState implements LifeCycleCallbac
     return this._object3D
   }
 
-  protected buildCSS3DObject(): THREE.Object3D {
-    return
-  }
-
-  get renderer() {
-    return this.root.renderer
-  }
-
   protected buildObject3D(): THREE.Object3D {
     return new RealObjectDummy(this)
   }
 
+  protected disposeObject3D() {
+    this._object3D && (this._object3D as any).dispose()
+  }
+
+  /**
+   * property renderer
+   * readonly
+   */
+  get renderer() {
+    return this.root.renderer
+  }
+
+  /**
+   * Component의 상태값의 변화를 Object3D에 반영
+   */
   protected updateTransform() {
 
     var {
@@ -111,6 +180,9 @@ export default class Component extends ModelAndState implements LifeCycleCallbac
     }
   }
 
+  /**
+   * Object3D 모델의 변화를 Component의 모델값에 반영
+   */
   updateTransformReverse() {
     var object3D = this.object3D
 
@@ -118,7 +190,7 @@ export default class Component extends ModelAndState implements LifeCycleCallbac
     var position = object3D.position;
     var scale = object3D.scale;
 
-    this.set({
+    this.setModel({
       rotate: {
         x: rotation.x,
         y: rotation.y,
@@ -150,7 +222,12 @@ export default class Component extends ModelAndState implements LifeCycleCallbac
    * findById(id) 파라미터 id와 같은 id를 가진 컴포넌트를 찾는다.
    */
 
-  findAll(selector: string | Function, ...others) {
+  /**
+   * 컴포넌트 계층에서 selector에 해당하는 컴포넌트들을 찾는다
+   * @param {string} selector 
+   * @param {any} others 
+   */
+  findAll(selector: string | Function, ...others): Component[] {
     if (typeof selector === 'string')
       return select(selector, this, others[0] || this) // others[0] means (self)
 
@@ -158,22 +235,33 @@ export default class Component extends ModelAndState implements LifeCycleCallbac
       return [this]
   }
 
-  findById(id: string) {
+  /**
+   * 루트 컨테이너 계층 안에서 해당 id를 가진 컴포넌트를 찾는다
+   * @param {string} id 
+   */
+  findById(id: string): Component {
     return this.root.findById(id)
   }
 
   /**
-   * Data Manipulation Methods
+   * Data Manipulation
    */
-
   private _dataSpreadEngine: DataSpreadEngine
 
-  get dataSpreadEngine​​() {
+  get dataSpreadEngine() {
     if (!this._dataSpreadEngine) {
-      this._dataSpreadEngine = new DataSpreadEngine(this)
+      this._dataSpreadEngine = this.createDataSpreadEngine()
     }
 
     return this._dataSpreadEngine
+  }
+
+  protected createDataSpreadEngine() {
+    return new DataSpreadEngine(this)
+  }
+
+  protected disposeDataSpreadEngine() {
+    this._dataSpreadEngine && this._dataSpreadEngine.dispose()
   }
 
   /**
@@ -194,7 +282,6 @@ export default class Component extends ModelAndState implements LifeCycleCallbac
     this.dataSpreadEngine.reset()
   }
 
-  /* 아래 로직들은 모두 prerender로 들어가는 것이 좋겠다. */
   onchangetranslate(after, before) {
     var { x = 0, y = 0, z = 0 } = after
     this.object3D.position.set(x, y, z)
