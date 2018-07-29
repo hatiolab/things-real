@@ -10,7 +10,10 @@ import { isEqual } from 'lodash'
 
 export class ModelAndState extends EventSource implements ComponentModel, EventCallback {
 
-  constructor(model: Object) {
+  /**
+   * @param {ComponentModel} model ComponentModel
+   */
+  constructor(model: ComponentModel) {
     super();
 
     this._model = clonedeep(model);
@@ -20,10 +23,16 @@ export class ModelAndState extends EventSource implements ComponentModel, EventC
   private _model: ComponentModel = {}
   private _state: ComponentModel = {}
 
+  /**
+   * 객체의 모델 정보 전체 조회
+   */
   get model(): ComponentModel {
     return this._model;
   }
 
+  /**
+   * 객체의 상태 정보 전체 조회
+   */
   get state(): ComponentModel {
     return {
       ...this._model,
@@ -44,21 +53,32 @@ export class ModelAndState extends EventSource implements ComponentModel, EventC
   }
 
   /**
-   * get / set 함수는 모델을 변경하거나 가져오는 기능을 하도록 정의되어있으나 (기존 things-scene의 관례에 따라)
-   * 실질적으로 State를 변경하거나 가져오는 기능으로 바꾸는 것이 사용 빈도에 있어서 효율적일 것 같다. 또는 아예 제거하는 것이 좋다.
+   * get == getState 
    */
   get(prop: string) {
     return this.getState(prop)
   }
 
+  /**
+   * set == setState 
+   */
   set(props: Object | string, value?: any) {
     this.setState(props, value);
   }
 
+  /**
+   * 주어진 이름의 모델 속성을 제공
+   * @param {string} prop 속성명
+   */
   getModel(prop: string) {
     return this._model[prop];
   }
 
+  /**
+   * 모델 속성을 변경
+   * @param {Object | string} prop 속성명 또는 속성모음 객체
+   * @param {any} value 속성명(prop)이 string 인 경우 해당 속성의 값
+   */
   setModel(props: Object | string, value?: any) {
     if (typeof props === 'string') {
       return this.setModel({ [props]: value })
@@ -101,10 +121,18 @@ export class ModelAndState extends EventSource implements ComponentModel, EventC
     }
   }
 
+  /**
+   * 객체의 상태값을 조회
+   * @param {string} prop 
+   */
   getState(prop: string) {
     return (prop in this._state) ? this._state[prop] : this.getModel(prop)
   }
 
+  /**
+   * 객체의 상태값을 초기화함. 이 경우 모델값과 상태값이 같아진다.
+   * @param {string} prop 
+   */
   clearState(props: string[] | string) {
     if (typeof props === 'string') {
       return this.clearState([props])
@@ -134,6 +162,11 @@ export class ModelAndState extends EventSource implements ComponentModel, EventC
     }
   }
 
+  /**
+   * 객체의 상태값을 변경
+   * @param {Object | string} prop 속성명 또는 속성모음 객체
+   * @param {any} value 속성명(prop)이 string 인 경우 해당 속성의 값
+   */
   setState(props: Object | string, value?: any) {
 
     if (typeof props === 'string')
