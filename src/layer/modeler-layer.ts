@@ -9,17 +9,21 @@ import CommandChange from '../command/command-change'
 
 import * as THREE from 'three'
 
+/**
+ * Real Scene Renderer for Modeling
+ */
 export default class ModelerLayer extends ViewerLayer {
-
-  private _transformControls: TransformControls
-  private _gridHelper: THREE.GridHelper
 
   private boundOnclick
   private boundOnmousedown
   private boundOnmouseup
 
+  /**
+   * scene-renderer disposer
+   */
   dispose() {
-    this._transformControls && this._transformControls.dispose();
+    this.disposeTransformControls()
+    this.disposeGridHelper()
 
     this.canvas.removeEventListener('click', this.boundOnclick)
     this.canvas.removeEventListener('mousedown', this.boundOnmousedown)
@@ -28,6 +32,9 @@ export default class ModelerLayer extends ViewerLayer {
     super.dispose()
   }
 
+  /**
+   * Lifecycle Target Element에 attach된 후, render() 전에 호출됨
+   */
   ready() {
     super.ready()
 
@@ -40,60 +47,107 @@ export default class ModelerLayer extends ViewerLayer {
     this.canvas.addEventListener('mouseup', this.boundOnmouseup)
   }
 
-  setRootContainer(rootContainer​​) {
-    if (this._scene) {
-      /* scene이 dispose 될 때, 같이 dispose 되지 않도록 미리 빼줌 */
-      this._scene.remove(this.gridHelper)
-      this._scene.remove(this.transformControls)
+  /* overides */
+
+  createObjectScene() {
+    var objectScene = this.rootContainer.object3D as RealObjectScene
+
+    if (objectScene) {
+      objectScene.add(this.gridHelper)
+      objectScene.add(...this.lights)
+      objectScene.add(this.transformControls)
     }
 
-    super.setRootContainer(rootContainer)
+    return objectScene
   }
 
+  disposeRootContainer() {
+    this.objectScene.remove(this.gridHelper)
+    this.objectScene.remove(this.transformControls)
+
+    super.disposeRootContainer()
+  }
+
+  /* transform controls */
+  private _transformControls: TransformControls
+
+  /**
+   * transform-controls getter
+   */
   get transformControls() {
     if (!this._transformControls) {
-      this._transformControls = new TransformControls(this.camera, this.canvas);
-
-      this._transformControls.addEventListener('change', () => {
-        this.invalidate();
-      });
-
-      this._transformControls.addEventListener('objectChange', () => {
-        let object = this._transformControls.object;
-        let component = object && object.component
-
-        object && CommandChange.around(this.owner.commander, () => {
-          // 3d-object의 변화를 component에 반영한다.
-          component.updateTransformReverse(object);
-        });
-      });
+      this._transformControls = this.createTransformControls()
     }
 
     return this._transformControls;
   }
 
-  get scene() {
-    if (!this._scene) {
-      this._scene = this.rootContainer.object3D as RealObjectScene
+  /**
+   * createTransformControls
+   */
+  protected createTransformControls() {
+    var controls = new TransformControls(this.camera, this.canvas)
 
-      this._scene.add(this.gridHelper)
-      this._scene.add(...this.lights)
-      this._scene.add(this.transformControls)
-    }
+    controls.addEventListener('change', () => {
+      this.invalidate()
+    })
 
-    return this._scene;
+    controls.addEventListener('objectChange', () => {
+      let object = this._transformControls.object;
+      let component = object && object.component
+
+      object && CommandChange.around(this.ownerScene.commander, () => {
+        // 3d-object의 변화를 component에 반영한다.
+        component.updateTransformReverse(object);
+      })
+    })
+
+    return controls
   }
 
+  /**
+   * disposeTransformControls
+   */
+  protected disposeTransformControls() {
+    this._transformControls && this._transformControls.dispose();
+  }
+
+  /* grid-helper */
+  private _gridHelper: THREE.GridHelper
+
+  /**
+   * grid-helper getter
+   */
   get gridHelper() {
     if (!this._gridHelper) {
-      let { width, height } = this.rootContainer.state;
-      let size = Math.max(width, height);
-      this._gridHelper = new THREE.GridHelper(size, 20);
+      this._gridHelper = this.createGridHelper()
     }
 
     return this._gridHelper;
   }
 
+  /**
+   * createGridHelper
+   */
+  protected createGridHelper() {
+    var { width, height } = this.rootContainer.state
+    var size = Math.max(width, height)
+
+    return new THREE.GridHelper(size, 20)
+  }
+
+  /**
+   * disposeGridHelper
+   */
+  protected disposeGridHelper() {
+    // Nothing to do
+  }
+
+  /**
+   * 
+   * @param x 
+   * @param y 
+   */
   capture(x, y) {
     var {
       width,
@@ -126,7 +180,7 @@ export default class ModelerLayer extends ViewerLayer {
     for (let i = 0; i < intersects.length; i++) {
       let object: THREE.Object3D = intersects[i].object
 
-      while (!object['isRealObject'] && object !== this.scene) {
+      while (!object['isRealObject'] && object !== this.objectScene) {
         object = object.parent
       }
 
@@ -149,6 +203,10 @@ export default class ModelerLayer extends ViewerLayer {
     return this.rootContainer;
   }
 
+  /**
+   * 
+   * @param event 
+   */
   onclick(event) {
     let pointer = event['changedTouches'] ? event['changedTouches'][0] : event
     let component = this.capture(pointer.offsetX, pointer.offsetY)
@@ -168,9 +226,17 @@ export default class ModelerLayer extends ViewerLayer {
     event.stopPropagation()
   }
 
+  /**
+   * 
+   * @param event 
+   */
   onmousedown(event) {
   }
 
+  /**
+   * 
+   * @param event 
+   */
   onmouseup(event) {
   }
 
