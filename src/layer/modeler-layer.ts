@@ -22,14 +22,14 @@ export default class ModelerLayer extends ViewerLayer {
    * scene-renderer disposer
    */
   dispose() {
+    super.dispose()
+
     this.disposeTransformControls()
     this.disposeGridHelper()
 
     this.canvas.removeEventListener('click', this.boundOnclick)
     this.canvas.removeEventListener('mousedown', this.boundOnmousedown)
     this.canvas.removeEventListener('mouseup', this.boundOnmouseup)
-
-    super.dispose()
   }
 
   /**

@@ -35,6 +35,7 @@ export default class ViewerLayer extends Layer {
    * disposer
    */
   dispose() {
+    super.dispose()
     this.disposeEditorControls()
 
     this.disposeObjectScene()
@@ -46,7 +47,7 @@ export default class ViewerLayer extends Layer {
 
     this.disposeCanvas()
 
-    super.dispose()
+    // super.dispose()
   }
 
   /**
