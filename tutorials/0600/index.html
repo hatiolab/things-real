@@ -28,6 +28,9 @@
     <button id='redo'>Redo</button>
     <button id='start'>Start</button>
     <button id='stop'>Stop</button>
+    <button id='setTranslateMode'>Translate</button>
+    <button id='setRotateMode'>Rotate</button>
+    <button id='setScaleMode'>Scale</button>
     <button id='fullscreen'>Full-Screen</button>
   </p>
 
@@ -217,6 +220,18 @@
     function stop() {
       clearInterval(interval)
       interval = undefined
+    }
+
+    function setTranslateMode() {
+      scene && (scene.transformMode = { mode: 'translate' })
+    }
+
+    function setRotateMode() {
+      scene && (scene.transformMode = { mode: 'rotate' })
+    }
+
+    function setScaleMode() {
+      scene && (scene.transformMode = { mode: 'scale' })
     }
 
     function fullscreen() {

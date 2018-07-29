@@ -144,6 +144,16 @@ export default class ModelerLayer extends ViewerLayer {
   }
 
   /**
+   * transform mode
+   * @params mode mode: 'translate' | 'scale' | 'rotate', space: 'world' | 'local'
+   */
+  set transformMode({ mode, space, size }: { mode?, space?, size?}) {
+    mode && (this.transformControls.mode = mode)
+    space && (this.transformControls.setSpace(space))
+    size && (this.transformControls.size = size)
+  }
+
+  /**
    * 
    * @param x 
    * @param y 
