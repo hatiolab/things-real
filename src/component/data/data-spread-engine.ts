@@ -18,25 +18,41 @@ function buildSpreadRules(rules: DataSpreadModel[]) {
   })
 }
 
+/**
+ * Component의 data 변화를 spread rule에 따라서 수행하는 엔진
+ */
 export default class DataSpreadEngine {
   private owner: Component
   private spreadRules: DataSpreadRule[]
 
+  /**
+   * DataSpreadEngine create
+   * @param {Component} owner
+   */
   constructor(owner: Component) {
     this.owner = owner
     this.reset()
   }
 
+  /**
+   * DataSpreadEngine dispose
+   */
   dispose() {
     delete this.spreadRules
     delete this.owner
   }
 
+  /**
+   * DataSpreadEngine rebuild
+   */
   reset() {
     this.spreadRules = buildSpreadRules(this.owner.mappings)
     // this.execute()
   }
 
+  /**
+   * owner component의 data spread 를 실행
+   */
   execute() {
     this.spreadRules && this.spreadRules.forEach(rule => {
       try {
