@@ -5,7 +5,6 @@
  * @author WestLangley / http://github.com/WestLangley
  */
 
-import { EventSource } from '../../event'
 import * as THREE from 'three'
 
 var changeEvent = { type: 'change' }
@@ -22,8 +21,7 @@ enum STATE {
 	PAN
 }
 
-export default class EditorControls extends EventSource {
-	// export default class EditorControls extends THREE.EventDispatcher {
+export default class EditorControls extends THREE.EventDispatcher {
 
 	private domElement
 
@@ -102,8 +100,7 @@ export default class EditorControls extends EventSource {
 
 		this.object.position.copy(this.center).add(delta);
 
-		this.trigger('change');
-		// this.dispatchEvent(changeEvent);
+		this.dispatchEvent(changeEvent);
 	}
 
 	pan(delta) {
@@ -116,8 +113,7 @@ export default class EditorControls extends EventSource {
 		this.object.position.add(delta);
 		this.center.add(delta);
 
-		this.trigger('change');
-		// this.dispatchEvent(changeEvent);
+		this.dispatchEvent(changeEvent);
 	}
 
 	zoom(delta) {
@@ -132,8 +128,7 @@ export default class EditorControls extends EventSource {
 
 		this.object.position.add(delta);
 
-		this.trigger('change');
-		// this.dispatchEvent(changeEvent);
+		this.dispatchEvent(changeEvent);
 	}
 
 	rotate(delta) {
@@ -149,8 +144,7 @@ export default class EditorControls extends EventSource {
 		this.object.position.copy(this.center).add(vector);
 		this.object.lookAt(this.center);
 
-		this.trigger('change');
-		// this.dispatchEvent(changeEvent);
+		this.dispatchEvent(changeEvent);
 	}
 
 	// mouse

@@ -92,6 +92,14 @@ export default class Scene {
     return this._snapshotCommander
   }
 
+  set transformMode(mode: { mode?, space?, size?}) {
+    if (this.sceneMode == SceneMode.VIEW) {
+      return
+    }
+
+    (this._layer as any).transformMode = mode
+  }
+
   fit(mode: FitMode): void {
     this._fitMode = mode
     this._layer.resize()

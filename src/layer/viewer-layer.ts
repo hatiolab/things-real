@@ -142,6 +142,7 @@ export default class ViewerLayer extends Layer {
 
   /* editor-controls */
   private _editorControls: EditorControls
+  private _editorControlsEventHandler
 
   /**
    * editorControls getter
@@ -155,16 +156,18 @@ export default class ViewerLayer extends Layer {
 
   protected createEditorControls(): EditorControls {
     var editorControls = new EditorControls(this.camera, this.canvas)
-    editorControls.on('change', () => {
+
+    this._editorControlsEventHandler = (() => {
       this.invalidate()
-    })
+    }).bind(this)
+    editorControls.addEventListener('change', this._editorControlsEventHandler)
 
     return editorControls
   }
 
   protected disposeEditorControls() {
     if (this._editorControls) {
-      this._editorControls.off('change')
+      this._editorControls.removeEventListener('change', this._editorControlsEventHandler)
       this._editorControls.dispose()
     }
   }
