@@ -47,7 +47,6 @@ export default class DataSpreadEngine {
    */
   reset() {
     this.spreadRules = buildSpreadRules(this.owner.mappings)
-    // this.execute()
   }
 
   /**

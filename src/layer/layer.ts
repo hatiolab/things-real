@@ -6,32 +6,40 @@ import { EventSource } from '../event'
 import { RootContainer } from '../component'
 import { Scene } from '../scene'
 
+/**
+ * RealSceneRenderer
+ */
 export default abstract class Layer extends EventSource {
 
-  protected owner: Scene
-  protected _rootContainer: RootContainer
-  protected _target: HTMLElement
-  protected element: HTMLElement
-
-  private _draw_reserved: boolean = false
-  private _resizeTimeout
-
-  constructor(owner: Scene) {
+  /**
+   * RealSceneRenderer constructor
+   * @param ownerScene
+   */
+  constructor(ownerScene: Scene) {
     super()
 
-    this.owner = owner
-    this.setRootContainer(owner.rootContainer)
+    this._ownerScene = ownerScene
+    this.setRootContainer(ownerScene.rootContainer)
   }
 
+  /**
+   * diposer
+   */
   dispose() {
-    this.setRootContainer()
-    this.target = null;
-    this.element = null;
+    this.disposeRootContainer()
+    this.disposeTarget()
+    this.disposeElement()
   }
 
-  ready() {
-    /** Target Element에 attach된 후, render() 전에 호출됨. */
-  }
+  /**
+   * Lifecycle Target Element에 attach된 후, render() 전에 호출됨
+   */
+  ready() { }
+
+  /**
+   * throttle render
+   */
+  private _draw_reserved: boolean = false
 
   private throttle_render() {
     if (!this._draw_reserved) {
@@ -45,15 +53,33 @@ export default abstract class Layer extends EventSource {
     this._draw_reserved = true;
   }
 
+  /* owner Scene */
+  private _ownerScene: Scene
+
+  /**
+   * owner Scene
+   */
+  get ownerScene() {
+    return this._ownerScene
+  }
+
+  /* root-container */
+  private _rootContainer: RootContainer
+
+  /**
+   * root-container
+   */
   get rootContainer() {
     return this._rootContainer
   }
 
-  setRootContainer(rootContainer?) {
+  /**
+   * root-container set
+   * @param rootContainer 
+   */
+  public setRootContainer(rootContainer?) {
     if (this._rootContainer) {
-      this._rootContainer.off('render')
-      this._rootContainer.dispose()
-      delete this._rootContainer
+      this.disposeRootContainer()
     }
 
     if (rootContainer) {
@@ -67,7 +93,26 @@ export default abstract class Layer extends EventSource {
     }
   }
 
+  /**
+   * root-container clear
+   */
+  protected disposeRootContainer() {
+    if (!this._rootContainer) {
+      return
+    }
+    this._rootContainer.off('render')
+    // delete this._rootContainer
+  }
+
+  /**
+   * element가 resize 된 후에 호출됨
+   * @param width 
+   * @param height 
+   */
   onresize(width, height) { }
+
+  /* resize */
+  private _resizeTimeout
 
   /**
    * 부모 엘리먼트의 크기가 변화했을 때, 호출한다.
@@ -88,6 +133,8 @@ export default abstract class Layer extends EventSource {
     var oldheight
 
     var checker = () => {
+      if (!this.target)
+        return
 
       let width = this.target.offsetWidth
       let height = this.target.offsetHeight
@@ -113,39 +160,106 @@ export default abstract class Layer extends EventSource {
     requestAnimationFrame(checker)
   }
 
-  protected abstract buildOverlays()
+  /**
+   * element내부에 필요한 overlay들을 생성
+   * @param into 
+   */
+  protected abstract buildOverlays(into)
 
+  /* target container element */
+  private _target: HTMLElement
+
+  /**
+   * target container element getter
+   */
   get target() {
-
     return this._target
   }
 
+  /**
+   * target container element setter
+   */
   set target(target) {
-    if (this._target && this.element) {
-      this._target.removeChild(this.element);
-    }
+    this.disposeTarget()
 
-    this._target = target;
+    this._target = this.buildTarget(target)
 
-    if (!target)
-      return;
+    this.resize()
 
-    if (!this.element) {
-      this.element = document.createElement('div')
-      this.element.style.position = 'absolute'
+    this.ready() // TODO 필요한가 ?
+  }
 
-      this.buildOverlays()
+  /**
+   * target builder
+   * @param target 
+   */
+  protected buildTarget(target) {
+
+    if (!target) {
+      return
     }
 
     target.appendChild(this.element)
 
-    this.resize()
-
-    this.ready()
+    return target
   }
 
+  /**
+   * target container element clear
+   */
+  protected disposeTarget() {
+    if (!this._target || !this.element) {
+      return
+    }
+
+    this._target.removeChild(this.element)
+
+    // delete this._target
+  }
+
+  /* element */
+  private _element: HTMLElement
+
+  /**
+   * element getter
+   */
+  get element() {
+    if (!this._element) {
+      this._element = this.createElement()
+    }
+
+    return this._element
+  }
+
+  /**
+   * createElement
+   */
+  protected createElement() {
+    var element = document.createElement('div')
+    element.style.position = 'absolute'
+
+    this.buildOverlays(element)
+
+    return element
+  }
+
+  /**
+   * element disposer
+   */
+  protected disposeElement() {
+    // delete this._element
+  }
+
+  /**
+   * render
+   * @param context 
+   */
   protected abstract render(context?)
 
+  /**
+   * prerender
+   * @param context 
+   */
   protected prerender(context?) { }
 
   /**
@@ -156,6 +270,6 @@ export default abstract class Layer extends EventSource {
   public invalidate() {
     // throttle 로직으로 호출을 최소화
     // 빈번히 반복되는 invalidate()에 대해 비효율적으로 render()가 호출되는 것을 방지하기 위함
-    this.throttle_render();
+    this.throttle_render()
   }
 }

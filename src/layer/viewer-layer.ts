@@ -10,161 +10,320 @@ import RealObjectScene from '../component/threed/real-object-scene'
 
 import * as THREE from 'three'
 
+/**
+ * Real Scene Renderer for Viewer
+ */
 export default class ViewerLayer extends Layer {
 
-  protected _scene: RealObjectScene
-  private _canvas: HTMLCanvasElement
-  private _div: HTMLDivElement
-  private _raycaster: THREE.Raycaster
-  private _camera: THREE.PerspectiveCamera
-  private _lights: THREE.Light[]
-  private _editorControls: EditorControls
-  private _glRenderer: THREE.WebGLRenderer
-  private _cssRenderer //: CSS3DRenderer
-
   private _textureLoader: THREE.TextureLoader
-
+  /**
+   * constructor
+   * @param owner Real Scene
+   */
   constructor(owner: Scene) {
     super(owner)
+
+    // editorControls을 만들기 위해 강제로 getter를 access 함.
+    this.editorControls
 
     this._textureLoader = new THREE.TextureLoader(THREE.DefaultLoadingManager)
     this._textureLoader.withCredentials = 'true'
     this._textureLoader.crossOrigin = 'use-credentials'
   }
 
+  /**
+   * disposer
+   */
   dispose() {
+    this.disposeEditorControls()
 
-    this.editorControls && this.editorControls.dispose()
+    this.disposeObjectScene()
+    this.disposeGLRenderer()
+    this.disposeCSS3DRenderer()
+    this.disposeLights()
+    this.disposeCamera()
+    this.disposeRaycaster()
 
-    this.scene.dispose()
-    this.glRenderer.dispose()
-    // this.cssRenderer.dispose()
+    this.disposeCanvas()
 
     super.dispose()
   }
 
+  /**
+   * Lifecycle Target Element에 attach된 후, render() 전에 호출됨
+   */
   ready() {
-    this.setEditorControl(this.camera, this.canvas)
   }
 
-  setRootContainer(rootContainer​​) {
-    if (this._scene) {
-      /* scene이 dispose 될 때, lights 도 같이 dispose 되지 않도록 미리 빼줌 */
-      this._scene.remove(...this.lights)
+  /* object-scene */
+  private _objectScene: RealObjectScene
+
+  /**
+   * getter
+   */
+  get objectScene(): RealObjectScene {
+    if (!this._objectScene) {
+      this._objectScene = this.createObjectScene()
     }
 
-    super.setRootContainer(rootContainer)
-
-    if (this._scene) {
-      this._scene.dispose()
-      delete this._scene
-    }
+    return this._objectScene
   }
 
-  buildOverlays() {
-    this._canvas = document.createElement('canvas')
-    this._canvas.style.position = 'absolute'
-    this._canvas.style.top = '0'
+  /**
+   * createObjectScene
+   */
+  protected createObjectScene(): RealObjectScene {
+    var objectScene = this.rootContainer.object3D as RealObjectScene
+    objectScene && objectScene.add(...this.lights)
 
-    this.element.appendChild(this.cssRenderer.domElement)
-    this.element.appendChild(this._canvas)
+    return objectScene
   }
 
+  /**
+   * objectScene disposer
+   */
+  protected disposeObjectScene() {
+    // 폐기된 objectScene을 지워서 다음 objectScene getter 호출시 새로 생성되도록 한다.
+    delete this._objectScene
+  }
+
+  /**
+   * root container disposer
+   * lights 등은 root-container에서 만든 것이 아니므로, 제거한다.
+   * lights 등은 다른 root-container에서 재활용될 수 있다.
+   */
+  disposeRootContainer() {
+    this.objectScene.remove(...this.lights)
+
+    this.disposeObjectScene()
+    super.disposeRootContainer()
+  }
+
+  /**
+   * ViewRenderer에서는 CSS3DRenderer와 GLRendering을 위한 canvas를 오버레이로 만든다.
+   * Warn: this.element는 아직 만들어지지 않은 상태에 buildOverlays가 호출됨.
+   * @param into 
+   */
+  buildOverlays(into) {
+    this._canvas = this.createCanvas()
+
+    into.appendChild(this.css3DRenderer.domElement)
+    into.appendChild(this.canvas)
+  }
+
+  /* canvas for GLRenderer */
+  private _canvas: HTMLCanvasElement
+
+  /**
+   * canvas getter
+   */
   get canvas() {
     return this._canvas
   }
 
+  /**
+   * canvas creator
+   */
+  createCanvas() {
+    var canvas = document.createElement('canvas')
+    canvas.style.position = 'absolute'
+    canvas.style.top = '0'
+
+    return canvas
+  }
+
+  /**
+   * canvas disposer
+   */
+  disposeCanvas() {
+    this._canvas && this.element.removeChild(this._canvas)
+  }
+
+  /* editor-controls */
+  private _editorControls: EditorControls
+
+  /**
+   * editorControls getter
+   */
   get editorControls() {
+    if (!this._editorControls) {
+      this._editorControls = this.createEditorControls()
+    }
     return this._editorControls
   }
 
-  private setEditorControl(camera, element) {
+  protected createEditorControls(): EditorControls {
+    var editorControls = new EditorControls(this.camera, this.canvas)
+    editorControls.on('change', () => {
+      this.invalidate()
+    })
 
+    return editorControls
+  }
+
+  protected disposeEditorControls() {
     if (this._editorControls) {
       this._editorControls.off('change')
       this._editorControls.dispose()
     }
-
-    this._editorControls = new EditorControls(camera, element)
-    this._editorControls.on('change', () => {
-      this.invalidate()
-    })
   }
 
+  /* raycaster */
+  private _raycaster: THREE.Raycaster
+
+  /**
+   * raycaster getter
+   */
   get raycaster() {
     if (!this._raycaster) {
-      this._raycaster = new THREE.Raycaster()
+      this._raycaster = this.createRaycaster()
     }
 
     return this._raycaster
   }
 
+  /**
+   * create raycaster
+   */
+  protected createRaycaster() {
+    return new THREE.Raycaster()
+  }
+
+  /**
+   * raycaster disposer
+   */
+  protected disposeRaycaster() {
+    // Nothing to do
+  }
+
+  /* gl-renderer */
+  private _glRenderer: THREE.WebGLRenderer
+
+  /**
+   * gl-renderer getter
+   */
   get glRenderer() {
     if (!this._glRenderer && this.canvas) {
-      this._glRenderer = new THREE.WebGLRenderer({
-        canvas: this.canvas,
-        precision: "highp",
-        antialias: true,
-        alpha: true
-      });
-
-      this._glRenderer.setClearColor(0xffffff, 0)
+      this._glRenderer = this.createGLRenderer()
     }
 
     return this._glRenderer
   }
 
-  get cssRenderer() {
-    if (!this._cssRenderer) {
-      this._cssRenderer = new CSS3DRenderer()
-      this._div = this._cssRenderer.domElement
-      this._div.style.position = 'absolute'
-      this._div.style.top = '0'
-    }
+  protected createGLRenderer() {
+    var renderer: THREE.WebGLRenderer = new THREE.WebGLRenderer({
+      canvas: this.canvas,
+      precision: "highp",
+      antialias: true,
+      alpha: true
+    })
+    renderer.setClearColor(0xffffff, 0)
 
-    return this._cssRenderer
+    return renderer
   }
 
+  protected disposeGLRenderer() {
+    this._glRenderer && this._glRenderer.dispose()
+  }
+
+  /* css3d-renderer */
+  private _css3DRenderer //: CSS3DRenderer
+
+  /**
+   * css3d-renderer getter
+   */
+  get css3DRenderer() {
+    if (!this._css3DRenderer) {
+      this._css3DRenderer = this.createCSS3DRenderer()
+    }
+
+    return this._css3DRenderer
+  }
+
+  protected createCSS3DRenderer() {
+    var renderer = new CSS3DRenderer()
+    var div = renderer.domElement
+    div.style.position = 'absolute'
+    div.style.top = '0'
+
+    return renderer
+  }
+
+  protected disposeCSS3DRenderer() {
+    // Nothing to do
+  }
+
+  /* camera */
+  private _camera: THREE.PerspectiveCamera
+
+  /**
+   * camera getter
+   */
   get camera() {
     if (!this._camera) {
-      let { width, height } = this.rootContainer.state
-
-      this._camera = new THREE.PerspectiveCamera()
-
-      this._camera.position.set(0, height, height * 3 / 4)
-
-      // let frustum = Math.max(width, height) / 2;
-      // this._camera = new THREE.OrthographicCamera(-frustum, frustum, frustum, -frustum, 0, 30000);
-      // this._camera.position.set(0, frustum * 2, 0);
-      // this._camera.position.set(0, frustum * 2, frustum * 2);
-      // this._camera.position.set(0, 0, frustum * 2);
-
-      this._camera.lookAt(new THREE.Vector3(0, 0, 0))
+      this._camera = this.createCamera()
     }
 
     return this._camera
   }
 
+  protected createCamera() {
+    var { width, height } = this.rootContainer.state
+
+    var camera = new THREE.PerspectiveCamera()
+
+    camera.position.set(0, height, height * 3 / 4)
+
+    // let frustum = Math.max(width, height) / 2;
+    // this._camera = new THREE.OrthographicCamera(-frustum, frustum, frustum, -frustum, 0, 30000);
+    // this._camera.position.set(0, frustum * 2, 0);
+    // this._camera.position.set(0, frustum * 2, frustum * 2);
+    // this._camera.position.set(0, 0, frustum * 2);
+
+    camera.lookAt(new THREE.Vector3(0, 0, 0))
+
+    return camera
+  }
+
+  protected disposeCamera() {
+    // Nothing to do
+  }
+
+  /* lights */
+  private _lights: THREE.Light[]
+
+  /**
+   * lights getter
+   */
   get lights() {
     if (!this._lights) {
-      this._lights = [
-        new THREE.AmbientLight(0x777777),
-        new THREE.DirectionalLight(0xffffff, 0.5)
-      ];
+      this._lights = this.createLights()
     }
 
     return this._lights
   }
 
-  get scene() {
-    if (!this._scene) {
-      this._scene = this.rootContainer.object3D
-      this._scene.add(...this.lights)
-    }
-
-    return this._scene
+  /**
+   * lights creator
+   */
+  createLights() {
+    return [
+      new THREE.AmbientLight(0x777777),
+      new THREE.DirectionalLight(0xffffff, 0.5)
+    ]
   }
 
+  /**
+   * lights disposer
+   */
+  disposeLights() {
+    // Nothing to do
+  }
+
+  /**
+   * 
+   * @param force 
+   */
   prerender(force?) {
 
     this.rootContainer.components.forEach(component => {
@@ -173,11 +332,19 @@ export default class ViewerLayer extends Layer {
     })
   }
 
+  /**
+   * gl-renderer와 css3d-render를 render 한다.
+   */
   render() {
-    this.glRenderer.render(this.scene, this.camera)
-    this.cssRenderer.render(this.rootContainer.cssScene3D, this.camera)
+    this.glRenderer.render(this.objectScene, this.camera)
+    this.css3DRenderer.render(this.rootContainer.css3DScene, this.camera)
   }
 
+  /**
+   * 
+   * @param width 
+   * @param height 
+   */
   onresize(width, height) {
 
     this.camera.near = 1
@@ -191,10 +358,16 @@ export default class ViewerLayer extends Layer {
     // this.camera.position.set(0, h, h * 3 / 4)
     this.camera.updateProjectionMatrix()
 
-    this.cssRenderer.setSize(width, height)
+    this.css3DRenderer.setSize(width, height)
     this.glRenderer.setSize(width, height, true)
   }
 
+  /**
+   * mouse/touch pointer를 받아서 raycaster로 Object3D를 찾고,
+   * Object3D를 생성한 Component를 리턴한다.
+   * @param x 
+   * @param y 
+   */
   capture(x, y) {
     var {
       width,
@@ -218,7 +391,7 @@ export default class ViewerLayer extends Layer {
     for (let i = 0; i < intersects.length; i++) {
       let object: THREE.Object3D = intersects[i].object
 
-      while (!(object['isRealObject']) && object !== this.scene) {
+      while (!(object['isRealObject']) && object !== this.objectScene) {
         object = object.parent
       }
 

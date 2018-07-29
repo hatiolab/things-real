@@ -10,19 +10,6 @@ import * as THREE from 'three'
 
 class ObjectCylinder extends RealObjectMesh {
 
-  // setDimension(dimension: Dimension) {
-  //   var old = (this.geometry as THREE.CylinderGeometry).parameters;
-
-  //   var radius = Math.min(dimension.width, dimension.depth) / 2;
-
-  //   (this.geometry as THREE.CylinderGeometry).parameters = {
-  //     ...old,
-  //     radiusTop: radius,
-  //     radiusBottom: radius,
-  //     height: dimension.height
-  //   }
-  // }
-
   buildGeometry() {
 
     var {
