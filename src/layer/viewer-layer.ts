@@ -158,7 +158,7 @@ export default class ViewerLayer extends Layer {
 
   get scene() {
     if (!this._scene) {
-      this._scene = this.rootContainer.object3D
+      this._scene = this.rootContainer.object3D as RealObjectScene
       this._scene.add(...this.lights)
     }
 
@@ -175,7 +175,7 @@ export default class ViewerLayer extends Layer {
 
   render() {
     this.glRenderer.render(this.scene, this.camera)
-    this.cssRenderer.render(this.rootContainer.cssScene3D, this.camera)
+    this.cssRenderer.render(this.rootContainer.css3DScene, this.camera)
   }
 
   onresize(width, height) {
