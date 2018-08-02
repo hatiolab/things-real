@@ -513,8 +513,10 @@ function newUtil() {
 
         var encoder = new FileReader();
         encoder.onloadend = function () {
-          var content = encoder.result.split(/,/)[1];
-          resolve(content);
+          if (typeof encoder.result === 'string') {
+            var content = encoder.result.split(/,/)[1];
+            resolve(content);
+          }
         };
         encoder.readAsDataURL(request.response);
       }
