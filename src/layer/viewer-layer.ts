@@ -5,7 +5,7 @@
 import { Scene } from '../scene'
 import Layer from './layer'
 import EditorControls from '../threed/controls/editor-controls'
-import { CSS3DRenderer } from '../threed/renderers/CSS3DRenderer'
+import { CSS3DRenderer } from '../threed/renderers/css-3d-renderer'
 import RealObjectScene from '../component/threed/real-object-scene'
 
 import * as THREE from 'three'

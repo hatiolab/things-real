@@ -5,7 +5,7 @@
 import Component from './component'
 
 import RealObjectDomElement from './threed/real-object-dom-element'
-import { CSS3DObject } from '../threed/renderers/CSS3DRenderer'
+import { CSS3DObject } from '../threed/renderers/css-3d-renderer'
 import * as THREE from 'three'
 
 export default class DOMComponent extends Component {
