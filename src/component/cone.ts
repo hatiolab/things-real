@@ -16,7 +16,7 @@ class ObjectCone extends RealObjectMesh {
       width = 1,
       height = 1,
       depth = 1
-    } = this.component.state.dimension || { width: 1, height: 1, depth: 1 }
+    } = this.component.state.dimension || Component.UNIT_DIMENSION
 
     var radius = Math.min(width, depth) / 2
 

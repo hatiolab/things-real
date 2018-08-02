@@ -8,10 +8,6 @@ import RealObjectDomElement from './threed/real-object-dom-element'
 import { CSS3DObject } from '../threed/renderers/CSS3DRenderer'
 import * as THREE from 'three'
 
-const SCALE = { x: 1, y: 1, z: 1 }
-const ROTATE = { x: 0, y: 0, z: 0 }
-const TRANSLATE = ROTATE
-
 export default class DOMComponent extends Component {
 
   private _cssObject3D: THREE.Object3D
@@ -70,17 +66,17 @@ export default class DOMComponent extends Component {
         x: sx = 1,
         y: sy = 1,
         z: sz = 1
-      } = SCALE,
+      } = Component.UNIT_SCALE,
       translate: {
         x: tx = 0,
         y: ty = 0,
         z: tz = 0
-      } = TRANSLATE,
+      } = Component.UNIT_TRANSLATE,
       rotate: {
         x: rx = 0,
         y: ry = 0,
         z: rz = 0
-      } = ROTATE
+      } = Component.UNIT_ROTATE
     } = this.state
 
     if (this.cssObject3D) {

@@ -154,7 +154,7 @@
               y: 50,
               z: -150
             },
-            url: 'https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/Duck/glTF-Binary/Duck.glb'
+            url: 'https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/Buggy/glTF-Binary/Buggy.glb'
           }, {
             id: 'second-cube',
             type: 'cube',
@@ -193,19 +193,8 @@
       stop()
 
       interval = setInterval(() => {
-        scene && scene.findAll('dom').forEach(dom => {
-          let r = dom.state.rotate || rotate
 
-          dom.set({
-            rotate: {
-              x: r.x + 0.1,
-              y: r.y + 0.1,
-              z: r.z + 0.1
-            }
-          })
-        })
-
-        scene && scene.findAll('cube').forEach(cube => {
+        scene && scene.findAll('gltf').forEach(cube => {
           let d = cube.state.dimension
           let delta = Math.random() * 10 - 5
           cube.set({

@@ -16,7 +16,7 @@ class ObjectCube extends RealObjectMesh {
       width = 1,
       height = 1,
       depth = 1
-    } = this.component.state.dimension || { width: 1, height: 1, depth: 1 }
+    } = this.component.state.dimension || Component.UNIT_DIMENSION
 
     return new THREE.CubeGeometry(width, height, depth)
   }

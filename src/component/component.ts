@@ -14,11 +14,12 @@ import { clonedeep, error } from '../util'
 
 type EventMap = { [selector: string]: { [delegator: string]: { [event: string]: Function } } }
 
-const SCALE = { x: 1, y: 1, z: 1 }
-const ROTATE = { x: 0, y: 0, z: 0 }
-const TRANSLATE = ROTATE
-
 export default class Component extends ModelAndState implements LifeCycleCallback {
+
+  static readonly UNIT_DIMENSION = { width: 1, height: 1, depth: 1 }
+  static readonly UNIT_SCALE = { x: 1, y: 1, z: 1 }
+  static readonly UNIT_TRANSLATE = { x: 0, y: 0, z: 0 }
+  static readonly UNIT_ROTATE = { x: 0, y: 0, z: 0 }
 
   /**
    * 컴포넌트 타입을 등록
@@ -160,17 +161,17 @@ export default class Component extends ModelAndState implements LifeCycleCallbac
         x: sx = 1,
         y: sy = 1,
         z: sz = 1
-      } = SCALE,
+      } = Component.UNIT_SCALE,
       translate: {
         x: tx = 0,
         y: ty = 0,
         z: tz = 0
-      } = TRANSLATE,
+      } = Component.UNIT_TRANSLATE,
       rotate: {
         x: rx = 0,
         y: ry = 0,
         z: rz = 0
-      } = ROTATE
+      } = Component.UNIT_ROTATE
     } = this.state
 
     if (this.object3D) {
@@ -262,6 +263,13 @@ export default class Component extends ModelAndState implements LifeCycleCallbac
 
   protected disposeDataSpreadEngine() {
     this._dataSpreadEngine && this._dataSpreadEngine.dispose()
+  }
+
+  /**
+   * redraw common
+   */
+  public invalidate() {
+    this.root.invalidate()
   }
 
   /**

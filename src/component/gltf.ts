@@ -14,17 +14,13 @@ import 'imports-loader?THREE=three!three/examples/js/loaders/GLTFLoader'
 class ObjectGltf extends AbstractRealObject {
 
   private static _GLTFLoader = new THREE.GLTFLoader()
+  private objectSize: THREE.Vector3 = new THREE.Vector3()
 
   static get GLTFLoader() {
     return ObjectGltf._GLTFLoader
   }
 
   build() {
-    var {
-      width = 1,
-      height = 1,
-      depth = 1
-    } = this.component.state.dimension || { width: 1, height: 1, depth: 1 }
 
     var {
       url
@@ -41,11 +37,6 @@ class ObjectGltf extends AbstractRealObject {
   }
 
   private gltfLoaded(gltf) {
-    var {
-      width = 1,
-      height = 1,
-      depth = 1
-    } = this.component.state.dimension || { width: 1, height: 1, depth: 1 }
 
     let scene = gltf.scene
     let animations = gltf.animations
@@ -56,14 +47,18 @@ class ObjectGltf extends AbstractRealObject {
 
     var boundingBox = new THREE.Box3().setFromObject(object)
     var center = boundingBox.getCenter(object.position)
-    var size = boundingBox.getSize(new THREE.Vector3())
+
+    this.objectSize = boundingBox.getSize(new THREE.Vector3())
 
     center.multiplyScalar(-1)
 
     object.updateMatrix()
 
     this.add(object)
-    this.scale.set(width / size.x, depth / size.y, height / size.z)
+
+    this.update()
+
+    this.component.invalidate()
 
     // if (animations && animations.length) {
     //   for (var i = 0; i < animations.length; i++) {
@@ -74,6 +69,20 @@ class ObjectGltf extends AbstractRealObject {
     // }
   }
 
+  update() {
+
+    var {
+      width = 1,
+      height = 1,
+      depth = 1
+    } = this.component.state.dimension || Component.UNIT_DIMENSION
+
+    var {
+      x, y, z
+    } = this.objectSize
+
+    this.scale.set(width / x, depth / y, height / z)
+  }
 }
 
 export default class Gltf extends Component {
