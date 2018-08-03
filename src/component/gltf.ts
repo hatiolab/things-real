@@ -77,7 +77,8 @@ class ObjectGltf extends AbstractRealObject {
   }
 
   clear() {
-    // gltf object 리소스 해제가 필요하면, 여기에 추가.
+    // TODO gltf object 리소스 해제가 필요하면, 여기에 추가.
+    // 반복적으로 로딩하면 WebGL 리소스 부족으로 오류 발생.
 
     super.clear()
   }
