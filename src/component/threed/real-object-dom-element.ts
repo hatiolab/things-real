@@ -27,8 +27,9 @@ export default class RealObjectDomElement extends RealObjectMesh {
     var material = new THREE.MeshBasicMaterial()
 
     material.color.set('black')
-    material.opacity = 0;
-    material.blending = THREE.NoBlending;
+    material.opacity = 0
+    material.side = THREE.DoubleSide
+    material.blending = THREE.NoBlending
 
     return material
   }
