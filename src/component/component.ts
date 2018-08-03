@@ -8,8 +8,9 @@ import { ModelAndState, select } from './model'
 import { Class, ComponentModel } from '../types'
 import Container from './container'
 import RootContainer from './root-container'
-import { DataSpreadEngine } from './data'
+import RealObject from './threed/real-object'
 import RealObjectDummy from './threed/real-object-dummy';
+import { DataSpreadEngine } from './data'
 import { clonedeep, error } from '../util'
 
 type EventMap = { [selector: string]: { [delegator: string]: { [event: string]: Function } } }
@@ -306,7 +307,7 @@ export default class Component extends ModelAndState implements LifeCycleCallbac
   }
 
   onchangedimension(after, before) {
-    (this.object3D as any).update()
+    (this.object3D as RealObject).update()
   }
 }
 

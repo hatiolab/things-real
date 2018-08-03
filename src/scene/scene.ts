@@ -97,6 +97,7 @@ export default class Scene {
       return
     }
 
+    /* edit mode 에서만 적용되는 transformMode 를 효과적으로 처리하는 방법은 ? */
     (this._layer as any).transformMode = mode
   }
 
