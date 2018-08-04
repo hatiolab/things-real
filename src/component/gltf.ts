@@ -5,6 +5,7 @@
 import Component from './component'
 
 import AbstractRealObject from './threed/abstract-real-object'
+import { error } from '../util'
 import * as T from 'three'
 const THREE: any = T
 
@@ -13,7 +14,7 @@ import 'imports-loader?THREE=three!three/examples/js/loaders/GLTFLoader'
 class ObjectGltf extends AbstractRealObject {
 
   private static _GLTFLoader = new THREE.GLTFLoader()
-  private gltfObject
+  private pivot: THREE.Object3D
   private objectSize: THREE.Vector3 = new THREE.Vector3()
 
   static get GLTFLoader() {
@@ -26,47 +27,50 @@ class ObjectGltf extends AbstractRealObject {
       url
     } = this.component.state
 
-    if (!url)
+    if (!url) {
+      this.clear()
       return
+    }
 
     let gltfLoader = ObjectGltf.GLTFLoader;
 
     gltfLoader.load(url, gltf => {
       this.gltfLoaded(gltf)
+    }, xhr => {
+      console.log(Math.round(xhr.loaded / xhr.total * 100) + '% loaded')
+    }, error => {
+      error('GLTFLoader.load', error)
+      this.clear()
     })
   }
 
   private gltfLoaded(gltf) {
 
     let scene = gltf.scene
-    let animations = gltf.animations
-
-    // for ?
-    this.type = 'gltf-object'
 
     var object = scene.clone()
 
     var boundingBox = new THREE.Box3().setFromObject(object)
 
-    // for ?
     var center = boundingBox.getCenter(object.position)
-
-    this.objectSize = boundingBox.getSize(new THREE.Vector3())
-
-    // for ?
     center.multiplyScalar(-1)
 
-    // for ?
-    object.updateMatrix()
+    this.objectSize = boundingBox.getSize()
 
-    this.add(object)
+    // object.updateMatrix()
 
-    this.gltfObject = object
+    // 오브젝트 공백을 최소로 하기위해서 clear() 를 최대한 pending함.
+    this.clear()
+
+    this.pivot = new THREE.Object3D()
+    this.add(this.pivot)
+
+    this.pivot.add(object)
 
     this.update()
-
     this.component.invalidate()
 
+    // let animations = gltf.animations
     // if (animations && animations.length) {
     //   for (var i = 0; i < animations.length; i++) {
     //     var animation = animations[i]
@@ -83,11 +87,6 @@ class ObjectGltf extends AbstractRealObject {
     super.clear()
   }
 
-  rebuild() {
-    this.clear();
-    this.build()
-  }
-
   update() {
 
     var {
@@ -100,8 +99,8 @@ class ObjectGltf extends AbstractRealObject {
       x, y, z
     } = this.objectSize
 
-    /* component 자체의 scale도 별도의 의미가 있으므로, dimension은 하위 gltfObject의 scale로 조절한다. */
-    this.gltfObject.scale.set(width / x, depth / y, height / z)
+    /* component 자체의 scale도 별도의 의미가 있으므로, dimension은 하위 pivot object의 scale로 조절한다. */
+    this.pivot.scale.set(width / x, depth / y, height / z)
   }
 
 }
@@ -113,7 +112,7 @@ export default class Gltf extends Component {
 
   /* url 이 바뀐 경우에는 rebuild 한다. */
   onchangeurl(after, before) {
-    (this.object3D as ObjectGltf).rebuild()
+    (this.object3D as ObjectGltf).build()
   }
 }
 

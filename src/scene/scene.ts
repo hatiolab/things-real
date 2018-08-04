@@ -53,6 +53,10 @@ export default class Scene {
       take: () => { return this.sceneModel },
       putback: model => { this.sceneModel = model as SceneModel }
     })
+
+    window.addEventListener('resize', () => {
+      this._layer.resize()
+    }, false);
   }
 
   dispose() {
