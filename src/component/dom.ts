@@ -31,7 +31,7 @@ export default class DOMComponent extends Component {
     return new RealObjectDomElement(this)
   }
 
-  buildCSS3DObject() {
+  createElement() {
     var {
       tagName,
       options = {}
@@ -43,6 +43,12 @@ export default class DOMComponent extends Component {
       element[prop] = options[prop]
     })
 
+    return element
+  }
+
+  buildCSS3DObject() {
+
+    var element = this.createElement()
     var cssObject: THREE.Object3D = new CSS3DObject(element)
 
     var {

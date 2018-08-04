@@ -9,6 +9,19 @@ import * as d3 from 'd3'
 
 export default class D3Chart extends DomComponent {
 
+  createElement() {
+    var {
+      options = {}
+    } = this.state
+
+    var element = document.createElementNS("http://www.w3.org/2000/svg", "svg")
+    Object.keys(options).forEach(prop => {
+      element[prop] = options[prop]
+    })
+
+    return element
+  }
+
   onchangedata(after, before) {
 
     var {
