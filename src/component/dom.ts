@@ -37,7 +37,8 @@ export default class DOMComponent extends Component {
       options = {}
     } = this.state
 
-    var element = document.createElement(tagName)
+    var element = tagName !== 'svg' ? document.createElement(tagName)
+      : document.createElementNS("http://www.w3.org/2000/svg", "svg")
     Object.keys(options).forEach(prop => {
       element[prop] = options[prop]
     })
