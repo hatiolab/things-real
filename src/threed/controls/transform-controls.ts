@@ -151,11 +151,11 @@ export default class TransformControls extends THREE.Object3D {
   attach(object) {
 
     this.object = object
-    this.visible = true
+    this.visible = true;
 
-    this.boundBox.update(object);
-    // this.boundBox.setFromObject(object)
-    this.boundBox.visible = true;
+    // this.boundBox.update(object)
+    (this.boundBox as any).setFromObject(object)
+    this.boundBox.visible = true
     // this.boundBox.update()
 
     this.update()
@@ -540,6 +540,7 @@ export default class TransformControls extends THREE.Object3D {
   intersectObjects(pointer, objects) {
 
     var rect = this.domElement.getBoundingClientRect()
+    console.log('rect', rect)
     var x = (pointer.clientX - rect.left) / rect.width
     var y = (pointer.clientY - rect.top) / rect.height
 

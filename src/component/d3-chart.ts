@@ -9,7 +9,38 @@ import * as d3 from 'd3'
 
 export default class D3Chart extends DomComponent {
 
-  createElement() {
+  private static _style
+
+  static installStyle() {
+    if (D3Chart._style) {
+      return
+    }
+
+    var style = `
+    .bar {
+      fill: steelblue;
+    }
+    
+    .bar:hover {
+      fill: brown;
+    }
+    
+    .axis--x path {
+      display: none;
+    }`
+
+    var styleElement = document.createElement("style");
+    styleElement.type = 'text/css';
+    if (styleElement['styleSheet']) {
+      styleElement['styleSheet'].cssText = style;
+    } else {
+      styleElement.appendChild(document.createTextNode(style));
+    }
+
+    document.head.appendChild(styleElement);
+  }
+
+  createDOMElement() {
     var {
       options = {}
     } = this.state
@@ -18,6 +49,8 @@ export default class D3Chart extends DomComponent {
     Object.keys(options).forEach(prop => {
       element[prop] = options[prop]
     })
+
+    D3Chart.installStyle()
 
     return element
   }
