@@ -9,10 +9,20 @@ import * as d3 from 'd3'
 
 export default abstract class D3Chart extends DomComponent {
 
-  public abstract styleSheet
-  public abstract styleSheetId
+  get styleSheet() {
+    return ''
+  }
+
+  get styleSheetId() {
+    return this.type + '-style'
+  }
 
   installStyleSheet() {
+    var styleSheet = this.styleSheet
+    if (!styleSheet) {
+      return
+    }
+
     if (document.querySelector(`#${this.styleSheetId}`)) {
       return
     }

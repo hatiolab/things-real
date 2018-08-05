@@ -28,10 +28,6 @@ export default class D3BarChart extends D3Chart {
     }`
   }
 
-  get styleSheetId() {
-    return this.type + '-style'
-  }
-
   onchangedata(after, before) {
 
     var {
