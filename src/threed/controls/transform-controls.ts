@@ -77,7 +77,7 @@ export default class TransformControls extends THREE.Object3D {
   private boundOnPointerMove
   private boundOnPointerUp
 
-  constructor(camera, domElement: HTMLElement | Document = document) {
+  constructor(scene, camera, domElement: HTMLElement | Document = document) {
     super()
 
     // TODO: Make non-uniform scale and rotate play nice in hierarchies
@@ -103,7 +103,7 @@ export default class TransformControls extends THREE.Object3D {
     material.transparent = true;
     (material as THREE.LineBasicMaterial).color.set(0x1faaf2)
 
-    this.add(this.boundBox)
+    scene.add(this.boundBox)
 
     // event handlers
 
@@ -153,10 +153,8 @@ export default class TransformControls extends THREE.Object3D {
     this.object = object
     this.visible = true;
 
-    // this.boundBox.update(object)
-    (this.boundBox as any).setFromObject(object)
+    (this.boundBox as any).setFromObject(object).update()
     this.boundBox.visible = true
-    // this.boundBox.update()
 
     this.update()
   }
@@ -209,8 +207,9 @@ export default class TransformControls extends THREE.Object3D {
 
   update() {
 
-    if (this.object === undefined)
+    if (this.object === undefined) {
       return
+    }
 
     this.object.updateMatrixWorld()
     this.worldPosition.setFromMatrixPosition(this.object.matrixWorld)
@@ -241,7 +240,7 @@ export default class TransformControls extends THREE.Object3D {
     gizmo.highlight(this.axis)
 
     // update bound box
-    this.boundBox.update(this.object);
+    this.boundBox.update()
   }
 
   onPointerHover(event) {
@@ -540,7 +539,7 @@ export default class TransformControls extends THREE.Object3D {
   intersectObjects(pointer, objects) {
 
     var rect = this.domElement.getBoundingClientRect()
-    console.log('rect', rect)
+
     var x = (pointer.clientX - rect.left) / rect.width
     var y = (pointer.clientY - rect.top) / rect.height
 

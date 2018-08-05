@@ -95,7 +95,7 @@ export default class ModelerLayer extends ViewerLayer {
    * createTransformControls
    */
   protected createTransformControls() {
-    var controls = new TransformControls(this.camera, this.element)
+    var controls = new TransformControls(this.rootContainer.object3D, this.camera, this.element)
 
     controls.addEventListener('change', () => {
       this.invalidate()
