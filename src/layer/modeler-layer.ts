@@ -25,6 +25,7 @@ export default class ModelerLayer extends ViewerLayer {
     super.dispose()
 
     this.disposeTransformControls()
+    this.disposeBoundBox()
     this.disposeGridHelper()
 
     this.element.removeEventListener('click', this.boundOnclick)
@@ -77,6 +78,42 @@ export default class ModelerLayer extends ViewerLayer {
     return renderer
   }
 
+  /* selection box */
+  private _boundBox: THREE.BoxHelper
+
+  /**
+   * boundBox getter
+   */
+  get boundBox() {
+    if (!this._boundBox) {
+      this._boundBox = this.createBoundBox()
+    }
+
+    return this._boundBox
+  }
+
+  /**
+   * createBoundBox
+   */
+  protected createBoundBox() {
+    var boundBox = new THREE.BoxHelper()
+    var material = boundBox.material
+    material.depthTest = false
+    material.transparent = true;
+    (material as THREE.LineBasicMaterial).color.set(0x1faaf2)
+
+    this.rootContainer.object3D.add(boundBox)
+
+    return boundBox
+  }
+
+  /**
+   * disposeBoundBox
+   */
+  protected disposeBoundBox() {
+    // this._boundBox && this._boundBox.dispose();
+  }
+
   /* transform controls */
   private _transformControls: TransformControls
 
@@ -95,9 +132,10 @@ export default class ModelerLayer extends ViewerLayer {
    * createTransformControls
    */
   protected createTransformControls() {
-    var controls = new TransformControls(this.rootContainer.object3D, this.camera, this.element)
+    var controls = new TransformControls(this.camera, this.element)
 
     controls.addEventListener('change', () => {
+      this.boundBox.update()
       this.invalidate()
     })
 
@@ -231,13 +269,21 @@ export default class ModelerLayer extends ViewerLayer {
     let component = this.capture(pointer.offsetX, pointer.offsetY)
 
     if (component === this.rootContainer) {
+      this.boundBox.visible = false
       this.transformControls.detach()
+
       this.editorControls.enable()
       this.render()
       return
     }
 
-    this.transformControls.attach(component.object3D)
+    var object3D = component.object3D
+
+    this.transformControls.attach(object3D);
+
+    (this.boundBox as any).setFromObject(object3D).update()
+    this.boundBox.visible = true
+
     this.editorControls.disable()
     this.render()
 

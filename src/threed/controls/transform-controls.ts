@@ -31,7 +31,7 @@ export default class TransformControls extends THREE.Object3D {
     'rotate': new TransformGizmoRotate(),
     'scale': new TransformGizmoScale()
   }
-  private boundBox: THREE.BoxHelper
+  // private boundBox: THREE.BoxHelper
 
   private ray = new THREE.Raycaster()
   private pointerVector = new THREE.Vector2()
@@ -77,7 +77,7 @@ export default class TransformControls extends THREE.Object3D {
   private boundOnPointerMove
   private boundOnPointerUp
 
-  constructor(scene, camera, domElement: HTMLElement | Document = document) {
+  constructor(camera, domElement: HTMLElement | Document = document) {
     super()
 
     // TODO: Make non-uniform scale and rotate play nice in hierarchies
@@ -95,18 +95,7 @@ export default class TransformControls extends THREE.Object3D {
       this.add(gizmoObj)
     }
 
-    // selection box
-    this.boundBox = new THREE.BoxHelper()
-
-    var material = this.boundBox.material
-    material.depthTest = false
-    material.transparent = true;
-    (material as THREE.LineBasicMaterial).color.set(0x1faaf2)
-
-    scene.add(this.boundBox)
-
     // event handlers
-
     this.boundOnPointerDown = this.onPointerDown.bind(this)
     this.boundOnPointerHover = this.onPointerHover.bind(this)
     this.boundOnPointerMove = this.onPointerMove.bind(this)
@@ -153,9 +142,6 @@ export default class TransformControls extends THREE.Object3D {
     this.object = object
     this.visible = true;
 
-    (this.boundBox as any).setFromObject(object).update()
-    this.boundBox.visible = true
-
     this.update()
   }
 
@@ -164,8 +150,6 @@ export default class TransformControls extends THREE.Object3D {
     this.object = undefined
     this.visible = false
     this.axis = null
-
-    this.boundBox.visible = false;
   }
 
   get mode() {
@@ -238,9 +222,6 @@ export default class TransformControls extends THREE.Object3D {
     }
 
     gizmo.highlight(this.axis)
-
-    // update bound box
-    this.boundBox.update()
   }
 
   onPointerHover(event) {
