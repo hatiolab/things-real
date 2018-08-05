@@ -27,9 +27,9 @@ export default class ModelerLayer extends ViewerLayer {
     this.disposeTransformControls()
     this.disposeGridHelper()
 
-    this.canvas.removeEventListener('click', this.boundOnclick)
-    this.canvas.removeEventListener('mousedown', this.boundOnmousedown)
-    this.canvas.removeEventListener('mouseup', this.boundOnmouseup)
+    this.element.removeEventListener('click', this.boundOnclick)
+    this.element.removeEventListener('mousedown', this.boundOnmousedown)
+    this.element.removeEventListener('mouseup', this.boundOnmouseup)
   }
 
   /**
@@ -42,9 +42,9 @@ export default class ModelerLayer extends ViewerLayer {
     this.boundOnmousedown = this.onmousedown.bind(this)
     this.boundOnmouseup = this.onmouseup.bind(this)
 
-    this.canvas.addEventListener('click', this.boundOnclick)
-    this.canvas.addEventListener('mousedown', this.boundOnmousedown)
-    this.canvas.addEventListener('mouseup', this.boundOnmouseup)
+    this.element.addEventListener('click', this.boundOnclick)
+    this.element.addEventListener('mousedown', this.boundOnmousedown)
+    this.element.addEventListener('mouseup', this.boundOnmouseup)
   }
 
   /* overides */
@@ -68,6 +68,15 @@ export default class ModelerLayer extends ViewerLayer {
     super.disposeRootContainer()
   }
 
+  createCSS3DRenderer() {
+    var renderer = super.createCSS3DRenderer()
+    var div = renderer.domElement
+    // only for editor mode
+    div.style.pointerEvents = 'none'
+
+    return renderer
+  }
+
   /* transform controls */
   private _transformControls: TransformControls
 
@@ -86,7 +95,7 @@ export default class ModelerLayer extends ViewerLayer {
    * createTransformControls
    */
   protected createTransformControls() {
-    var controls = new TransformControls(this.camera, this.canvas)
+    var controls = new TransformControls(this.camera, this.element)
 
     controls.addEventListener('change', () => {
       this.invalidate()

@@ -106,7 +106,7 @@ export default class ViewerLayer extends Layer {
    * @param into 
    */
   buildOverlays(into) {
-    this._canvas = this.createCanvas()
+    // this._canvas = this.createCanvas()
 
     into.appendChild(this.css3DRenderer.domElement)
     into.appendChild(this.canvas)
@@ -119,6 +119,9 @@ export default class ViewerLayer extends Layer {
    * canvas getter
    */
   get canvas() {
+    if (!this._canvas) {
+      this._canvas = this.createCanvas()
+    }
     return this._canvas
   }
 
@@ -129,6 +132,7 @@ export default class ViewerLayer extends Layer {
     var canvas = document.createElement('canvas')
     canvas.style.position = 'absolute'
     canvas.style.top = '0'
+    canvas.style.pointerEvents = 'none'
 
     return canvas
   }
@@ -155,7 +159,7 @@ export default class ViewerLayer extends Layer {
   }
 
   protected createEditorControls(): EditorControls {
-    var editorControls = new EditorControls(this.camera, this.canvas)
+    var editorControls = new EditorControls(this.camera, this.element)
 
     this._editorControlsEventHandler = (() => {
       this.invalidate()
@@ -249,6 +253,8 @@ export default class ViewerLayer extends Layer {
     var div = renderer.domElement
     div.style.position = 'absolute'
     div.style.top = '0'
+    // only for editor mode
+    // div.style.pointerEvents = 'none'
 
     return renderer
   }
@@ -381,16 +387,16 @@ export default class ViewerLayer extends Layer {
     var vector = new THREE.Vector2(
       x / width * 2 - 1,
       -y / height * 2 + 1
-    );
+    )
 
-    this.raycaster.setFromCamera(vector, this.camera);
+    this.raycaster.setFromCamera(vector, this.camera)
 
     // TUNE-ME 자손들까지의 모든 intersects를 다 포함하는 것이면, capturable component에 해당하는 오브젝트라는 것을 보장할 수 없음.
     // 또한, component에 매핑된 오브젝트라는 것도 보장할 수 없음.
-    var capturables = this.rootContainer.layout.capturables(this);
+    var capturables = this.rootContainer.layout.capturables(this)
     var intersects = this.raycaster.intersectObjects(capturables.map(component => {
       return component.object3D
-    }), true);
+    }), true)
 
     for (let i = 0; i < intersects.length; i++) {
       let object: THREE.Object3D = intersects[i].object
@@ -407,14 +413,14 @@ export default class ViewerLayer extends Layer {
       if (component) {
         /* [BEGIN] GROUP을 위한 테스트 로직임(제거되어야 함.) */
         while (component.parent && component.parent !== this) {
-          component = component.parent;
+          component = component.parent
         }
         /* [END] GROUP을 위한 테스트 로직임 */
 
-        return component;
+        return component
       }
     }
 
-    return this;
+    return this
   }
 }

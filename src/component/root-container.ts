@@ -21,6 +21,10 @@ var invalidateDataDebouncer = debounce(function mapper(comp: Component) {
 
 export default class RootContainer extends Container {
 
+  static get type() {
+    return 'root'
+  }
+
   /**
    * root container를 생성
    * @param {SceneModel} model 
@@ -382,4 +386,4 @@ export default class RootContainer extends Container {
   }
 }
 
-Component.register('root', RootContainer)
+Component.register(RootContainer.type, RootContainer)

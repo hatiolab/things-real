@@ -10,6 +10,10 @@ import * as THREE from 'three'
 
 export default class DOMComponent extends Component {
 
+  static get type() {
+    return 'dom'
+  }
+
   private _cssObject3D: THREE.Object3D
 
   /**
@@ -31,17 +35,24 @@ export default class DOMComponent extends Component {
     return new RealObjectDomElement(this)
   }
 
-  buildCSS3DObject() {
+  createDOMElement() {
     var {
       tagName,
       options = {}
     } = this.state
 
-    var element = document.createElement(tagName)
+    var element = tagName !== 'svg' ? document.createElement(tagName)
+      : document.createElementNS("http://www.w3.org/2000/svg", "svg")
     Object.keys(options).forEach(prop => {
       element[prop] = options[prop]
     })
 
+    return element
+  }
+
+  buildCSS3DObject() {
+
+    var element = this.createDOMElement()
     var cssObject: THREE.Object3D = new CSS3DObject(element)
 
     var {
@@ -113,5 +124,5 @@ export default class DOMComponent extends Component {
   }
 }
 
-Component.register('dom', DOMComponent)
+Component.register(DOMComponent.type, DOMComponent)
 

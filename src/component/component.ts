@@ -39,6 +39,13 @@ export default class Component extends ModelAndState implements LifeCycleCallbac
   }
 
   /**
+   * 컴포넌트 타입 - 모든 컴포넌트는 type 이름 정보를 제공해야한다.
+   */
+  static get type(): string {
+    return 'component'
+  }
+
+  /**
    * 새로운 컴포넌트 인스턴스를 모델 정보에 맞게 생성
    * @param {ComponentModel} model 컴포넌트 모델
    */
@@ -64,6 +71,10 @@ export default class Component extends ModelAndState implements LifeCycleCallbac
   disposed() { }
 
   /* Component */
+
+  get type() {
+    return registry.clazz(this.constructor.name)['type']
+  }
 
   /**
    * property hierarchy
@@ -311,5 +322,5 @@ export default class Component extends ModelAndState implements LifeCycleCallbac
   }
 }
 
-Component.register('component', Component)
+Component.register(Component.type, Component)
 

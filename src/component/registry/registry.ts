@@ -4,7 +4,7 @@
 
 import { Class } from '../../types'
 
-var registry = {};
+var registry: { [key: string]: Class } = {}
 
 export default {
   register(type: string, clazz: Class): Class {
@@ -12,5 +12,11 @@ export default {
       return registry[type]
     registry[type] = clazz
     return clazz;
+  },
+
+  clazz(classname) {
+    return Object.values(registry).find(clazz => {
+      return clazz.prototype.constructor.name == classname
+    })
   }
 }

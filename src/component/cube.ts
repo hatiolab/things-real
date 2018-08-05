@@ -23,10 +23,15 @@ class ObjectCube extends RealObjectMesh {
 }
 
 export default class Cube extends Component {
+
+  static get type() {
+    return 'cube'
+  }
+
   buildObject3D() {
     return new ObjectCube(this)
   }
 }
 
-Component.register('cube', Cube)
+Component.register(Cube.type, Cube)
 

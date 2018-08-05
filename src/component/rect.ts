@@ -9,6 +9,10 @@ import * as THREE from 'three'
 
 export default class Rect extends Shape {
 
+  static get type() {
+    return 'rect'
+  }
+
   createShape() {
     var {
       dimension,
@@ -47,4 +51,4 @@ export default class Rect extends Shape {
   }
 }
 
-Component.register('rect', Rect)
+Component.register(Rect.type, Rect)

@@ -4,7 +4,6 @@
 
 import Component from './component'
 
-import { Dimension } from '../types'
 import RealObjectMesh from './threed/real-object-mesh'
 import * as THREE from 'three'
 
@@ -25,10 +24,15 @@ class ObjectSphere extends RealObjectMesh {
 }
 
 export default class Sphere extends Component {
+
+  static get type() {
+    return 'sphere'
+  }
+
   buildObject3D() {
     return new ObjectSphere(this)
   }
 }
 
-Component.register('sphere', Sphere)
+Component.register(Sphere.type, Sphere)
 
