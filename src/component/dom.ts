@@ -10,6 +10,10 @@ import * as THREE from 'three'
 
 export default class DOMComponent extends Component {
 
+  static get type() {
+    return 'dom'
+  }
+
   private _cssObject3D: THREE.Object3D
 
   /**
@@ -120,5 +124,5 @@ export default class DOMComponent extends Component {
   }
 }
 
-Component.register('dom', DOMComponent)
+Component.register(DOMComponent.type, DOMComponent)
 

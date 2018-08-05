@@ -10,6 +10,10 @@ import { clonedeep } from '../util'
 
 export default class Container extends Component {
 
+  static get type() {
+    return 'container'
+  }
+
   constructor(model: ComponentModel) {
     super(model)
 
@@ -209,7 +213,7 @@ export default class Container extends Component {
 
 }
 
-Component.register('container', Container);
+Component.register(Container.type, Container);
 
 
 // import * as selector from '../model/selector'

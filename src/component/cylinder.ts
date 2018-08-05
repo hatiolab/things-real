@@ -25,10 +25,15 @@ class ObjectCylinder extends RealObjectMesh {
 }
 
 export default class Cylinder extends Component {
+
+  static get type() {
+    return 'cylinder'
+  }
+
   buildObject3D() {
     return new ObjectCylinder(this)
   }
 }
 
-Component.register('cylinder', Cylinder)
+Component.register(Cylinder.type, Cylinder)
 

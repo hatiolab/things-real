@@ -106,6 +106,11 @@ class ObjectGltf extends AbstractRealObject {
 }
 
 export default class Gltf extends Component {
+
+  static get type() {
+    return 'gltf'
+  }
+
   buildObject3D() {
     return new ObjectGltf(this)
   }
@@ -116,5 +121,5 @@ export default class Gltf extends Component {
   }
 }
 
-Component.register('gltf', Gltf)
+Component.register(Gltf.type, Gltf)
 

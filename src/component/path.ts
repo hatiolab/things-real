@@ -9,6 +9,10 @@ import * as THREE from 'three'
 
 export default class Path extends Shape {
 
+  static get type() {
+    return 'path'
+  }
+
   createShape() {
     var {
       dimension,
@@ -46,4 +50,4 @@ export default class Path extends Shape {
   }
 }
 
-Component.register('path', Path)
+Component.register(Path.type, Path)
