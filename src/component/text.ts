@@ -3,7 +3,7 @@
  */
 
 import Component from './component'
-import RealObjectMesh from './threed/real-object-mesh';
+import RealObjectMesh from './threed/real-object-mesh'
 
 import * as THREE from 'three'
 
@@ -23,8 +23,8 @@ class ObjectText extends RealObjectMesh {
   buildMaterial() {
     let { width, height } = this.component.state.dimension
 
-    let canvas = this.createOffcanvas(width, height);
-    this.drawTextTexture(canvas);
+    let canvas = this.createOffcanvas(width, height)
+    this.drawTextTexture(canvas)
 
     var texture = new THREE.CanvasTexture(canvas)
     texture.needsUpdate = true
@@ -56,7 +56,7 @@ class ObjectText extends RealObjectMesh {
     span.style.lineHeight = `${lineHeight}px`
     span.style.whiteSpace = 'pre'
     span.style.position = 'absolute'
-    span.textContent = text;
+    span.textContent = text
 
     document.body.appendChild(span)
 
