@@ -2,7 +2,6 @@
  * Copyright © HatioLab Inc. All rights reserved.
  */
 
-import Component from '../component'
 import RealObject from './real-object'
 
 import * as THREE from 'three'
@@ -56,15 +55,11 @@ export default abstract class RealObjectMesh extends THREE.Mesh implements RealO
   }
 
   clear() {
-    this.traverse(o => {
-      let mesh = o as any;
+    this.traverse((mesh: any) => {
       if (mesh.isMesh) {
-        mesh.geometry.dispose()
-        let materials = mesh.material.length ? mesh.material : [mesh.material]
-        materials.forEach(m => {
-          if (m.dispose)
-            m.dispose()
-        })
+        mesh.geometry.dispose();
+        (mesh.material.length ? mesh.material : [mesh.material])
+          .forEach(m => m.dispose && m.dispose())
       }
     })
   }

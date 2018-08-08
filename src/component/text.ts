@@ -7,6 +7,25 @@ import RealObjectMesh from './threed/real-object-mesh'
 
 import * as THREE from 'three'
 
+function fontStyle(bold: boolean, italic: boolean, fontSize: number, fontFamily: string): string {
+  return [
+    ['bold', bold],
+    ['italic', italic],
+    [fontSize + 'px', true],
+    [fontFamily, true]
+  ].filter(p => p[1]).map(p => p[0]).join(' ')
+}
+
+function createOffcanvas(width: number, height: number): HTMLCanvasElement {
+  let canvas = document.createElement('canvas')
+  canvas.width = width
+  canvas.height = height
+  return canvas
+}
+
+/**
+ * ObjectText
+ */
 class ObjectText extends RealObjectMesh {
 
   buildGeometry() {
@@ -23,7 +42,7 @@ class ObjectText extends RealObjectMesh {
   buildMaterial() {
     let { width, height } = this.component.state.dimension
 
-    let canvas = this.createOffcanvas(width, height)
+    let canvas = createOffcanvas(width, height)
     this.drawTextTexture(canvas)
 
     var texture = new THREE.CanvasTexture(canvas)
@@ -52,12 +71,7 @@ class ObjectText extends RealObjectMesh {
     }
 
     let span = document.createElement('span')
-    span.style.font = [
-      ['bold', bold],
-      ['italic', italic],
-      [fontSize + 'px', true],
-      [fontFamily, true]
-    ].filter(p => p[1]).map(p => p[0]).join(' ')
+    span.style.font = fontStyle(bold, italic, fontSize, fontFamily)
     span.style.lineHeight = `${lineHeight}px`
     span.style.whiteSpace = 'pre'
     span.style.position = 'absolute'
@@ -75,13 +89,6 @@ class ObjectText extends RealObjectMesh {
     }
   }
 
-  private createOffcanvas(width: number, height: number): HTMLCanvasElement {
-    let canvas = document.createElement('canvas')
-    canvas.width = width
-    canvas.height = height
-    return canvas
-  }
-
   private drawTextTexture(canvas: HTMLCanvasElement) {
 
     let {
@@ -97,12 +104,7 @@ class ObjectText extends RealObjectMesh {
     let ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, canvas.width, canvas.height)
     ctx.fillStyle = fontColor;
-    ctx.font = [
-      ['bold', bold],
-      ['italic', italic],
-      [fontSize + 'px', true],
-      [fontFamily, true]
-    ].filter(p => p[1]).map(p => p[0]).join(' ')
+    ctx.font = fontStyle(bold, italic, fontSize, fontFamily)
     ctx.textBaseline = 'top'
     ctx.textAlign = 'left'
     ctx.strokeStyle = fontColor;
@@ -110,7 +112,7 @@ class ObjectText extends RealObjectMesh {
     lineText.forEach((t, i) => {
       ctx.fillText(t, 0, Number(i) * lineHeight)
       ctx.strokeText(t, 0, Number(i) * lineHeight)
-    });
+    })
   }
 }
 
