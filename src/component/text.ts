@@ -43,7 +43,7 @@ class ObjectText extends RealObjectMesh {
       text,
       bold = false,
       italic = false,
-      fontFamily: font = 'serif',
+      fontFamily = 'serif',
       lineHeight = fontSize * 1.2, // default(line-height: normal) lineHeight
     } = this.component.state
 
@@ -52,7 +52,12 @@ class ObjectText extends RealObjectMesh {
     }
 
     let span = document.createElement('span')
-    span.style.font = `${bold ? 'bold ' : ''}${italic ? 'italic ' : ''}${fontSize}px ${font}`
+    span.style.font = [
+      ['bold', bold],
+      ['italic', italic],
+      [fontSize + 'px', true],
+      [fontFamily, true]
+    ].filter(p => p[1]).map(p => p[0]).join(' ')
     span.style.lineHeight = `${lineHeight}px`
     span.style.whiteSpace = 'pre'
     span.style.position = 'absolute'
@@ -71,10 +76,10 @@ class ObjectText extends RealObjectMesh {
   }
 
   private createOffcanvas(width: number, height: number): HTMLCanvasElement {
-    let canvas = document.createElement('canvas');
-    canvas.width = width;
-    canvas.height = height;
-    return canvas;
+    let canvas = document.createElement('canvas')
+    canvas.width = width
+    canvas.height = height
+    return canvas
   }
 
   private drawTextTexture(canvas: HTMLCanvasElement) {
@@ -84,22 +89,27 @@ class ObjectText extends RealObjectMesh {
       text = '',
       bold = false,
       italic = false,
-      fontFamily: font = 'serif',
+      fontFamily = 'serif',
       lineHeight = fontSize * 1.2, // default(line-height: normal) lineHeight
       fontColor = 'black'
     } = this.component.state
 
     let ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
     ctx.fillStyle = fontColor;
-    ctx.font = `${bold ? 'bold ' : ''}${italic ? 'italic ' : ''}${fontSize}px ${font}`;
+    ctx.font = [
+      ['bold', bold],
+      ['italic', italic],
+      [fontSize + 'px', true],
+      [fontFamily, true]
+    ].filter(p => p[1]).map(p => p[0]).join(' ')
     ctx.textBaseline = 'top'
     ctx.textAlign = 'left'
     ctx.strokeStyle = fontColor;
-    let lineText = text.split('\n');
+    let lineText = text.split('\n')
     lineText.forEach((t, i) => {
-      ctx.fillText(t, 0, Number(i) * lineHeight);
-      ctx.strokeText(t, 0, Number(i) * lineHeight);
+      ctx.fillText(t, 0, Number(i) * lineHeight)
+      ctx.strokeText(t, 0, Number(i) * lineHeight)
     });
   }
 }
