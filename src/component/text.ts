@@ -81,7 +81,7 @@ class ObjectText extends RealObjectMesh {
 
     let {
       fontSize = 10,
-      text,
+      text = '',
       bold = false,
       italic = false,
       fontFamily: font = 'serif',
