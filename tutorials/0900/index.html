@@ -80,6 +80,8 @@
       transform: translate(-50%, -50%);
     `
 
+    var texts = ['Halo', 'Hello', '안녕하세요']
+
     export function create() {
       scene = new Scene({
         targetEl: 'scene',
@@ -90,7 +92,7 @@
           components: [{
             id: 'text',
             type: 'text',
-            color: 'red',
+            fontColor: 'red',
             dimension: {
               // width: 100,
               // height: 100
@@ -100,8 +102,8 @@
               y: 0,
               z: 0
             },
-            text: 'Hello',
-            fontSize: 30
+            text: texts[Math.round(Math.random() * 2)],
+            fontSize: 50
           }]
         },
         fit: FitMode.RATIO
@@ -127,16 +129,9 @@
 
       interval = setInterval(() => {
 
-        scene && scene.findAll('gltf').forEach(gltf => {
-          let t = gltf.state.translate
-          let delta = Math.random() * 10 - 5
-
-          gltf.set({
-            translate: {
-              x: t.x,
-              y: t.y + delta,
-              z: t.z
-            }
+        scene && scene.findAll('text').forEach(text => {
+          text.set({
+            text: texts[Math.round(Math.random() * 2)]
           })
         })
       }, 1000)
