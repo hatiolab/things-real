@@ -2,7 +2,7 @@
  * Copyright © HatioLab Inc. All rights reserved.
  */
 
-import { Vector3, Dimension, ComponentModel, DataSpreadModel } from '../../types'
+import { Vector3, Dimension, ComponentModel, DataSpreadModel, TextOptions } from '../../types'
 import EventCallback from '../callback/event-callback'
 import { EventSource } from '../../event'
 import { clonedeep } from '../../util'
@@ -204,7 +204,7 @@ export class ModelAndState extends EventSource implements ComponentModel, EventC
   /**
    * Simple Properties
    */
-  public text: string;
+  public textOptions: TextOptions;
   public dimension: Dimension;
   public translate: Vector3;
   public scale: Vector3;
@@ -218,7 +218,7 @@ export class ModelAndState extends EventSource implements ComponentModel, EventC
 
 /* 단순한 state 속성의 getter/setter 정의 방법. */
 [
-  'text', 'dimension', 'translate', 'scale', 'rotate', 'scale', 'color', 'style', 'templatePrefix', 'data', 'mappings'
+  'textOptions', 'dimension', 'translate', 'scale', 'rotate', 'scale', 'color', 'style', 'templatePrefix', 'data', 'mappings'
 ].forEach(property => Object.defineProperty(ModelAndState.prototype, property, {
   get() {
     return this.getState(property);

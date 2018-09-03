@@ -24,11 +24,20 @@ export interface DataSpreadModel {
   param?: string | { [propName: string]: string }
 }
 
+export interface TextOptions {
+  text?: string,
+  bold?: boolean,
+  italic?: boolean,
+  fontFamily?: string,
+  fontSize?: number,
+  lineHeight?: number
+}
+
 export interface ComponentModel {
   type?: string,
   id?: string,
   class?: string,
-  text?: string,
+  textOptions?: TextOptions,
   dimension?: Dimension,
   translate?: Vector3,
   scale?: Vector3,

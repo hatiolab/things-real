@@ -52,8 +52,9 @@
     } = REAL;
 
     var dimension = {
-      width: 200,
-      height: 200
+      width: 30,
+      height: 30,
+      depth: 30
     }
 
     var scale = {
@@ -68,19 +69,72 @@
       z: 0
     }
 
+    var translate = {
+      x: 0,
+      y: 0,
+      z: 0
+    }
+
     var scene
     var interval
 
-    var textStyle = `
-      color: yellow;
-      margin: 0;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-    `
+    var AXIS = {
+      X: 0,
+      Y: 1,
+      Z: 2
+    }
 
-    var texts = ['Halo', 'Hello', '안녕하세요']
+    var config = [{
+      joint: {
+        axis: AXIS.Y,
+        min: -190 / 180 * Math.PI,
+        max: 190 / 180 * Math.PI
+      },
+      arm: {
+        width: 0,
+        height: 10,
+        depth: 0
+      }
+    }, {
+      joint: {
+        axis: AXIS.X,
+        min: -58 / 180 * Math.PI,
+        max: 90 / 180 * Math.PI
+      },
+      arm: {
+        width: 0,
+        height: 0,
+        depth: 10
+      }
+    }, {
+      joint: {
+        axis: AXIS.X,
+        min: -135 / 180 * Math.PI,
+        max: 40 / 180 * Math.PI
+      },
+      arm: {
+        width: -3,
+        height: 0,
+        depth: 0
+      }
+    }, {
+      joint: {
+        axis: AXIS.Y,
+        min: -90 / 180 * Math.PI,
+        max: 75 / 180 * Math.PI
+      },
+      arm: {
+        width: 0,
+        height: -6,
+        depth: 0
+      }
+    }, {
+      joint: {
+        axis: AXIS.Y,
+        min: -139 / 180 * Math.PI,
+        max: 20 / 180 * Math.PI
+      }
+    }]
 
     export function create() {
       scene = new Scene({
@@ -91,23 +145,11 @@
           height: 300,
           components: [{
             id: 'text',
-            type: 'text',
-            dimension: {
-              // width: 100,
-              // height: 100
-            },
-            translate: {
-              x: 0,
-              y: 0,
-              z: 0
-            },
-            textOptions: {
-              text: texts[Math.round(Math.random() * 2)],
-              fontColor: 'red',
-              bold: true,
-              italic: true,
-              fontSize: 100
-            }
+            type: 'robot-arm',
+            dimension,
+            translate,
+            config,
+            angles: [0, -0.5, -0.3, 3, 4, 5]
           }]
         },
         fit: FitMode.RATIO
@@ -132,17 +174,19 @@
       stop()
 
       interval = setInterval(() => {
-        texts[2] = String(Date.now())
 
-        scene && scene.findAll('text').forEach(text => {
-          text.set({
-            textOptions: {
-              ...text.textOptions,
-              text: texts[Math.round(Math.random() * 2)]
-            }
+        scene && scene.findAll('robot-arm').forEach(robot => {
+          let angles = [...robot.angles]
+
+          for(let idx in angles) {
+            angles[idx] += (Math.random() - .5) * 0.4
+          }
+
+          robot.set({
+            angles
           })
         })
-      }, 1000)
+      }, 100)
     }
 
     function stop() {

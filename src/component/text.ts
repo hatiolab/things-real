@@ -58,13 +58,17 @@ class ObjectText extends RealObjectMesh {
 
   private getTextBounds(): { width: number, height: number } {
     let {
-      fontSize = 10,
+      textOptions = {}
+    } = this.component.state
+
+    let {
       text,
       bold = false,
       italic = false,
       fontFamily = 'serif',
+      fontSize = 10,
       lineHeight = fontSize * 1.2, // default(line-height: normal) lineHeight
-    } = this.component.state
+    } = textOptions
 
     if (!text) {
       text = ' '
@@ -92,14 +96,14 @@ class ObjectText extends RealObjectMesh {
   private drawTextTexture(canvas: HTMLCanvasElement) {
 
     let {
-      fontSize = 10,
       text = '',
       bold = false,
       italic = false,
       fontFamily = 'serif',
+      fontSize = 10,
       lineHeight = fontSize * 1.2, // default(line-height: normal) lineHeight
       fontColor = 'black'
-    } = this.component.state
+    } = (this.component.state.textOptions || {})
 
     let ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, canvas.width, canvas.height)
@@ -127,7 +131,7 @@ export default class Text extends Component {
   }
 
   /* text 가 바뀐 경우에는 rebuild 한다. */
-  onchangetext(after, before) {
+  onchangetextOptions(after, before) {
     (this.object3D as ObjectText).build()
   }
 }
