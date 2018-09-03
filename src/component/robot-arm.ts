@@ -14,7 +14,9 @@ const DEFAULT_CONFIG = [{
   joint: {
     axis: AXIS.Y,
     min: -190 / 180 * Math.PI,
-    max: 190 / 180 * Math.PI
+    max: 190 / 180 * Math.PI,
+    radius: 2,
+    height: 2
   },
   arm: {
     width: 0,
@@ -24,8 +26,8 @@ const DEFAULT_CONFIG = [{
 }, {
   joint: {
     axis: AXIS.X,
-    min: -58 / 180 * Math.PI,
-    max: 90 / 180 * Math.PI
+    min: -45 / 180 * Math.PI,
+    max: 45 / 180 * Math.PI
   },
   arm: {
     width: 0,
@@ -35,8 +37,8 @@ const DEFAULT_CONFIG = [{
 }, {
   joint: {
     axis: AXIS.X,
-    min: -135 / 180 * Math.PI,
-    max: 40 / 180 * Math.PI
+    min: -45 / 180 * Math.PI,
+    max: 45 / 180 * Math.PI
   },
   arm: {
     width: -3,
@@ -126,12 +128,12 @@ class Joint extends THREE.Group {
   private _min: number
   private _joint: THREE.Group
 
-  constructor(axis: AXIS = AXIS.Y, angle: number = 0, min: number = -Math.PI + 0.1, max: number = Math.PI - 0.1) {
+  constructor(axis: AXIS = AXIS.Y, radius: number = 0.8, height: number = 0.8 * 2, angle: number = 0, min: number = -Math.PI + 0.1, max: number = Math.PI - 0.1) {
     super()
 
-    const jointGeo1 = new THREE.CylinderGeometry(0.8, 0.8, 0.8 * 2, 32, 32, false, -min, 2 * Math.PI - max + min)
-    const jointGeoMax = new THREE.CylinderGeometry(0.8, 0.8, 0.8 * 2, 32, 32, false, -max, max)
-    const jointGeoMin = new THREE.CylinderGeometry(0.8, 0.8, 0.8 * 2, 32, 32, false, 0, -min)
+    const jointGeo1 = new THREE.CylinderGeometry(radius, radius, height, 32, 32, false, -min, 2 * Math.PI - max + min)
+    const jointGeoMax = new THREE.CylinderGeometry(radius, radius, height, 32, 32, false, -max, max)
+    const jointGeoMin = new THREE.CylinderGeometry(radius, radius, height, 32, 32, false, 0, -min)
 
     const jointMesh1 = new THREE.Mesh(jointGeo1, new THREE.MeshBasicMaterial({
       color: 0xffbb00,
@@ -230,7 +232,7 @@ class RobotArm3D extends AbstractRealObject {
       let jointConfig = config[i].joint
       let armConfig = config[i].arm
 
-      let joint = new Joint(jointConfig.axis, 0, jointConfig.min, jointConfig.max)
+      let joint = new Joint(jointConfig.axis, jointConfig.radius, jointConfig.height, 0, jointConfig.min, jointConfig.max)
       parentArm && parentArm.attach(joint)
 
       if (armConfig) {
