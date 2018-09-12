@@ -130,7 +130,7 @@ export default class Text extends Component {
     return new ObjectText(this)
   }
 
-  /* text 가 바뀐 경우에는 rebuild 한다. */
+  /* textOptions가 바뀐 경우에는 rebuild 한다. */
   onchangetextOptions(after, before) {
     (this.object3D as ObjectText).build()
   }
