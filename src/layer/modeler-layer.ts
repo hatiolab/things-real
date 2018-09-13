@@ -214,25 +214,25 @@ export default class ModelerLayer extends ViewerLayer {
     var vector = new THREE.Vector2(
       x / width * 2 - 1,
       -y / height * 2 + 1
-    );
+    )
 
-    this.raycaster.setFromCamera(vector, this.camera);
+    this.raycaster.setFromCamera(vector, this.camera)
 
     /* modeler case begin */
-    var activePickers = this.transformControls.activePickers;
-    var intersects = this.raycaster.intersectObjects(activePickers, true);
+    var activePickers = this.transformControls.activePickers
+    var intersects = this.raycaster.intersectObjects(activePickers, true)
 
     if (intersects.length > 0) {
-      return this.rootContainer;
+      return this.rootContainer
     }
     /* modeler case end */
 
     // TUNE-ME 자손들까지의 모든 intersects를 다 포함하는 것이면, capturable component에 해당하는 오브젝트라는 것을 보장할 수 없음.
     // 또한, component에 매핑된 오브젝트라는 것도 보장할 수 없음.
-    var capturables = this.rootContainer.layout.capturables(this.rootContainer);
+    var capturables = this.rootContainer.layout.capturables(this.rootContainer)
     intersects = this.raycaster.intersectObjects(capturables.map(component => {
       return component.object3D
-    }), true);
+    }), true)
 
     for (let i = 0; i < intersects.length; i++) {
       let object: THREE.Object3D = intersects[i].object
@@ -249,15 +249,15 @@ export default class ModelerLayer extends ViewerLayer {
       if (component) {
         /* [BEGIN] GROUP을 위한 테스트 로직임(제거되어야 함.) */
         while (component.parent && component.parent !== this.rootContainer) {
-          component = component.parent;
+          component = component.parent
         }
         /* [END] GROUP을 위한 테스트 로직임 */
 
-        return component;
+        return component
       }
     }
 
-    return this.rootContainer;
+    return this.rootContainer
   }
 
   /**
@@ -274,6 +274,9 @@ export default class ModelerLayer extends ViewerLayer {
 
       this.editorControls.enable()
       this.render()
+
+      this.ownerScene.selected = []
+
       return
     }
 
@@ -286,6 +289,8 @@ export default class ModelerLayer extends ViewerLayer {
 
     this.editorControls.disable()
     this.render()
+
+    this.ownerScene.selected = [component]
 
     event.preventDefault()
     event.stopPropagation()

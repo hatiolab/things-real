@@ -5,11 +5,11 @@
 import { registry, residence } from './registry'
 import { LifeCycleCallback } from './callback'
 import { ModelAndState, select } from './model'
-import { Class, ComponentModel } from '../types'
+import { Class, ComponentModel, Nature } from '../types'
 import Container from './container'
 import RootContainer from './root-container'
 import RealObject from './threed/real-object'
-import RealObjectDummy from './threed/real-object-dummy';
+import RealObjectDummy from './threed/real-object-dummy'
 import { DataSpreadEngine } from './data'
 import { clonedeep, error } from '../util'
 
@@ -21,6 +21,14 @@ export default class Component extends ModelAndState implements LifeCycleCallbac
   static readonly UNIT_SCALE = { x: 1, y: 1, z: 1 }
   static readonly UNIT_TRANSLATE = { x: 0, y: 0, z: 0 }
   static readonly UNIT_ROTATE = { x: 0, y: 0, z: 0 }
+
+  static readonly NATURE: Nature = {
+    mutable: false,
+    resizable: true,
+    rotatable: true,
+    properties: [],
+    'value-property': 'text'
+  }
 
   /**
    * 컴포넌트 타입을 등록
@@ -71,6 +79,10 @@ export default class Component extends ModelAndState implements LifeCycleCallbac
   disposed() { }
 
   /* Component */
+
+  get nature() {
+    return Component.NATURE
+  }
 
   get type() {
     return registry.clazz(this.constructor.name)['type']

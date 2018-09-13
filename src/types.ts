@@ -48,8 +48,25 @@ export interface ComponentModel {
   templatePrefix?: string,
   components?: ComponentModel[],
   mappings?: DataSpreadModel[],
-  options?: { [propName: string]: any; },
+  options?: { [propName: string]: any },
   [propName: string]: any
+}
+
+export interface NatureProperty {
+  type: string,
+  label: string,
+  name: string,
+  placeholder?: string,
+  property: { [propName: string]: any }
+}
+
+export interface Nature {
+  mutable?: false,
+  resizable?: true,
+  rotatable?: true,
+  properties: NatureProperty[],
+  valueProperty?: string,
+  'value-property'?: string
 }
 
 export enum SceneMode {

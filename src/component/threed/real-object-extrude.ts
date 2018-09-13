@@ -36,32 +36,32 @@ export default class RealObjectExtrude extends AbstractRealObject {
       lineWidth = 1,
       alpha = 1,
       dimension
-    } = this.component.state;
+    } = this.component.state
 
     var {
-      depth = 1
+      height: depth = 1
     } = dimension
 
-    var shape = (this.component as Shape).createShape();
+    var shape = (this.component as Shape).createShape()
 
     var options = {
       ...EXTRUDE_OPTIONS,
       depth,
       UVGenerator: this.boundUVGenerator
-    };
+    }
 
     this.boundUVGenerator.setShape({
       extrudedShape: shape,
       extrudedOptions: options
     })
 
-    var geometry = this.createGeometry(shape, options);
+    var geometry = this.createGeometry(shape, options)
 
     if (fillStyle && fillStyle != 'none') {
       var material = this.createMaterial();
       var mesh = this.createMesh(geometry, material);
 
-      this.add(mesh);
+      this.add(mesh)
     }
 
     if (strokeStyle && strokeStyle != 'transparent' && lineWidth > 0) {
@@ -74,14 +74,14 @@ export default class RealObjectExtrude extends AbstractRealObject {
 
   get boundUVGenerator() {
     if (!this._boundUVGenerator)
-      this._boundUVGenerator = new BoundUVGenerator();
+      this._boundUVGenerator = new BoundUVGenerator()
 
     return this._boundUVGenerator
   }
 
   createGeometry(shape, options) {
-    var geometry = new THREE.ExtrudeBufferGeometry(shape, options);
-    geometry.center();
+    var geometry = new THREE.ExtrudeBufferGeometry(shape, options)
+    geometry.center()
 
     return geometry
   }
@@ -90,10 +90,10 @@ export default class RealObjectExtrude extends AbstractRealObject {
     var {
       fillStyle,
       alpha = 1
-    } = this.component.state;
+    } = this.component.state
 
     if (!fillStyle) {
-      return;
+      return
     }
 
     var material;
@@ -114,17 +114,17 @@ export default class RealObjectExtrude extends AbstractRealObject {
         })
       ]
     } else {
-      let params: { color?} = {};
+      let params: { color?} = {}
 
       if (fillStyle && fillStyle !== 'transparent') {
-        params.color = fillStyle;
+        params.color = fillStyle
       }
 
       material = new THREE.MeshLambertMaterial(params)
     }
 
-    var tinyFillStyle = tinycolor(fillStyle);
-    var fillAlpha = tinyFillStyle.getAlpha();
+    var tinyFillStyle = tinycolor(fillStyle)
+    var fillAlpha = tinyFillStyle.getAlpha()
 
     material.opacity = alpha * fillAlpha;
     material.transparent = alpha < 1 || fillAlpha < 1
@@ -147,40 +147,40 @@ export default class RealObjectExtrude extends AbstractRealObject {
       dimension,
       lineWidth = 0,
       alpha = 1
-    } = this.component.state;
+    } = this.component.state
 
     var {
-      depth = 1
+      height: depth = 1
     } = dimension
 
-    var hole = new THREE.Path();
-    hole.setFromPoints(shape.getPoints());
+    var hole = new THREE.Path()
+    hole.setFromPoints(shape.getPoints())
 
     var sideMaterial = new THREE.MeshLambertMaterial({
       color: strokeStyle
     })
 
-    var tinyStrokeStyle = tinycolor(strokeStyle);
-    var strokeAlpha = tinyStrokeStyle.getAlpha();
-    sideMaterial.opacity = alpha * strokeAlpha;
+    var tinyStrokeStyle = tinycolor(strokeStyle)
+    var strokeAlpha = tinyStrokeStyle.getAlpha()
+    sideMaterial.opacity = alpha * strokeAlpha
     sideMaterial.transparent = alpha < 1 || strokeAlpha < 1
 
     // prevent overlapped layers flickering
-    sideMaterial.polygonOffset = true;
-    sideMaterial.polygonOffsetFactor = -0.1;
+    sideMaterial.polygonOffset = true
+    sideMaterial.polygonOffsetFactor = -0.1
 
-    shape.holes.push(hole);
+    shape.holes.push(hole)
 
     var options = {
       ...SIDE_EXTRUDE_OPTIONS,
       depth,
       bevelSize: lineWidth,
-    };
+    }
 
-    var sideGeometry = new THREE.ExtrudeBufferGeometry(shape, options);
-    sideGeometry.center();
+    var sideGeometry = new THREE.ExtrudeBufferGeometry(shape, options)
+    sideGeometry.center()
 
-    var sideMesh = new THREE.Mesh(sideGeometry, sideMaterial);
+    var sideMesh = new THREE.Mesh(sideGeometry, sideMaterial)
     sideMesh.rotation.x = - Math.PI / 2
     sideMesh.rotation.y = - Math.PI
     sideMesh.rotation.z = - Math.PI

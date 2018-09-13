@@ -5,13 +5,13 @@
 import Command from './command'
 
 function calculate_bounds_on_root(component) {
-  if (component.isRootModel())
+  if (component.isRoot)
     return component.bounds
 
   var { bounds, rotatePoint } = component
 
   var pointOnTop = rotatePoint
-  // if(component.parent && !component.parent.isRootModel())
+  // if(component.parent && !component.parent.isRoot)
   // pointOnTop = recursive_transcoordS2P(pointOnTop, component.parent)
   // TODO 목적상 아래 로직으로 대체 가능할 것이다. 검토하라. (스케일된 컴포넌트에 대해서 이상작동한다.)
   pointOnTop = component.transcoordS2T(pointOnTop.x, pointOnTop.y)
@@ -25,7 +25,7 @@ function calculate_bounds_on_root(component) {
 }
 
 function calculate_bounds_on_container(component, container) {
-  if (container.isRootModel())
+  if (container.isRoot)
     return component.bounds
 
   var { bounds, rotatePoint } = component
@@ -46,7 +46,7 @@ function calculate_rotation_on_root(component) {
 
   var rotation = 0
 
-  while (component && !component.isRootModel()) {
+  while (component && !component.isRoot) {
     rotation += component.get('rotation') || 0
 
     component = component.parent

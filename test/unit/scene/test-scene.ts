@@ -35,7 +35,7 @@ describe('Scene', () => {
       targetEl: 'container',
     });
 
-    expect(scene.sceneMode).to.equal(SceneMode.VIEW);
+    expect(scene.mode).to.equal(SceneMode.VIEW);
   })
 
   it('컨테이너 HTMLElement를 targetEl로 넘길 수 있어야한다.', async () => {
@@ -45,7 +45,7 @@ describe('Scene', () => {
       targetEl: document.getElementById('container'),
     });
 
-    expect(scene.sceneMode).to.equal(SceneMode.VIEW);
+    expect(scene.mode).to.equal(SceneMode.VIEW);
   })
 
   it('주어진 모델을 모두 포함하는 최상위 컨테이너가 되어야 한다.', () => {

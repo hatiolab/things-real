@@ -20,7 +20,7 @@ describe('API create', () => {
       }
     })
 
-    expect(scene.sceneMode).to.equal(SceneMode.VIEW);
+    expect(scene.mode).to.equal(SceneMode.VIEW);
   })
 
 })

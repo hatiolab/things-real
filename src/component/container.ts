@@ -4,6 +4,7 @@
 
 import { ComponentModel } from '../types'
 import Component from './component'
+
 import { select } from './model'
 import { AbsoluteLayout } from '../layout'
 import { clonedeep } from '../util'
@@ -210,7 +211,6 @@ export default class Container extends Component {
   indexOf(component) {
     return this.components.indexOf(component)
   }
-
 }
 
 Component.register(Container.type, Container);

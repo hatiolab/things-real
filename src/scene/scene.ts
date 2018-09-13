@@ -2,14 +2,15 @@
  * Copyright © HatioLab Inc. All rights reserved.
  */
 
-import { SceneConfig, SceneModel, SceneMode, FitMode } from '../types'
+import { SceneConfig, SceneModel, SceneMode, FitMode, ComponentModel } from '../types'
 import { Component, RootContainer } from '../component'
-import { SnapshotCommander } from '../command'
+import { CommandChange, SnapshotCommander } from '../command'
 import { Layer, ModelerLayer, ViewerLayer } from '../layer'
+import { EventSource } from '../event'
 import { clonedeep, fullscreen, error } from '../util'
 import { compile } from '../real'
 
-export default class Scene {
+export default class Scene extends EventSource {
   private _sceneMode: SceneMode
   private _fitMode: FitMode
   private _targetEl: HTMLElement
@@ -18,7 +19,11 @@ export default class Scene {
   private _rootContainer: RootContainer
   private _layer: Layer
 
+  private _baseUrl: string
+  private _selected: Component[]
+
   constructor(config: SceneConfig) {
+    super()
 
     if (typeof (config.targetEl) == 'string') {
       this._targetEl = document.getElementById(config.targetEl);
@@ -40,40 +45,43 @@ export default class Scene {
     this._sceneMode = config.mode | SceneMode.VIEW
     this._fitMode = config.fit | FitMode.RATIO
 
-    this.sceneModel = config.model
+    this.model = config.model
 
     /** layer */
-    this._layer = this.sceneMode == SceneMode.VIEW ?
+    this._layer = this.mode == SceneMode.VIEW ?
       new ViewerLayer(this) : new ModelerLayer(this)
 
     this._layer.target = this._targetEl
 
     /** commander */
     this._snapshotCommander = new SnapshotCommander({
-      take: () => { return this.sceneModel },
-      putback: model => { this.sceneModel = model as SceneModel }
+      take: () => { return this.model },
+      putback: model => { this.model = model as SceneModel }
     })
 
+    this._snapshotCommander.delegate_on(this)
+
     window.addEventListener('resize', () => {
-      this._layer.resize()
-    }, false);
+      this.resize()
+    }, false)
   }
 
   dispose() {
     // TODO implement
+    this._snapshotCommander.delegate_off(this)
     this._layer.dispose()
     this._rootContainer && this._rootContainer.dispose()
   }
 
-  get sceneMode() {
+  get mode() {
     return this._sceneMode
   }
 
-  get sceneModel(): SceneModel {
+  get model(): SceneModel {
     return this.rootContainer.hierarchy
   }
 
-  set sceneModel(model) {
+  set model(model) {
     this._rootContainer && this._rootContainer.dispose()
 
     this._rootContainer = compile({
@@ -82,6 +90,11 @@ export default class Scene {
     }) as RootContainer
 
     this._layer && (this._layer.setRootContainer(this._rootContainer))
+  }
+
+  // for things-scene compatible
+  get root() {
+    return this._rootContainer
   }
 
   get fitMode(): FitMode {
@@ -97,12 +110,20 @@ export default class Scene {
   }
 
   set transformMode(mode: { mode?, space?, size?}) {
-    if (this.sceneMode == SceneMode.VIEW) {
+    if (this.mode == SceneMode.VIEW) {
       return
     }
 
     /* edit mode 에서만 적용되는 transformMode 를 효과적으로 처리하는 방법은 ? */
     (this._layer as any).transformMode = mode
+  }
+
+  get baseUrl() {
+    return this._baseUrl
+  }
+
+  set baseUrl(baseUrl: string) {
+    this._baseUrl = baseUrl
   }
 
   fit(mode: FitMode): void {
@@ -127,32 +148,52 @@ export default class Scene {
     this.setProperties(targets, 'data', value)
   }
 
-  add(components) {
+  add(components: ComponentModel | ComponentModel[]) {
+    if (!(components instanceof Array)) {
+      this.add([components])
+      return
+    }
 
+    components.forEach(model => {
+      this.rootContainer.addComponent(compile(model))
+    })
   }
 
-  remove() {
+  remove(components: Component | Component[]) {
+    if (!(components instanceof Array)) {
+      this.add([components])
+      return
+    }
 
+    components.forEach(component => component.parent.removeComponent(component))
+  }
+
+  set selected(components: Component[]) {
+
+    var before = this._selected
+    this._selected = components
+
+    this.trigger('selected', this._selected, before)
   }
 
   get selected() {
-    return []
+    return this._selected
   }
 
   copy() {
 
-    var copied = this.selected.filter(component => !component.isRootModel)
+    var copied = this.selected.filter(component => !component.isRoot)
       .map(component => component.hierarchy)
 
     if (copied.length == 0)
-      return;
+      return
 
     return JSON.stringify(copied, null, 2);
   }
 
   cut() {
     var copied = this.copy()
-    this.remove()
+    this.remove(this.selected)
 
     return copied
   }
@@ -174,6 +215,14 @@ export default class Scene {
 
   redo() {
     this.commander.redo()
+  }
+
+  undoableChange(changeFunc) {
+    CommandChange.around(this.commander, changeFunc)
+  }
+
+  resize() {
+    this._layer.resize()
   }
 
   fullscreen(mode?: FitMode) {

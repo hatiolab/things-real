@@ -41,13 +41,13 @@ export default class ReferenceMap {
     return Object.keys(this.references)
   }
 
-  private resolve(resolver, id, target) {
+  private resolve(resolver, id, target, self) {
     target = mixin(target, function () {
-      this.release = () => this.release(this)
+      this.release = () => self.release(this)
     })
 
-    this.references[id] = target
-    this.counters[id] = 1
+    self.references[id] = target
+    self.counters[id] = 1
 
     resolver(target)
   }
@@ -68,7 +68,7 @@ export default class ReferenceMap {
           resolve(ref)
       } else {
         if (target) {
-          self.resolve(resolve, id, target)
+          self.resolve(resolve, id, target, self)
         } else {
           if (!self.creator) {
             reject(Error("Reference id(" + id + ") is not allowed. Reference creator should be defined."))
@@ -76,7 +76,7 @@ export default class ReferenceMap {
           }
 
           self.creator.call(null, id, function (target) {
-            self.resolve(resolve, id, target)
+            self.resolve(resolve, id, target, self)
           }, function (error) {
             reject(error)
           })

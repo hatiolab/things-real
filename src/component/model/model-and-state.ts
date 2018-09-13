@@ -16,8 +16,8 @@ export class ModelAndState extends EventSource implements ComponentModel, EventC
   constructor(model: ComponentModel) {
     super();
 
-    this._model = clonedeep(model);
-    delete this._model.components;
+    this._model = clonedeep(model)
+    delete this._model.components
   }
 
   private _model: ComponentModel = {}
@@ -27,7 +27,7 @@ export class ModelAndState extends EventSource implements ComponentModel, EventC
    * 객체의 모델 정보 전체 조회
    */
   get model(): ComponentModel {
-    return this._model;
+    return this._model
   }
 
   /**
@@ -63,7 +63,7 @@ export class ModelAndState extends EventSource implements ComponentModel, EventC
    * set == setState 
    */
   set(props: Object | string, value?: any) {
-    this.setState(props, value);
+    this.setState(props, value)
   }
 
   /**
@@ -71,7 +71,7 @@ export class ModelAndState extends EventSource implements ComponentModel, EventC
    * @param {string} prop 속성명
    */
   getModel(prop: string) {
-    return this._model[prop];
+    return this._model[prop]
   }
 
   /**
@@ -196,7 +196,7 @@ export class ModelAndState extends EventSource implements ComponentModel, EventC
     })
 
     if (changed) {
-      this.onchange && this.onchange(after, before);
+      this.onchange && this.onchange(after, before)
       this.trigger('change', after, before)
     }
   }
@@ -204,16 +204,16 @@ export class ModelAndState extends EventSource implements ComponentModel, EventC
   /**
    * Simple Properties
    */
-  public textOptions: TextOptions;
-  public dimension: Dimension;
-  public translate: Vector3;
-  public scale: Vector3;
-  public rotate: Vector3;
-  public color: any;
-  public style: any;
-  public templatePrefix: string;
-  public data: any;
-  public mappings: DataSpreadModel[];
+  public textOptions: TextOptions
+  public dimension: Dimension
+  public translate: Vector3
+  public scale: Vector3
+  public rotate: Vector3
+  public color: any
+  public style: any
+  public templatePrefix: string
+  public data: any
+  public mappings: DataSpreadModel[]
 }
 
 /* 단순한 state 속성의 getter/setter 정의 방법. */
@@ -221,11 +221,11 @@ export class ModelAndState extends EventSource implements ComponentModel, EventC
   'textOptions', 'dimension', 'translate', 'scale', 'rotate', 'scale', 'color', 'style', 'templatePrefix', 'data', 'mappings'
 ].forEach(property => Object.defineProperty(ModelAndState.prototype, property, {
   get() {
-    return this.getState(property);
+    return this.getState(property)
   },
 
   set(value) {
-    this.setState(property, value);
+    this.setState(property, value)
   },
 
   enumerable: true,
