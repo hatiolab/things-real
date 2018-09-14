@@ -51,13 +51,15 @@ export default class SceneModelMigrator1 {
           x && (model$2.x = x)
           y && (model$2.z = y)
           break
-        case 'x':
+        case 'left':
+          // 모든 컴포넌트 종류에 대해서 Center 계산 로직이 필요함.
           model$2.translate = {
             ...model$2.translate,
             x: value
           }
           break
-        case 'y':
+        case 'top':
+          // 모든 컴포넌트 종류에 대해서 Center 계산 로직이 필요함.
           model$2.translate = {
             ...model$2.translate,
             z: value

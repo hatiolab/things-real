@@ -15,7 +15,7 @@ module.exports = (env, argv) => {
 
     new webpack.DefinePlugin({
       REAL_MODE: JSON.stringify(argv.mode || 'development'),
-      REAL_SceneModelVersion: JSON.stringify(NodePackage.version)
+      REAL_VERSION: JSON.stringify(NodePackage.version)
     })
   ];
 
