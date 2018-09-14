@@ -2,7 +2,7 @@
  * Copyright © HatioLab Inc. All rights reserved.
  */
 
-export const VERSION = 4
+export const SceneModelVersion = 2
 
 export type Class = { new(...args: any[]): any; }
 
@@ -13,9 +13,9 @@ export interface Vector3 {
 }
 
 export interface Dimension {
-  width: number,
-  height: number,
-  depth: number
+  width?: number,
+  height?: number,
+  depth?: number
 }
 
 export interface DataSpreadModel {

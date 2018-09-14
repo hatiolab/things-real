@@ -2,11 +2,12 @@
  * Copyright © HatioLab Inc. All rights reserved.
  */
 
-import { VERSION, SceneConfig, SceneModel, SceneMode, FitMode, ComponentModel } from '../types'
+import { SceneModelVersion, SceneConfig, SceneModel, SceneMode, FitMode, ComponentModel } from '../types'
 import { Component, RootContainer } from '../component'
 import { CommandChange, SnapshotCommander } from '../command'
 import { Layer, ModelerLayer, ViewerLayer } from '../layer'
 import { EventSource } from '../event'
+import SceneModelMigrator from '../migrator/scene-model-migrator'
 import { clonedeep, fullscreen, error } from '../util'
 import { compile } from '../real'
 
@@ -79,20 +80,20 @@ export default class Scene extends EventSource {
 
   get model(): SceneModel {
     var hierarchy = this.rootContainer.hierarchy
-    hierarchy.version = this.version
+    hierarchy.sceneModelVersion = this.sceneModelVersion
 
     return hierarchy
   }
 
-  get version(): number {
-    return VERSION
+  get sceneModelVersion(): number {
+    return SceneModelVersion
   }
 
   set model(model) {
     this._rootContainer && this._rootContainer.dispose()
 
     this._rootContainer = compile({
-      ...model,
+      ...SceneModelMigrator.migrate(model),
       type: 'root'
     }) as RootContainer
 
