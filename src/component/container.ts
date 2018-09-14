@@ -71,6 +71,9 @@ export default class Container extends Component {
     component.delegate_on(this)
     component.trigger('added', this, component, index)
 
+    if (this.started)
+      component.start()
+
     // this.root && this.root.isReady && component.ready()
   }
 
@@ -210,6 +213,18 @@ export default class Container extends Component {
 
   indexOf(component) {
     return this.components.indexOf(component)
+  }
+
+  start() {
+    super.start()
+
+    this.components.forEach(component => component.start())
+  }
+
+  stop() {
+    super.stop()
+
+    this.components.forEach(component => component.stop())
   }
 }
 

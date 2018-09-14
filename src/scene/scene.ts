@@ -89,7 +89,11 @@ export default class Scene extends EventSource {
       type: 'root'
     }) as RootContainer
 
-    this._layer && (this._layer.setRootContainer(this._rootContainer))
+    this._layer && this._layer.setRootContainer(this._rootContainer)
+
+    if (this.mode == SceneMode.VIEW) {
+      this._rootContainer.start()
+    }
   }
 
   // for things-scene compatible

@@ -8,11 +8,21 @@ export default class Moving extends Animation {
 
   step(delta) {
     var {
-      x = 0,
-      y = 0
+      tx = 0,
+      ty = 0,
+      tz = 0
     } = this.config
 
-    this.client.delta('tx', delta * x)
-    this.client.delta('ty', delta * y)
+    var {
+      x = 0,
+      y = 0,
+      z = 0
+    } = this._state.translate || {}
+
+    x += delta * tx
+    y += delta * ty
+    z += delta * tz
+
+    this.client.translate = { x, y, z }
   }
 }

@@ -214,11 +214,23 @@ export class ModelAndState extends EventSource implements ComponentModel, EventC
   public templatePrefix: string
   public data: any
   public mappings: DataSpreadModel[]
+
+  /* for simplicity */
+  get text() {
+    return (this.get('textOptions') || {}).text || ''
+  }
+
+  set text(text) {
+    this.textOptions = {
+      ...(this.textOptions || {}),
+      text
+    }
+  }
 }
 
 /* 단순한 state 속성의 getter/setter 정의 방법. */
 [
-  'textOptions', 'dimension', 'translate', 'scale', 'rotate', 'scale', 'color', 'style', 'templatePrefix', 'data', 'mappings'
+  'textOptions', 'dimension', 'translate', 'scale', 'rotate', 'lineStyle', 'fillStyle', 'color', 'templatePrefix', 'data', 'mappings', 'animation', 'alpha'
 ].forEach(property => Object.defineProperty(ModelAndState.prototype, property, {
   get() {
     return this.getState(property)

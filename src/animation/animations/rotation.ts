@@ -7,11 +7,22 @@ import Animation from './animation'
 export default class Rotation extends Animation {
 
   step(delta) {
-
     var {
-      theta = 6.28
+      rx = 0,
+      ry = 0,
+      rz = 0
     } = this.config
 
-    this.client.delta('theta', delta * theta)
+    var {
+      x = 0,
+      y = 0,
+      z = 0
+    } = this._state.rotate || {}
+
+    x += delta * rx
+    y += delta * ry
+    z += delta * rz
+
+    this.client.rotate = { x, y, z }
   }
 }

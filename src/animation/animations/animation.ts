@@ -3,6 +3,7 @@
  */
 
 import * as Delta from '../delta'
+import { ComponentModel } from '../../types'
 
 function makeEaseOut(delta, options) {
   return function (progress) {
@@ -30,6 +31,7 @@ export default abstract class Animation {
   private _started: boolean = false
   private delta
   private _raf
+  protected _state: ComponentModel
 
   protected abstract step(delta): void
 
@@ -75,6 +77,7 @@ export default abstract class Animation {
     } = this.config
 
     this._started = true
+    this._state = this.client.state
 
     setTimeout(() => {
       let started_at = 0

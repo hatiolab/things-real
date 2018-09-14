@@ -16,13 +16,13 @@ export default class Fade extends Animation {
     var max = startAlpha < endAlpha ? endAlpha : startAlpha
     var range = (max - min) * 2;
     var fade;
-    
+
     // 깜빡이는 범위는 최소 값 + (범위 * delta)
-    if(delta < 0.5)
+    if (delta < 0.5)
       fade = 1 - (min + delta * range)
     else
       fade = 1 - (min + (1 - delta) * range)
 
-    this.client.delta('fade', fade)
+    this.client.alpha = (this._state.alpha || 1) * fade
   }
 }

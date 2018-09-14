@@ -11,6 +11,7 @@ import RootContainer from './root-container'
 import RealObject from './threed/real-object'
 import RealObjectDummy from './threed/real-object-dummy'
 import { DataSpreadEngine } from './data'
+import { compile } from '../animation'
 import { clonedeep, error } from '../util'
 
 type EventMap = { [selector: string]: { [delegator: string]: { [event: string]: Function } } }
@@ -67,15 +68,22 @@ export default class Component extends ModelAndState implements LifeCycleCallbac
    * 컴포넌트 제거
    */
   dispose() {
+    this.disposeAnimation()
     this.disposeDataSpreadEngine()
     this.disposeObject3D()
   }
 
   /* LifeCycleCallback */
   created() { }
-  added(parent) { }
+
+  added(parent) {
+  }
+
   removed(parent) { }
-  ready() { }
+
+  ready() {
+  }
+
   disposed() { }
 
   /* Component */
@@ -117,6 +125,14 @@ export default class Component extends ModelAndState implements LifeCycleCallbac
    * readonly
    */
   get isDomComponent(): boolean {
+    return false
+  }
+
+  /**
+   * property isDomComponent
+   * readonly
+   */
+  get isTemplate(): boolean {
     return false
   }
 
@@ -294,6 +310,68 @@ export default class Component extends ModelAndState implements LifeCycleCallbac
    */
   public invalidate() {
     this.root.invalidate()
+  }
+
+  /**
+   * animation
+   */
+
+  private _animation
+
+  get animation() {
+    // if (!this.app.isViewMode || this.isTemplate())
+    if (this.isTemplate)
+      return
+
+    if (!this._animation) {
+      let config = this.get('animation')
+      if (config && config['oncreate'])
+        this._animation = compile(this, config['oncreate'])
+    }
+    return this._animation
+  }
+
+  disposeAnimation() {
+    if (this._animation) {
+      this._animation.dispose()
+      delete this._animation
+    }
+  }
+
+  protected _started = false
+
+  start() {
+    this._started = true
+
+    this.animation && (this.animation.started = true)
+  }
+
+  stop() {
+    this._started = false
+
+    this.animation && (this.animation.started = false)
+  }
+
+  get started() {
+    return this._started
+  }
+
+  set started(started) {
+    started ? this.start() : this.stop()
+  }
+
+  /**
+   * for retension
+   */
+
+  private _updatedAt
+
+  touch() {
+    this._updatedAt = performance.now()
+  }
+
+  get updatedAt() {
+    return this._updatedAt
   }
 
   /**
