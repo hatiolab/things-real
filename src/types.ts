@@ -81,7 +81,8 @@ export enum FitMode {
 
 export interface SceneModel extends ComponentModel {
   width: number,
-  height: number
+  height: number,
+  version?: number
 }
 
 export interface SceneConfig {
