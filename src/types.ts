@@ -2,6 +2,8 @@
  * Copyright © HatioLab Inc. All rights reserved.
  */
 
+export const VERSION = 4
+
 export type Class = { new(...args: any[]): any; }
 
 export interface Vector3 {

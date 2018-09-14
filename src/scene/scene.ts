@@ -2,7 +2,7 @@
  * Copyright © HatioLab Inc. All rights reserved.
  */
 
-import { SceneConfig, SceneModel, SceneMode, FitMode, ComponentModel } from '../types'
+import { VERSION, SceneConfig, SceneModel, SceneMode, FitMode, ComponentModel } from '../types'
 import { Component, RootContainer } from '../component'
 import { CommandChange, SnapshotCommander } from '../command'
 import { Layer, ModelerLayer, ViewerLayer } from '../layer'
@@ -78,7 +78,14 @@ export default class Scene extends EventSource {
   }
 
   get model(): SceneModel {
-    return this.rootContainer.hierarchy
+    var hierarchy = this.rootContainer.hierarchy
+    hierarchy.version = this.version
+
+    return hierarchy
+  }
+
+  get version(): number {
+    return VERSION
   }
 
   set model(model) {
