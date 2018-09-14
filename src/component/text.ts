@@ -4,6 +4,7 @@
 
 import Component from './component'
 import RealObjectMesh from './threed/real-object-mesh'
+import { createOffcanvas } from './html/elements'
 
 import * as THREE from 'three'
 
@@ -14,13 +15,6 @@ function fontStyle(bold: boolean, italic: boolean, fontSize: number, fontFamily:
     [fontSize + 'px', true],
     [fontFamily, true]
   ].filter(p => p[1]).map(p => p[0]).join(' ')
-}
-
-function createOffcanvas(width: number, height: number): HTMLCanvasElement {
-  let canvas = document.createElement('canvas')
-  canvas.width = width
-  canvas.height = height
-  return canvas
 }
 
 /**
@@ -132,11 +126,6 @@ export default class Text extends Component {
 
   get hasTextProperty() {
     return true
-  }
-
-  /* textOptions가 바뀐 경우에는 rebuild 한다. */
-  onchangetextOptions(after, before) {
-    (this.object3D as ObjectText).build()
   }
 }
 

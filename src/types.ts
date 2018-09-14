@@ -33,11 +33,20 @@ export interface TextOptions {
   lineHeight?: number
 }
 
+export interface LineStyle {
+  lineWidth?: number,
+  strokeStyle?: any,
+  lineDash?: string,
+  lineCap?: string,
+  lineJoin?: string
+}
+
 export interface ComponentModel {
   type?: string,
   id?: string,
   class?: string,
   textOptions?: TextOptions,
+  lineStyle?: LineStyle,
   dimension?: Dimension,
   translate?: Vector3,
   scale?: Vector3,

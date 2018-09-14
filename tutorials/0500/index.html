@@ -113,9 +113,11 @@
               rotate,
               path,
               round: 10,
-              lineWidth: 2,
+              lineStyle: {
+                lineWidth: 2,
+                strokeStyle: colors[(idx + 2) % colors.length]
+              },
               fillStyle: colors[(idx + 1) % colors.length],
-              strokeStyle: colors[(idx + 2) % colors.length],
               curved: true,
               src
             }

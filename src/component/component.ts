@@ -336,6 +336,18 @@ export default class Component extends ModelAndState implements LifeCycleCallbac
   onchangealpha(after, before) {
     (this.object3D as RealObject).update()
   }
+
+  onchangelineStyle(after, before) {
+    (this.object3D as RealObject).update()
+  }
+
+  onchangefillStyle(after, before) {
+    (this.object3D as RealObject).update()
+  }
+
+  onchangetextOptions(after, before) {
+    (this.object3D as RealObject).update()
+  }
 }
 
 Component.register(Component.type, Component)

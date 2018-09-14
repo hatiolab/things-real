@@ -32,8 +32,7 @@ export default class RealObjectExtrude extends AbstractRealObject {
   build() {
     var {
       fillStyle,
-      strokeStyle = 0x636363,
-      lineWidth = 1,
+      lineStyle = {},
       alpha = 1,
       dimension
     } = this.component.state
@@ -41,6 +40,11 @@ export default class RealObjectExtrude extends AbstractRealObject {
     var {
       height: depth = 1
     } = dimension
+
+    var {
+      strokeStyle = 0x636363,
+      lineWidth = 1
+    } = lineStyle
 
     var shape = (this.component as Shape).createShape()
 
@@ -143,15 +147,19 @@ export default class RealObjectExtrude extends AbstractRealObject {
 
   createSideMesh(geometry, shape) {
     var {
-      strokeStyle = 0x000000,
       dimension,
-      lineWidth = 0,
+      lineStyle = {},
       alpha = 1
     } = this.component.state
 
     var {
       height: depth = 1
     } = dimension
+
+    var {
+      lineWidth = 0,
+      strokeStyle = 0x000000
+    } = lineStyle
 
     var hole = new THREE.Path()
     hole.setFromPoints(shape.getPoints())
