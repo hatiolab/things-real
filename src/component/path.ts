@@ -11,6 +11,17 @@ export default class Path extends Shape {
     return 'path'
   }
 
+  static readonly NATURE = {
+    mutable: false,
+    resizable: true,
+    rotatable: true,
+    properties: [{
+      type: 'checkbox',
+      label: 'curved',
+      name: 'curved'
+    }]
+  }
+
   render(shape) {
     var {
       dimension,
@@ -41,6 +52,10 @@ export default class Path extends Shape {
       for (let i = 1; i < path.length; i++)
         shape.lineTo(path[i].x, path[i].y)
     }
+  }
+
+  onchangecurved(after, before) {
+    this.update()
   }
 }
 

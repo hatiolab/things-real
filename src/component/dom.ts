@@ -57,8 +57,8 @@ export default class DOMComponent extends Component {
 
     var {
       dimension,
-      translate: position,
-      rotate: rotation
+      translate: position = { x: 0, y: 0, z: 0 },
+      rotate: rotation = { x: 0, y: 0, z: 0 }
     } = this.state
 
     element.style.width = dimension.width
