@@ -5,15 +5,13 @@
 import Component from './component'
 import Shape from './shape'
 
-import * as THREE from 'three'
-
 export default class Path extends Shape {
 
   static get type() {
     return 'path'
   }
 
-  createShape() {
+  render(shape) {
     var {
       dimension,
       curved = false,
@@ -25,8 +23,6 @@ export default class Path extends Shape {
       height,
       depth
     } = dimension
-
-    var shape = new THREE.Shape();
 
     if (path.length <= 2)
       return;
@@ -45,8 +41,6 @@ export default class Path extends Shape {
       for (let i = 1; i < path.length; i++)
         shape.lineTo(path[i].x, path[i].y)
     }
-
-    return shape
   }
 }
 

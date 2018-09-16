@@ -82,7 +82,7 @@ export interface NatureProperty {
   label: string,
   name: string,
   placeholder?: string,
-  property: { [propName: string]: any }
+  property?: { [propName: string]: any }
 }
 
 export interface Nature {

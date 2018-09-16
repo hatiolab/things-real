@@ -46,7 +46,8 @@ export default class RealObjectExtrude extends AbstractRealObject {
       lineWidth = 1
     } = lineStyle
 
-    var shape = (this.component as Shape).createShape()
+    var shape: THREE.Shape = new THREE.Shape();
+    (this.component as Shape).render(shape)
 
     var options = {
       ...EXTRUDE_OPTIONS,

@@ -89,7 +89,7 @@ export default class Component extends ModelAndState implements LifeCycleCallbac
   /* Component */
 
   get nature() {
-    return Component.NATURE
+    return this.constructor['NATURE'] || Component.NATURE
   }
 
   get type() {
@@ -253,8 +253,8 @@ export default class Component extends ModelAndState implements LifeCycleCallbac
   /* Event */
   public eventMap: EventMap
 
-  prerender(context: CanvasRenderingContext2D | WebGLRenderingContext) { }
-  render(context: CanvasRenderingContext2D | WebGLRenderingContext) { }
+  prerender(context: CanvasRenderingContext2D | WebGLRenderingContext | THREE.Shape) { }
+  render(context: CanvasRenderingContext2D | WebGLRenderingContext | THREE.Shape) { }
 
   /*
    * 조건에 맞는 컴포넌트를 찾기 위한 기능들
@@ -375,6 +375,14 @@ export default class Component extends ModelAndState implements LifeCycleCallbac
   }
 
   /**
+   * update 필요에 따라, 2D 컴포넌트 invalidate, 3D 컴포넌트 update 를 수행한다.
+   */
+  update() {
+    (this.object3D as RealObject).update()
+    this.invalidate()
+  }
+
+  /**
    * data state 변경시 호출되는 callback
    * @param after 
    * @param before 
@@ -408,23 +416,23 @@ export default class Component extends ModelAndState implements LifeCycleCallbac
   }
 
   onchangedimension(after, before) {
-    (this.object3D as RealObject).update()
+    this.update()
   }
 
   onchangealpha(after, before) {
-    (this.object3D as RealObject).update()
+    this.update()
   }
 
   onchangelineStyle(after, before) {
-    (this.object3D as RealObject).update()
+    this.update()
   }
 
   onchangefillStyle(after, before) {
-    (this.object3D as RealObject).update()
+    this.update()
   }
 
   onchangetextOptions(after, before) {
-    (this.object3D as RealObject).update()
+    this.update()
   }
 }
 

@@ -5,15 +5,24 @@
 import Component from './component'
 import Shape from './shape'
 
-import * as THREE from 'three'
-
 export default class Rect extends Shape {
 
   static get type() {
     return 'rect'
   }
 
-  createShape() {
+  static readonly NATURE = {
+    mutable: false,
+    resizable: true,
+    rotatable: true,
+    properties: [{
+      type: 'number',
+      label: 'round',
+      name: 'round'
+    }]
+  }
+
+  render(shape) {
     var {
       dimension,
       round = 0
@@ -21,11 +30,8 @@ export default class Rect extends Shape {
 
     var {
       width,
-      height,
       depth
     } = dimension
-
-    var shape = new THREE.Shape();
 
     if (round > 0) {
       var radius = (round / 100) * (width / 2)
@@ -46,8 +52,10 @@ export default class Rect extends Shape {
       shape.lineTo(0, depth);
       shape.lineTo(0, 0);
     }
+  }
 
-    return shape
+  onchangeround(after, before) {
+    this.update()
   }
 }
 
