@@ -535,18 +535,19 @@ export default class ViewerLayer extends Layer {
 
     switch (action) {
       case 'data-toggle':
-        (enter || restore) && this.ownerScene.findAll(target).forEach(component => {
+        (enter || restore) && this.rootContainer.findAll(target).forEach(component => {
           component.data = !component.data
         })
         break
       case 'data-tristate':
-        (enter || restore) && this.ownerScene.findAll(target).forEach(component => {
-          component.data = (Math.round(Number(component.data) || 0) + (restore ? -1 : 1)) % 3
+        (enter || restore) && this.rootContainer.findAll(target).forEach(component => {
+          let number = Math.round(Math.max(Number(component.data) || 0, 0))
+          component.data = (number + (enter ? 1 : 2)) % 3
         })
         break
       case 'data-set':
         if (enter) {
-          this.ownerScene.findAll(target).forEach(component => {
+          this.rootContainer.findAll(target).forEach(component => {
             component.data = value
           })
         } else if (restore) {
@@ -561,6 +562,7 @@ export default class ViewerLayer extends Layer {
         //     : restore ? InfoWindow.hide(component, target) : ;
         break
       default:
+        // things-real 라이브러리 외부에서 처리하도록 한다.
         this.ownerScene.trigger(action, target, value)
     }
   }
