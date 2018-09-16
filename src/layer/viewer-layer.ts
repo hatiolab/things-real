@@ -7,6 +7,7 @@ import Layer from './layer'
 import EditorControls from '../threed/controls/editor-controls'
 import { CSS3DRenderer } from '../threed/renderers/css-3d-renderer'
 import RealObjectScene from '../component/threed/real-object-scene'
+import { ActionModel } from '../types'
 
 import * as THREE from 'three'
 
@@ -16,6 +17,11 @@ import * as THREE from 'three'
 export default class ViewerLayer extends Layer {
 
   private _textureLoader: THREE.TextureLoader
+
+  private boundOnclick
+  private boundOnmousedown
+  private boundOnmouseup
+
   /**
    * constructor
    * @param owner Real Scene
@@ -36,6 +42,7 @@ export default class ViewerLayer extends Layer {
    */
   dispose() {
     super.dispose()
+
     this.disposeEditorControls()
 
     this.disposeObjectScene()
@@ -47,13 +54,22 @@ export default class ViewerLayer extends Layer {
 
     this.disposeCanvas()
 
-    // super.dispose()
+    this.element.removeEventListener('click', this.boundOnclick)
+    this.element.removeEventListener('mousedown', this.boundOnmousedown)
+    this.element.removeEventListener('mouseup', this.boundOnmouseup)
   }
 
   /**
    * Lifecycle Target Element에 attach된 후, render() 전에 호출됨
    */
   ready() {
+    this.boundOnclick = this.onclick.bind(this)
+    this.boundOnmousedown = this.onmousedown.bind(this)
+    this.boundOnmouseup = this.onmouseup.bind(this)
+
+    this.element.addEventListener('click', this.boundOnclick)
+    this.element.addEventListener('mousedown', this.boundOnmousedown)
+    this.element.addEventListener('mouseup', this.boundOnmouseup)
   }
 
   /* object-scene */
@@ -393,7 +409,7 @@ export default class ViewerLayer extends Layer {
 
     // TUNE-ME 자손들까지의 모든 intersects를 다 포함하는 것이면, capturable component에 해당하는 오브젝트라는 것을 보장할 수 없음.
     // 또한, component에 매핑된 오브젝트라는 것도 보장할 수 없음.
-    var capturables = this.rootContainer.layout.capturables(this)
+    var capturables = this.rootContainer.layout.capturables(this.rootContainer)
     var intersects = this.raycaster.intersectObjects(capturables.map(component => {
       return component.object3D
     }), true)
@@ -401,7 +417,7 @@ export default class ViewerLayer extends Layer {
     for (let i = 0; i < intersects.length; i++) {
       let object: THREE.Object3D = intersects[i].object
 
-      while (!(object['isRealObject']) && object !== this.objectScene) {
+      while (!object['isRealObject'] && object !== this.objectScene) {
         object = object.parent
       }
 
@@ -412,7 +428,7 @@ export default class ViewerLayer extends Layer {
 
       if (component) {
         /* [BEGIN] GROUP을 위한 테스트 로직임(제거되어야 함.) */
-        while (component.parent && component.parent !== this) {
+        while (component.parent && component.parent !== this.rootContainer) {
           component = component.parent
         }
         /* [END] GROUP을 위한 테스트 로직임 */
@@ -421,6 +437,131 @@ export default class ViewerLayer extends Layer {
       }
     }
 
-    return this
+    return this.rootContainer
+  }
+
+  /**
+   * 
+   * @param event 
+   */
+  onclick(event) {
+    let pointer = event['changedTouches'] ? event['changedTouches'][0] : event
+    let component = this.capture(pointer.offsetX, pointer.offsetY)
+
+    if (component === this.rootContainer) {
+      return
+    }
+
+    event.preventDefault()
+    event.stopPropagation()
+
+    var tapEvtModel: ActionModel = component.model.event && component.model.event.tap
+
+    if (!tapEvtModel) {
+      return
+    }
+
+    this._doEventAction(tapEvtModel, component, true)
+  }
+
+  /**
+   * 
+   * @param event 
+   */
+  onmousedown(event) {
+  }
+
+  /**
+   * 
+   * @param event 
+   */
+  onmouseup(event) {
+  }
+
+  onmouseenter(event) {
+    let pointer = event['changedTouches'] ? event['changedTouches'][0] : event
+    let component = this.capture(pointer.offsetX, pointer.offsetY)
+
+    if (component === this.rootContainer) {
+      return
+    }
+
+    event.preventDefault()
+    event.stopPropagation()
+
+    var hoverEvtModel: ActionModel = component.model.event && component.model.event.hover
+
+    if (!hoverEvtModel) {
+      return
+    }
+
+    this._doEventAction(hoverEvtModel, component, true)
+  }
+
+  onmouseleave(event) {
+    let pointer = event['changedTouches'] ? event['changedTouches'][0] : event
+    let component = this.capture(pointer.offsetX, pointer.offsetY)
+
+    if (component === this.rootContainer) {
+      return
+    }
+
+    event.preventDefault()
+    event.stopPropagation()
+
+    var hoverEvtModel: ActionModel = component.model.event && component.model.event.hover
+
+    if (!hoverEvtModel) {
+      return
+    }
+
+    this._doEventAction(hoverEvtModel, component, false)
+  }
+
+  _doEventAction(event: ActionModel, component, enter: boolean) {
+
+    var { action, target, value, emphasize = false, restore = false } = event
+    if (!action || !target)
+      return
+
+    // IMPLEMENT-ME
+    if (emphasize) {
+      if (enter) {
+        // Emphasize.emphasize(component)
+      } else if (restore) {
+        // Emphasize.normalize(component)
+      }
+    }
+
+    switch (action) {
+      case 'data-toggle':
+        (enter || restore) && this.ownerScene.findAll(target).forEach(component => {
+          component.data = !component.data
+        })
+        break
+      case 'data-tristate':
+        (enter || restore) && this.ownerScene.findAll(target).forEach(component => {
+          component.data = (Math.round(Number(component.data) || 0) + (restore ? -1 : 1)) % 3
+        })
+        break
+      case 'data-set':
+        if (enter) {
+          this.ownerScene.findAll(target).forEach(component => {
+            component.data = value
+          })
+        } else if (restore) {
+          // TODO restore 설정은 leave 시점에 enter 시점의 상태로 되돌린다는 뜻이다.
+          // data-set에서는 어떻게 할 것인가 ? 참고로 enter - leave 는 stack 처럼 중복될 수 있다.
+        }
+        break
+      case 'infowindow':
+        // IMPLEMENT-ME
+        //   enter
+        //     ? InfoWindow.show(component, target, true /* auto close - no close button */)
+        //     : restore ? InfoWindow.hide(component, target) : ;
+        break
+      default:
+        this.ownerScene.trigger(action, target, value)
+    }
   }
 }

@@ -223,7 +223,7 @@ export class ModelAndState extends EventSource implements ComponentModel, EventC
   set text(text) {
     this.textOptions = {
       ...(this.textOptions || {}),
-      text
+      text: text === undefined ? '' : String(text)
     }
   }
 }

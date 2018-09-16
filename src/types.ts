@@ -43,6 +43,19 @@ export interface LineStyle {
   lineJoin?: string
 }
 
+export interface ActionModel {
+  action: string,
+  target: string,
+  value?: string,
+  emphasize?: boolean,
+  restore?: boolean
+}
+
+export interface EventModel {
+  tap?: ActionModel,
+  hover?: ActionModel
+}
+
 export interface ComponentModel {
   type?: string,
   id?: string,
@@ -60,6 +73,7 @@ export interface ComponentModel {
   components?: ComponentModel[],
   mappings?: DataSpreadModel[],
   options?: { [propName: string]: any },
+  event?: EventModel,
   [propName: string]: any
 }
 
@@ -72,9 +86,9 @@ export interface NatureProperty {
 }
 
 export interface Nature {
-  mutable?: false,
-  resizable?: true,
-  rotatable?: true,
+  mutable?: boolean,
+  resizable?: boolean,
+  rotatable?: boolean,
   properties: NatureProperty[],
   valueProperty?: string,
   'value-property'?: string

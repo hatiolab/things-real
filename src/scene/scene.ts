@@ -151,13 +151,24 @@ export default class Scene extends EventSource {
     return this.rootContainer.findById(id)
   }
 
-  setProperties(target: string, properties: string | object, value?: any) {
-    var components = this.findAll(target)
-    components.forEach(component => component.setState(clonedeep(properties), value ? clonedeep(value) : value))
+  setProperties(targets: string, properties: string | object, value?: any) {
+    this.findAll(targets).forEach(component => component.setState(clonedeep(properties), value ? clonedeep(value) : value))
   }
 
   setData(targets: string, value: any) {
     this.setProperties(targets, 'data', value)
+  }
+
+  toggleData(targets: string) {
+    this.findAll(targets).forEach(component => {
+      component.data = !component.data
+    })
+  }
+
+  tristateData(targets: string) {
+    this.findAll(targets).forEach(component => {
+      component.data = (Math.round(Number(component.data) || 0) + 1) % 3
+    })
   }
 
   add(components: ComponentModel | ComponentModel[]) {
@@ -190,6 +201,10 @@ export default class Scene extends EventSource {
 
   get selected() {
     return this._selected
+  }
+
+  get identities() {
+    return this.root.identities
   }
 
   copy() {

@@ -1,5 +1,4 @@
 import { SceneModelVersion, SceneModel, ComponentModel } from '../types'
-import { Scene } from 'three';
 
 /**
  * SceneModel version 1 migrator
@@ -102,7 +101,7 @@ export default class SceneModelMigrator1 {
     return model$2
   }
 
-  static migrateTypeName(type$1) {
+  static migrateTypeName(type$1: string) {
     switch (type$1) {
       case 'polygon':
         return 'path'

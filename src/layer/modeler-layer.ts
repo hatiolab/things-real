@@ -14,10 +14,6 @@ import * as THREE from 'three'
  */
 export default class ModelerLayer extends ViewerLayer {
 
-  private boundOnclick
-  private boundOnmousedown
-  private boundOnmouseup
-
   /**
    * scene-renderer disposer
    */
@@ -27,10 +23,6 @@ export default class ModelerLayer extends ViewerLayer {
     this.disposeTransformControls()
     this.disposeBoundBox()
     this.disposeGridHelper()
-
-    this.element.removeEventListener('click', this.boundOnclick)
-    this.element.removeEventListener('mousedown', this.boundOnmousedown)
-    this.element.removeEventListener('mouseup', this.boundOnmouseup)
   }
 
   /**
@@ -38,14 +30,6 @@ export default class ModelerLayer extends ViewerLayer {
    */
   ready() {
     super.ready()
-
-    this.boundOnclick = this.onclick.bind(this)
-    this.boundOnmousedown = this.onmousedown.bind(this)
-    this.boundOnmouseup = this.onmouseup.bind(this)
-
-    this.element.addEventListener('click', this.boundOnclick)
-    this.element.addEventListener('mousedown', this.boundOnmousedown)
-    this.element.addEventListener('mouseup', this.boundOnmouseup)
   }
 
   /* overides */
@@ -223,7 +207,8 @@ export default class ModelerLayer extends ViewerLayer {
     var intersects = this.raycaster.intersectObjects(activePickers, true)
 
     if (intersects.length > 0) {
-      return this.rootContainer
+      // return this.rootContainer
+      return this.ownerScene.selected[0]
     }
     /* modeler case end */
 

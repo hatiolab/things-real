@@ -185,6 +185,18 @@ export default class RootContainer extends Container {
   /* index registry */
   private _indexMap: Object = {}
 
+  get identities() {
+    return Object.values(this._indexMap).map((component) => {
+      let {
+        id, data
+      } = component.model
+
+      return {
+        key: id, value: data
+      }
+    }).sort((c1, c2) => { return c1.key > c2.key ? 1 : -1 })
+  }
+
   /**
    * Component 를 id로 찾는 경우, 빠르게 찾기위해 인덱스에 등록
    * @param {string} id 

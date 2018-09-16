@@ -64,8 +64,10 @@ class ObjectText extends RealObjectMesh {
       lineHeight = fontSize * 1.2, // default(line-height: normal) lineHeight
     } = textOptions
 
-    if (!text) {
+    if (text === undefined || text == '') {
       text = ' '
+    } else {
+      text = String(text)
     }
 
     let span = document.createElement('span')
@@ -99,14 +101,15 @@ class ObjectText extends RealObjectMesh {
       fontColor = 'black'
     } = (this.component.state.textOptions || {})
 
-    let ctx = canvas.getContext('2d');
+    let ctx = canvas.getContext('2d')
     ctx.clearRect(0, 0, canvas.width, canvas.height)
-    ctx.fillStyle = fontColor;
+    ctx.fillStyle = fontColor
     ctx.font = fontStyle(bold, italic, fontSize, fontFamily)
     ctx.textBaseline = 'top'
     ctx.textAlign = 'left'
-    ctx.strokeStyle = fontColor;
-    let lineText = text.split('\n')
+    ctx.strokeStyle = fontColor
+
+    let lineText = String(text).split('\n')
     lineText.forEach((t, i) => {
       ctx.fillText(t, 0, Number(i) * lineHeight)
       ctx.strokeText(t, 0, Number(i) * lineHeight)
