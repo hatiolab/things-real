@@ -111,6 +111,17 @@ export default class Gltf extends Component {
     return 'gltf'
   }
 
+  static readonly NATURE = {
+    mutable: false,
+    resizable: true,
+    rotatable: true,
+    properties: [{
+      type: 'string',
+      label: 'url',
+      name: 'url'
+    }]
+  }
+
   buildObject3D() {
     return new ObjectGltf(this)
   }
