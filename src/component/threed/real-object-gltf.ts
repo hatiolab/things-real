@@ -14,6 +14,7 @@ export default class RealObjectGLTF extends AbstractRealObject {
 
   private static _GLTFLoader = new THREE.GLTFLoader()
   private pivot: THREE.Object3D
+  private objectSize: THREE.Vector3
 
   static get GLTFLoader() {
     return RealObjectGLTF._GLTFLoader
@@ -53,7 +54,7 @@ export default class RealObjectGLTF extends AbstractRealObject {
     var center = boundingBox.getCenter(object.position)
     center.multiplyScalar(-1)
 
-    var objectSize = boundingBox.getSize()
+    this.objectSize = boundingBox.getSize()
 
     // object.updateMatrix()
 
@@ -65,20 +66,7 @@ export default class RealObjectGLTF extends AbstractRealObject {
 
     this.pivot.add(object)
 
-    var {
-      width = 1,
-      height = 1,
-      depth = 1
-    } = this.component.state.dimension || Component.UNIT_DIMENSION
-
-    var {
-      x = 1, y = 1, z = 1
-    } = objectSize
-
-    /* component 자체의 scale도 별도의 의미가 있으므로, dimension은 하위 pivot object의 scale로 조절한다. */
-    this.pivot.scale.set(width / x, depth / y, height / z)
-
-    this.component.invalidate()
+    this._rescale()
 
     // let animations = gltf.animations
     // if (animations && animations.length) {
@@ -97,7 +85,28 @@ export default class RealObjectGLTF extends AbstractRealObject {
     super.clear()
   }
 
+  _rescale() {
+    var {
+      width = 1,
+      height = 1,
+      depth = 1
+    } = this.component.state.dimension || Component.UNIT_DIMENSION
+
+    var {
+      x = 1, y = 1, z = 1
+    } = this.objectSize || {}
+
+    /* component 자체의 scale도 별도의 의미가 있으므로, dimension은 하위 pivot object의 scale로 조절한다. */
+    this.pivot && this.pivot.scale.set(width / x, height / y, depth / z)
+
+    this.component.invalidate()
+  }
+
   updateAlpha() {
     // TODO 최상위 material들을 찾아서, alpha를 적용한다 ? 잘 모르겠음.
+  }
+
+  updateDimension(after, before) {
+    this._rescale()
   }
 }
