@@ -409,7 +409,7 @@ export default class ViewerLayer extends Layer {
 
     // TUNE-ME 자손들까지의 모든 intersects를 다 포함하는 것이면, capturable component에 해당하는 오브젝트라는 것을 보장할 수 없음.
     // 또한, component에 매핑된 오브젝트라는 것도 보장할 수 없음.
-    var capturables = this.rootContainer.layout.capturables(this.rootContainer)
+    var capturables = this.rootContainer.capturables()
     var intersects = this.raycaster.intersectObjects(capturables.map(component => {
       return component.object3D
     }), true)

@@ -283,6 +283,10 @@ class RobotArm3D extends AbstractRealObject {
       this._joints[i].angle = angles[i]
     }
   }
+
+  updateAlpha() {
+
+  }
 }
 
 export default class RobotArm extends Component {
@@ -291,7 +295,7 @@ export default class RobotArm extends Component {
     return 'robot-arm'
   }
 
-  buildObject3D(): THREE.Object3D {
+  buildObject3D() {
     return new RobotArm3D(this)
   }
 

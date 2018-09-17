@@ -68,60 +68,6 @@ export default class DOMComponent extends Component {
 
     return cssObject
   }
-
-  protected updateTransform() {
-    super.updateTransform()
-
-    var {
-      scale: {
-        x: sx = 1,
-        y: sy = 1,
-        z: sz = 1
-      } = Component.UNIT_SCALE,
-      translate: {
-        x: tx = 0,
-        y: ty = 0,
-        z: tz = 0
-      } = Component.UNIT_TRANSLATE,
-      rotate: {
-        x: rx = 0,
-        y: ry = 0,
-        z: rz = 0
-      } = Component.UNIT_ROTATE
-    } = this.state
-
-    if (this.cssObject3D) {
-      this.cssObject3D.position.set(tx, ty, tz);
-      this.cssObject3D.rotation.set(rx, ry, rz);
-      this.cssObject3D.scale.set(sx, sy, sz);
-    }
-  }
-
-  onchangetranslate(after, before) {
-    super.onchangetranslate(after, before)
-    var { x = 1, y = 1, z = 1 } = after
-    this.cssObject3D.position.set(x, y, z)
-  }
-
-  onchangerotate(after, before) {
-    super.onchangerotate(after, before)
-    var { x = 1, y = 1, z = 1 } = after
-    this.cssObject3D.rotation.set(x, y, z)
-  }
-
-  onchangescale(after, before) {
-    super.onchangescale(after, before)
-    var { x = 1, y = 1, z = 1 } = after
-    this.cssObject3D.scale.set(x, y, z)
-  }
-
-  onchangedimension(after, before) {
-    super.onchangedimension(after, before)
-    if (this.cssObject3D) {
-      (this.cssObject3D as any).element.style.width = after.width;
-      (this.cssObject3D as any).element.style.height = after.height;
-    }
-  }
 }
 
 Component.register(DOMComponent.type, DOMComponent)

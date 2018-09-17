@@ -103,6 +103,9 @@ class ObjectGltf extends AbstractRealObject {
     this.pivot.scale.set(width / x, depth / y, height / z)
   }
 
+  updateAlpha() {
+
+  }
 }
 
 export default class Gltf extends Component {

@@ -176,6 +176,10 @@ export default class Container extends Component {
     this._components = this._components.concat(head, tail)
   }
 
+  capturables() {
+    return this.layout.capturables(this)
+  }
+
   findAll(s, ...others) {
     if (typeof s === 'string')
       return select(s, this, others[0] || this) // others[0] means (self)

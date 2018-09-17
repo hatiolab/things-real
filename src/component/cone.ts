@@ -4,7 +4,6 @@
 
 import Component from './component'
 
-import { Dimension } from '../types'
 import RealObjectMesh from './threed/real-object-mesh'
 import * as THREE from 'three'
 

@@ -24,6 +24,14 @@ export default class RealObjectScene extends THREE.Scene implements RealObject {
 
   update() { }
 
+  updateTransform() { }
+  updateTransformReverse() { }
+  updateDimension() { }
+  updateTranslate() { }
+  updateRotate() { }
+  updateScale() { }
+  updateAlpha() { }
+
   get isRealObject() {
     return true
   }

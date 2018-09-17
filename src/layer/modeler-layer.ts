@@ -129,7 +129,7 @@ export default class ModelerLayer extends ViewerLayer {
 
       object && CommandChange.around(this.ownerScene.commander, () => {
         // 3d-object의 변화를 component에 반영한다.
-        component.updateTransformReverse(object);
+        object.updateTransformReverse()
       })
     })
 
@@ -214,7 +214,7 @@ export default class ModelerLayer extends ViewerLayer {
 
     // TUNE-ME 자손들까지의 모든 intersects를 다 포함하는 것이면, capturable component에 해당하는 오브젝트라는 것을 보장할 수 없음.
     // 또한, component에 매핑된 오브젝트라는 것도 보장할 수 없음.
-    var capturables = this.rootContainer.layout.capturables(this.rootContainer)
+    var capturables = this.rootContainer.capturables()
     intersects = this.raycaster.intersectObjects(capturables.map(component => {
       return component.object3D
     }), true)

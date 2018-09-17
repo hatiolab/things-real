@@ -165,17 +165,18 @@ export default class Component extends ModelAndState implements LifeCycleCallbac
    * property object3D
    * readonly
    */
-  private _object3D: THREE.Object3D
+  private _object3D: RealObject
 
-  get object3D(): THREE.Object3D {
+  get object3D(): RealObject {
     if (!this._object3D) {
       this._object3D = this.buildObject3D()
-      this.updateTransform()
+      // this._object3D.update()
+      // this._object3D.updateTransform()
     }
     return this._object3D
   }
 
-  protected buildObject3D(): THREE.Object3D {
+  protected buildObject3D(): RealObject {
     return new RealObjectDummy(this)
   }
 
@@ -189,65 +190,6 @@ export default class Component extends ModelAndState implements LifeCycleCallbac
    */
   get renderer() {
     return this.root.renderer
-  }
-
-  /**
-   * Component의 상태값의 변화를 Object3D에 반영
-   */
-  protected updateTransform() {
-
-    var {
-      scale: {
-        x: sx = 1,
-        y: sy = 1,
-        z: sz = 1
-      } = Component.UNIT_SCALE,
-      translate: {
-        x: tx = 0,
-        y: ty = 0,
-        z: tz = 0
-      } = Component.UNIT_TRANSLATE,
-      rotate: {
-        x: rx = 0,
-        y: ry = 0,
-        z: rz = 0
-      } = Component.UNIT_ROTATE
-    } = this.state
-
-    if (this.object3D) {
-      this.object3D.position.set(tx, ty, tz);
-      this.object3D.rotation.set(rx, ry, rz);
-      this.object3D.scale.set(sx, sy, sz);
-    }
-  }
-
-  /**
-   * Object3D 모델의 변화를 Component의 모델값에 반영
-   */
-  updateTransformReverse() {
-    var object3D = this.object3D
-
-    var rotation = object3D.rotation;
-    var position = object3D.position;
-    var scale = object3D.scale;
-
-    this.setModel({
-      rotate: {
-        x: rotation.x,
-        y: rotation.y,
-        z: rotation.z
-      },
-      translate: {
-        x: position.x,
-        y: position.y,
-        z: position.z
-      },
-      scale: {
-        x: scale.x,
-        y: scale.y,
-        z: scale.z
-      }
-    })
   }
 
   /* Event */
@@ -378,8 +320,8 @@ export default class Component extends ModelAndState implements LifeCycleCallbac
    * update 필요에 따라, 2D 컴포넌트 invalidate, 3D 컴포넌트 update 를 수행한다.
    */
   update() {
-    (this.object3D as RealObject).update()
-    this.invalidate()
+    this.object3D.update()
+    this.invalidate() // 필요 ???
   }
 
   /**
@@ -401,26 +343,23 @@ export default class Component extends ModelAndState implements LifeCycleCallbac
   }
 
   onchangetranslate(after, before) {
-    var { x = 0, y = 0, z = 0 } = after
-    this.object3D.position.set(x, y, z)
+    this.object3D.updateTranslate(after, before)
   }
 
   onchangerotate(after, before) {
-    var { x = 0, y = 0, z = 0 } = after
-    this.object3D.rotation.set(x, y, z)
+    this.object3D.updateRotate(after, before)
   }
 
   onchangescale(after, before) {
-    var { x = 1, y = 1, z = 1 } = after
-    this.object3D.scale.set(x, y, z)
+    this.object3D.updateScale(after, before)
   }
 
   onchangedimension(after, before) {
-    this.update()
+    this.object3D.updateDimension(after, before)
   }
 
   onchangealpha(after, before) {
-    this.update()
+    this.object3D.updateAlpha(after, before)
   }
 
   onchangelineStyle(after, before) {

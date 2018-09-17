@@ -4,9 +4,9 @@
 
 import AbstractRealObject from './abstract-real-object'
 import Shape from '../shape'
+import { applyAlpha } from './commons'
 
 import * as THREE from 'three'
-import * as tinycolor from 'tinycolor2'
 
 import BoundUVGenerator from '../../threed/utils/bound-uv-generator'
 
@@ -28,12 +28,13 @@ const SIDE_EXTRUDE_OPTIONS = {
 export default class RealObjectExtrude extends AbstractRealObject {
 
   private _boundUVGenerator
+  private _mainMesh: THREE.Mesh
+  private _sideMesh: THREE.Mesh
 
   build() {
     var {
       fillStyle,
       lineStyle = {},
-      alpha = 1,
       dimension
     } = this.component.state
 
@@ -64,17 +65,19 @@ export default class RealObjectExtrude extends AbstractRealObject {
 
     if (fillStyle && fillStyle != 'none') {
       var material = this.createMaterial();
-      var mesh = this.createMesh(geometry, material);
+      this._mainMesh = this.createMesh(geometry, material);
 
-      this.add(mesh)
+      this.add(this._mainMesh)
     }
 
     if (strokeStyle && strokeStyle != 'transparent' && lineWidth > 0) {
       // var sideMesh = this.createSideMesh(geometry, shape, options)
-      var sideMesh = this.createSideMesh(geometry, shape)
+      this._sideMesh = this.createSideMesh(geometry, shape)
 
-      this.add(sideMesh)
+      this.add(this._sideMesh)
     }
+
+    // this.updateAlpha()
   }
 
   get boundUVGenerator() {
@@ -128,11 +131,13 @@ export default class RealObjectExtrude extends AbstractRealObject {
       material = new THREE.MeshLambertMaterial(params)
     }
 
-    var tinyFillStyle = tinycolor(fillStyle)
-    var fillAlpha = tinyFillStyle.getAlpha()
+    // applyAlpha(material, alpha, fillStyle)
 
-    material.opacity = alpha * fillAlpha;
-    material.transparent = alpha < 1 || fillAlpha < 1
+    // var tinyFillStyle = tinycolor(fillStyle)
+    // var fillAlpha = tinyFillStyle.getAlpha()
+
+    // material.opacity = alpha * fillAlpha
+    // material.transparent = alpha * fillAlpha < 1 // || fillAlpha < 1
 
     return material;
   }
@@ -169,10 +174,11 @@ export default class RealObjectExtrude extends AbstractRealObject {
       color: strokeStyle
     })
 
-    var tinyStrokeStyle = tinycolor(strokeStyle)
-    var strokeAlpha = tinyStrokeStyle.getAlpha()
-    sideMaterial.opacity = alpha * strokeAlpha
-    sideMaterial.transparent = alpha < 1 || strokeAlpha < 1
+    // applyAlpha(sideMaterial, strokeStyle, alpha)
+    // var tinyStrokeStyle = tinycolor(strokeStyle)
+    // var strokeAlpha = tinyStrokeStyle.getAlpha()
+    // sideMaterial.opacity = alpha * strokeAlpha
+    // sideMaterial.transparent = alpha < 1 || strokeAlpha < 1
 
     // prevent overlapped layers flickering
     sideMaterial.polygonOffset = true
@@ -195,5 +201,16 @@ export default class RealObjectExtrude extends AbstractRealObject {
     sideMesh.rotation.z = - Math.PI
 
     return sideMesh
+  }
+
+  updateAlpha() {
+    var {
+      alpha,
+      fillStyle,
+      lineStyle
+    } = this.component.state
+
+    applyAlpha(this._mainMesh.material, alpha, fillStyle)
+    applyAlpha(this._sideMesh.material, alpha, lineStyle && lineStyle.strokeStyle)
   }
 }

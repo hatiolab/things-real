@@ -7,7 +7,7 @@ import RealObjectExtrude from './threed/real-object-extrude';
 
 export default abstract class Shape extends Component {
 
-  buildObject3D(): THREE.Object3D {
+  buildObject3D() {
     return new RealObjectExtrude(this)
   }
 }
