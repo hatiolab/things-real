@@ -44,40 +44,17 @@ export default class RealObjectDomElement extends RealObjectMesh {
     return this._cssObject3D
   }
 
-  buildObject3D() {
-    return new RealObjectDomElement(this)
-  }
-
-  createDOMElement() {
-    var {
-      tagName,
-      options = {}
-    } = this.component.state
-
-    var element = tagName !== 'svg' ? document.createElement(tagName)
-      : document.createElementNS("http://www.w3.org/2000/svg", "svg")
-    Object.keys(options).forEach(prop => {
-      element[prop] = options[prop]
-    })
-
-    return element
-  }
-
   buildCSS3DObject() {
 
-    var element = this.createDOMElement()
+    var element = this.component.domElement
     var cssObject: THREE.Object3D = new CSS3DObject(element)
 
     var {
-      dimension,
-      translate: position = { x: 0, y: 0, z: 0 },
-      rotate: rotation = { x: 0, y: 0, z: 0 }
+      dimension
     } = this.component.state
 
-    element.style.width = dimension.width
-    element.style.height = dimension.height
-    cssObject.position.set(position.x, position.y, position.z)
-    cssObject.rotation.set(rotation.x, rotation.y, rotation.z)
+    element.style.width = dimension.width + 'px'
+    element.style.height = dimension.height + 'px'
 
     return cssObject
   }
@@ -103,11 +80,9 @@ export default class RealObjectDomElement extends RealObjectMesh {
       } = Component.UNIT_ROTATE
     } = this.component.state
 
-    if (this.cssObject3D) {
-      this.cssObject3D.position.set(tx, ty, tz);
-      this.cssObject3D.rotation.set(rx, ry, rz);
-      this.cssObject3D.scale.set(sx, sy, sz);
-    }
+    this.cssObject3D.position.set(tx, ty, tz)
+    this.cssObject3D.rotation.set(rx, ry, rz)
+    this.cssObject3D.scale.set(sx, sy, sz)
   }
 
   updateTranslate(after, before) {
@@ -134,12 +109,18 @@ export default class RealObjectDomElement extends RealObjectMesh {
   updateDimension(after, before) {
     super.updateDimension(after, before);
 
-    (this.cssObject3D as any).element.style.width = after.width;
-    (this.cssObject3D as any).element.style.height = after.height;
+    this.component.domElement.style.width = after.width + 'px'
+    this.component.domElement.style.height = after.height + 'px'
   }
 
   updateAlpha() {
     // material의 opacity는 항상 0으로 유지되어야 하며,
     // dom element의 opacity에 alpha를 적용해야한다.
+    // 하지만, 컬러톤의 반영 외에 transparent 기능은 하지 못하므로, 뒤에 있는 오브젝트를 보여주지 못한다.
+    var {
+      alpha = 1
+    } = this.component.state;
+
+    this.component.domElement.style.opacity = alpha
   }
 }

@@ -367,7 +367,7 @@ export default class RootContainer extends Container {
 
     this.eventEngine.add(component, component.eventMap)
 
-    if ((component as DOMComponent).cssObject3D) {
+    if (component.isDomComponent) {
       this.css3DScene.add((component as DOMComponent).cssObject3D)
     }
   }
@@ -392,7 +392,7 @@ export default class RootContainer extends Container {
 
     this.eventEngine.remove(component)
 
-    if ((component as DOMComponent).cssObject3D) {
+    if (component.isDomComponent) {
       this.css3DScene.remove((component as DOMComponent).cssObject3D)
     }
   }

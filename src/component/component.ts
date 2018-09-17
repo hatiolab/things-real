@@ -321,7 +321,7 @@ export default class Component extends ModelAndState implements LifeCycleCallbac
    */
   update() {
     this.object3D.update()
-    this.invalidate() // 필요 ???
+    this.invalidate()
   }
 
   /**

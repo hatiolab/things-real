@@ -2,10 +2,7 @@
  * Copyright © HatioLab Inc. All rights reserved.
  */
 
-import Component from './component'
-
 import DomComponent from './dom'
-import * as d3 from 'd3'
 
 export default abstract class D3Chart extends DomComponent {
 

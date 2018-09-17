@@ -38,7 +38,7 @@ export default class D3BarChart extends D3Chart {
     var width = dimension.width - margin.left - margin.right
     var height = dimension.height - margin.top - margin.bottom
 
-    var svg = d3.select((this.cssObject3D as any).element)
+    var svg = d3.select(this.domElement)
 
     svg.selectAll("*").remove()
 

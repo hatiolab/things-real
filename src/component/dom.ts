@@ -5,16 +5,14 @@
 import Component from './component'
 
 import RealObjectDomElement from './threed/real-object-dom-element'
-import { CSS3DObject } from '../threed/renderers/css-3d-renderer'
-import * as THREE from 'three'
 
 export default class DOMComponent extends Component {
+
+  private _domElement
 
   static get type() {
     return 'dom'
   }
-
-  private _cssObject3D: THREE.Object3D
 
   /**
    * property isDomComponent
@@ -24,15 +22,19 @@ export default class DOMComponent extends Component {
     return true
   }
 
-  get cssObject3D(): THREE.Object3D {
-    if (!this._cssObject3D) {
-      this._cssObject3D = this.buildCSS3DObject()
-    }
-    return this._cssObject3D
-  }
-
   buildObject3D() {
     return new RealObjectDomElement(this)
+  }
+
+  get cssObject3D() {
+    return (this.object3D as any).cssObject3D
+  }
+
+  get domElement() {
+    if (!this._domElement) {
+      this._domElement = this.createDOMElement()
+    }
+    return this._domElement
   }
 
   createDOMElement() {
@@ -48,25 +50,6 @@ export default class DOMComponent extends Component {
     })
 
     return element
-  }
-
-  buildCSS3DObject() {
-
-    var element = this.createDOMElement()
-    var cssObject: THREE.Object3D = new CSS3DObject(element)
-
-    var {
-      dimension,
-      translate: position = { x: 0, y: 0, z: 0 },
-      rotate: rotation = { x: 0, y: 0, z: 0 }
-    } = this.state
-
-    element.style.width = dimension.width
-    element.style.height = dimension.height
-    cssObject.position.set(position.x, position.y, position.z)
-    cssObject.rotation.set(rotation.x, rotation.y, rotation.z)
-
-    return cssObject
   }
 }
 
