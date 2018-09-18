@@ -22,3 +22,4 @@ export { default as D3LineChart } from './d3-line-chart'
 export { default as D3PieChart } from './d3-pie-chart'
 
 export { default as Random } from './random'
+export { default as SystemDataSource } from './system'
