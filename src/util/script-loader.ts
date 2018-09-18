@@ -140,7 +140,7 @@ function request_style(src) {
 
 export default class ScriptLoader {
 
-  static load(scripts, styles) {
+  static load(scripts, styles?) {
 
     if (typeof (scripts) == 'string')
       scripts = [scripts]

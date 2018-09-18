@@ -89,7 +89,7 @@ export interface Nature {
   mutable?: boolean,
   resizable?: boolean,
   rotatable?: boolean,
-  properties: NatureProperty[],
+  properties?: NatureProperty[],
   valueProperty?: string,
   'value-property'?: string
 }

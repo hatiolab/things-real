@@ -20,3 +20,5 @@ export { default as D3Chart } from './d3-chart'
 export { default as D3BarChart } from './d3-bar-chart'
 export { default as D3LineChart } from './d3-line-chart'
 export { default as D3PieChart } from './d3-pie-chart'
+
+export { default as Random } from './random'
