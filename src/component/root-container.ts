@@ -41,6 +41,8 @@ export default class RootContainer extends Container {
    * root container 소멸자
    */
   dispose() {
+    super.dispose()
+
     this.disposeEventEngine()
     this.disposeCSS3DScene()
     this.disposeTemplateMap()
