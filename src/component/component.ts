@@ -302,6 +302,16 @@ export default class Component extends ModelAndState implements LifeCycleCallbac
     started ? this.start() : this.stop()
   }
 
+  get value() {
+    var valueprop = this.nature['value-property'] || 'text'
+    return valueprop == 'value' ? this.getState('value') : this[valueprop]
+  }
+
+  set value(value) {
+    var valueprop = this.nature['value-property'] || 'text'
+    valueprop == 'value' ? this.setState('value', value) : this[valueprop] = value
+  }
+
   /**
    * for retension
    */

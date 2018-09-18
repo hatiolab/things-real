@@ -150,8 +150,6 @@ export default abstract class RealObjectMesh extends THREE.Mesh implements RealO
       color = fillStyle
     }
 
-    applyAlpha(this.material, alpha, fillStyle)
-
     return new THREE.MeshBasicMaterial({ color })
   }
 

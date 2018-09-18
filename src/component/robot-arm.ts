@@ -284,15 +284,21 @@ class RobotArm3D extends AbstractRealObject {
     }
   }
 
-  updateAlpha() {
-
-  }
+  updateAlpha() { }
 }
 
 export default class RobotArm extends Component {
 
   static get type() {
     return 'robot-arm'
+  }
+
+  static readonly NATURE = {
+    mutable: false,
+    resizable: true,
+    rotatable: true,
+    properties: [],
+    'value-property': 'angles'
   }
 
   buildObject3D() {
