@@ -75,13 +75,19 @@ export default class SceneModelMigrator1 {
           }
           break
         case 'text':
+        case 'textFormat':
+          model$2.textOptions = {
+            ...model$2.textOptions,
+            [key]: value
+          }
+          break
         case 'bold':
         case 'italic':
         case 'fontFamily':
         case 'fontSize':
         case 'lineHeight':
-          model$2.textOptions = {
-            ...model$2.textOptions,
+          model$2.textStyle = {
+            ...model$2.textStyle,
             [key]: value
           }
           break

@@ -383,6 +383,10 @@ export default class Component extends ModelAndState implements LifeCycleCallbac
   onchangetextOptions(after, before) {
     this.update()
   }
+
+  onchangetextStyle(after, before) {
+    this.update()
+  }
 }
 
 Component.register(Component.type, Component)

@@ -45,24 +45,28 @@ class ObjectText extends RealObjectMesh {
     return new THREE.MeshBasicMaterial({
       map: texture,
       transparent: true,
-      alphaTest: 0.5,
+      alphaTest: 0.2,
       side: THREE.DoubleSide
     })
   }
 
   private getTextBounds(): { width: number, height: number } {
     let {
-      textOptions = {}
+      textOptions = {},
+      textStyle = {}
     } = this.component.state
 
     let {
-      text,
+      text
+    } = textOptions
+
+    let {
       bold = false,
       italic = false,
       fontFamily = 'serif',
       fontSize = 10,
       lineHeight = fontSize * 1.2, // default(line-height: normal) lineHeight
-    } = textOptions
+    } = textStyle
 
     if (text === undefined || text == '') {
       text = ' '
@@ -71,7 +75,9 @@ class ObjectText extends RealObjectMesh {
     }
 
     let span = document.createElement('span')
-    span.style.font = fontStyle(bold, italic, fontSize, fontFamily)
+    span.style.font = `${fontSize}px ${fontFamily}`
+    span.style.fontStyle = italic ? 'italic' : 'normal'
+    span.style.fontWeight = bold ? 'bold' : 'normal'
     span.style.lineHeight = `${lineHeight}px`
     span.style.whiteSpace = 'pre'
     span.style.position = 'absolute'
@@ -91,17 +97,19 @@ class ObjectText extends RealObjectMesh {
 
   private drawTextTexture(canvas: HTMLCanvasElement) {
 
-    let {
-      text = '',
+    var text = this.component.text
+    var {
       bold = false,
       italic = false,
       fontFamily = 'serif',
       fontSize = 10,
       lineHeight = fontSize * 1.2, // default(line-height: normal) lineHeight
       fontColor = 'black'
-    } = (this.component.state.textOptions || {})
+    } = (this.component.state.textStyle || {})
 
-    let ctx = canvas.getContext('2d')
+    var ctx = canvas.getContext('2d')
+    ctx.imageSmoothingEnabled = false
+
     ctx.clearRect(0, 0, canvas.width, canvas.height)
     ctx.fillStyle = fontColor
     ctx.font = fontStyle(bold, italic, fontSize, fontFamily)
@@ -109,11 +117,18 @@ class ObjectText extends RealObjectMesh {
     ctx.textAlign = 'left'
     ctx.strokeStyle = fontColor
 
-    let lineText = String(text).split('\n')
+    var lineText = String(text).split('\n')
     lineText.forEach((t, i) => {
       ctx.fillText(t, 0, Number(i) * lineHeight)
       ctx.strokeText(t, 0, Number(i) * lineHeight)
     })
+  }
+
+  updateAlpha() {
+    // material의 transparency는 항상 true으로 유지되어야 한다.
+    super.updateAlpha();
+
+    (this.material as any).transparent = true
   }
 }
 

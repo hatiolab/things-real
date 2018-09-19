@@ -28,6 +28,10 @@ export interface DataSpreadModel {
 
 export interface TextOptions {
   text?: string,
+  textFormat?: string
+}
+
+export interface TextStyle {
   bold?: boolean,
   italic?: boolean,
   fontFamily?: string,
@@ -61,6 +65,7 @@ export interface ComponentModel {
   id?: string,
   class?: string,
   textOptions?: TextOptions,
+  textStyle?: TextStyle,
   lineStyle?: LineStyle,
   dimension?: Dimension,
   translate?: Vector3,
