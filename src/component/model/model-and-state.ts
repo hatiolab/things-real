@@ -216,6 +216,7 @@ export class ModelAndState extends EventSource implements ComponentModel, EventC
   public mappings: DataSpreadModel[]
 
   /* for simplicity */
+  // TODO text는 format과 치환(substitute)등을 적용한 결과를 리턴한다.
   get text() {
     return (this.get('textOptions') || {}).text || ''
   }
@@ -230,7 +231,7 @@ export class ModelAndState extends EventSource implements ComponentModel, EventC
 
 /* 단순한 state 속성의 getter/setter 정의 방법. */
 [
-  'textOptions', 'dimension', 'translate', 'scale', 'rotate', 'lineStyle', 'fillStyle', 'color', 'templatePrefix', 'data', 'mappings', 'animation', 'alpha'
+  'textStyle', 'textOptions', 'dimension', 'translate', 'scale', 'rotate', 'lineStyle', 'fillStyle', 'color', 'templatePrefix', 'data', 'mappings', 'animation', 'alpha'
 ].forEach(property => Object.defineProperty(ModelAndState.prototype, property, {
   get() {
     return this.getState(property)

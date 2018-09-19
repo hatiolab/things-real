@@ -6,7 +6,7 @@ import RealObject from './real-object'
 import { Component } from '..'
 
 import * as THREE from 'three'
-import { applyAlpha } from './commons';
+import { applyAlpha } from './common';
 
 export default abstract class RealObjectMesh extends THREE.Mesh implements RealObject {
   protected _component

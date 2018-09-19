@@ -33,6 +33,68 @@ export default class RealObjectScene extends THREE.Scene implements RealObject {
 
   private _floor: THREE.Mesh
 
+  createFloor(color, width, height) {
+
+    let fillStyle = this.component.state.fillStyle
+
+    var floorMaterial
+
+    if (fillStyle.type == 'pattern' && fillStyle.image) {
+
+      var textureLoader = new THREE.TextureLoader(THREE.DefaultLoadingManager)
+      textureLoader.withCredentials = 'true'
+      textureLoader.crossOrigin = 'use-credentials'
+      // textureLoader.crossOrigin = 'anonymous'
+
+      let texture = textureLoader.load(fillStyle.image, texture => {
+        texture.minFilter = THREE.LinearFilter
+        texture.repeat.set(1, 1)
+
+        this.component.invalidate() // ?
+      })
+
+      floorMaterial = [
+        new THREE.MeshLambertMaterial({
+          color
+        }),
+        new THREE.MeshLambertMaterial({
+          color
+        }),
+        new THREE.MeshLambertMaterial({
+          color
+        }),
+        new THREE.MeshLambertMaterial({
+          color
+        }),
+        new THREE.MeshLambertMaterial({
+          map: texture
+        }),
+        new THREE.MeshLambertMaterial({
+          color
+        })
+      ]
+    } else {
+      floorMaterial = new THREE.MeshLambertMaterial({
+        color
+      })
+    }
+
+    var floorGeometry = new THREE.BoxBufferGeometry(1, 1, 1);
+    var floor = new THREE.Mesh(floorGeometry, floorMaterial)
+
+    floor.scale.set(width, height, 5);
+    floor.rotation.x = -Math.PI / 2
+    floor.position.y = -2
+
+    floor.name = 'floor'
+
+    floor.receiveShadow = true
+
+    this.add(floor)
+
+    this._floor = floor
+  }
+
   get texture() {
     var {
       fillStyle

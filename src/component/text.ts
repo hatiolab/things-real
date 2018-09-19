@@ -75,7 +75,8 @@ class ObjectText extends RealObjectMesh {
     }
 
     let span = document.createElement('span')
-    span.style.font = `${fontSize}px ${fontFamily}`
+    span.style.fontSize = fontSize + 'px'
+    span.style.fontFamily = fontFamily
     span.style.fontStyle = italic ? 'italic' : 'normal'
     span.style.fontWeight = bold ? 'bold' : 'normal'
     span.style.lineHeight = `${lineHeight}px`

@@ -251,7 +251,7 @@ export default class ModelerLayer extends ViewerLayer {
    */
   onclick(event) {
     let pointer = event['changedTouches'] ? event['changedTouches'][0] : event
-    let component = this.capture(pointer.offsetX, pointer.offsetY)
+    let component = this.capture(pointer.offsetX * window.devicePixelRatio, pointer.offsetY * window.devicePixelRatio)
 
     if (component === this.rootContainer) {
       this.boundBox.visible = false

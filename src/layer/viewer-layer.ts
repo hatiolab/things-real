@@ -16,8 +16,6 @@ import * as THREE from 'three'
  */
 export default class ViewerLayer extends Layer {
 
-  private _textureLoader: THREE.TextureLoader
-
   private boundOnclick
   private boundOnmousedown
   private boundOnmouseup
@@ -31,10 +29,6 @@ export default class ViewerLayer extends Layer {
 
     // editorControls을 만들기 위해 강제로 getter를 access 함.
     this.editorControls
-
-    this._textureLoader = new THREE.TextureLoader(THREE.DefaultLoadingManager)
-    this._textureLoader.withCredentials = 'true'
-    this._textureLoader.crossOrigin = 'use-credentials'
   }
 
   /**
@@ -242,6 +236,10 @@ export default class ViewerLayer extends Layer {
       alpha: true
     })
     renderer.setClearColor(0xffffff, 0)
+    // Add support for retina displays
+    renderer.setPixelRatio(window.devicePixelRatio);
+    // Specify the size of the canvas
+    renderer.setSize(window.innerWidth, window.innerHeight);
 
     return renderer
   }
@@ -446,7 +444,7 @@ export default class ViewerLayer extends Layer {
    */
   onclick(event) {
     let pointer = event['changedTouches'] ? event['changedTouches'][0] : event
-    let component = this.capture(pointer.offsetX, pointer.offsetY)
+    let component = this.capture(pointer.offsetX * window.devicePixelRatio, pointer.offsetY * window.devicePixelRatio)
 
     if (component === this.rootContainer) {
       return

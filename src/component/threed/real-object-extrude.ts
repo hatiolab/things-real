@@ -4,7 +4,7 @@
 
 import AbstractRealObject from './abstract-real-object'
 import Shape from '../shape'
-import { applyAlpha } from './commons'
+import { applyAlpha } from './common'
 
 import * as THREE from 'three'
 
@@ -71,13 +71,10 @@ export default class RealObjectExtrude extends AbstractRealObject {
     }
 
     if (strokeStyle && strokeStyle != 'transparent' && lineWidth > 0) {
-      // var sideMesh = this.createSideMesh(geometry, shape, options)
       this._sideMesh = this.createSideMesh(geometry, shape)
 
       this.add(this._sideMesh)
     }
-
-    // this.updateAlpha()
   }
 
   get boundUVGenerator() {
@@ -106,10 +103,9 @@ export default class RealObjectExtrude extends AbstractRealObject {
 
     var material;
     if (fillStyle.type == 'pattern' && fillStyle.image) {
-      // var texture = this.component.renderer._textureLoader.load(this.component.renderer.app.url(fillStyle.image), texture => {
       var texture = (THREE.TextureLoader as any).load(this.component.renderer.app.url(fillStyle.image), texture => {
         texture.minFilter = THREE.LinearFilter
-        this.component.renderer.render_threed()
+        // this.component.renderer.render_threed()
       })
 
       material = [
@@ -131,14 +127,6 @@ export default class RealObjectExtrude extends AbstractRealObject {
 
       material = new THREE.MeshLambertMaterial(params)
     }
-
-    // applyAlpha(material, alpha, fillStyle)
-
-    // var tinyFillStyle = tinycolor(fillStyle)
-    // var fillAlpha = tinyFillStyle.getAlpha()
-
-    // material.opacity = alpha * fillAlpha
-    // material.transparent = alpha * fillAlpha < 1 // || fillAlpha < 1
 
     return material;
   }
@@ -174,12 +162,6 @@ export default class RealObjectExtrude extends AbstractRealObject {
     var sideMaterial = new THREE.MeshLambertMaterial({
       color: strokeStyle
     })
-
-    // applyAlpha(sideMaterial, strokeStyle, alpha)
-    // var tinyStrokeStyle = tinycolor(strokeStyle)
-    // var strokeAlpha = tinyStrokeStyle.getAlpha()
-    // sideMaterial.opacity = alpha * strokeAlpha
-    // sideMaterial.transparent = alpha < 1 || strokeAlpha < 1
 
     // prevent overlapped layers flickering
     sideMaterial.polygonOffset = true
