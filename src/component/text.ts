@@ -4,7 +4,7 @@
 
 import Component from './component'
 import RealObjectMesh from './threed/real-object-mesh'
-import { createOffcanvas } from './html/elements'
+import { PIXEL_RATIO, createCanvas } from './html/elements'
 
 import * as THREE from 'three'
 
@@ -36,7 +36,7 @@ class ObjectText extends RealObjectMesh {
   buildMaterial() {
     let { width, height } = this.component.state.dimension
 
-    let canvas = createOffcanvas(width, height)
+    let canvas = createCanvas(width, height)
     this.drawTextTexture(canvas)
 
     var texture = new THREE.CanvasTexture(canvas)
@@ -110,6 +110,9 @@ class ObjectText extends RealObjectMesh {
 
     var ctx = canvas.getContext('2d')
     ctx.imageSmoothingEnabled = false
+
+    fontSize *= PIXEL_RATIO
+    lineHeight *= PIXEL_RATIO
 
     ctx.clearRect(0, 0, canvas.width, canvas.height)
     ctx.fillStyle = fontColor
