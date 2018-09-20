@@ -6,6 +6,7 @@ import ViewerLayer from './viewer-layer'
 import RealObjectScene from '../component/threed/real-object-scene'
 import TransformControls from '../threed/controls/transform-controls'
 import CommandChange from '../command/command-change'
+import { PIXEL_RATIO } from '../component/html/elements'
 
 import * as THREE from 'three'
 
@@ -196,8 +197,8 @@ export default class ModelerLayer extends ViewerLayer {
     } = this.canvas
 
     var vector = new THREE.Vector2(
-      x / width * 2 - 1,
-      -y / height * 2 + 1
+      (x * PIXEL_RATIO) / width * 2 - 1,
+      -(y * PIXEL_RATIO) / height * 2 + 1
     )
 
     this.raycaster.setFromCamera(vector, this.camera)
@@ -251,7 +252,7 @@ export default class ModelerLayer extends ViewerLayer {
    */
   onclick(event) {
     let pointer = event['changedTouches'] ? event['changedTouches'][0] : event
-    let component = this.capture(pointer.offsetX * window.devicePixelRatio, pointer.offsetY * window.devicePixelRatio)
+    let component = this.capture(pointer.offsetX, pointer.offsetY)
 
     if (component === this.rootContainer) {
       this.boundBox.visible = false

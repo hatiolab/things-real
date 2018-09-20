@@ -8,6 +8,7 @@ import EditorControls from '../threed/controls/editor-controls'
 import { CSS3DRenderer } from '../threed/renderers/css-3d-renderer'
 import RealObjectScene from '../component/threed/real-object-scene'
 import { ActionModel } from '../types'
+import { PIXEL_RATIO } from '../component/html/elements'
 
 import * as THREE from 'three'
 
@@ -19,6 +20,11 @@ export default class ViewerLayer extends Layer {
   private boundOnclick
   private boundOnmousedown
   private boundOnmouseup
+  private boundOnmousemove
+  // private boundOnmouseenter
+  // private boundOnmouseleave
+
+  private enteredComponent
 
   /**
    * constructor
@@ -51,6 +57,10 @@ export default class ViewerLayer extends Layer {
     this.element.removeEventListener('click', this.boundOnclick)
     this.element.removeEventListener('mousedown', this.boundOnmousedown)
     this.element.removeEventListener('mouseup', this.boundOnmouseup)
+    this.element.removeEventListener('mousemove', this.boundOnmousemove)
+
+    // this.element.removeEventListener('mouseenter', this.boundOnmouseenter)
+    // this.element.removeEventListener('mouseleave', this.boundOnmouseleave)
   }
 
   /**
@@ -60,10 +70,17 @@ export default class ViewerLayer extends Layer {
     this.boundOnclick = this.onclick.bind(this)
     this.boundOnmousedown = this.onmousedown.bind(this)
     this.boundOnmouseup = this.onmouseup.bind(this)
+    this.boundOnmousemove = this.onmousemove.bind(this)
+
+    // this.boundOnmouseenter = this.onmouseenter.bind(this)
+    // this.boundOnmouseleave = this.onmouseleave.bind(this)
 
     this.element.addEventListener('click', this.boundOnclick)
     this.element.addEventListener('mousedown', this.boundOnmousedown)
     this.element.addEventListener('mouseup', this.boundOnmouseup)
+    this.element.addEventListener('mousemove', this.boundOnmousemove)
+    // this.element.addEventListener('mouseenter', this.boundOnmouseenter)
+    // this.element.addEventListener('mouseleave', this.boundOnmouseleave)
   }
 
   /* object-scene */
@@ -237,9 +254,9 @@ export default class ViewerLayer extends Layer {
     })
     renderer.setClearColor(0xffffff, 0)
     // Add support for retina displays
-    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setPixelRatio(PIXEL_RATIO)
     // Specify the size of the canvas
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setSize(1, 1)
 
     return renderer
   }
@@ -399,8 +416,8 @@ export default class ViewerLayer extends Layer {
     } = this.canvas
 
     var vector = new THREE.Vector2(
-      x / width * 2 - 1,
-      -y / height * 2 + 1
+      (x * PIXEL_RATIO) / width * 2 - 1,
+      -(y * PIXEL_RATIO) / height * 2 + 1
     )
 
     this.raycaster.setFromCamera(vector, this.camera)
@@ -444,7 +461,7 @@ export default class ViewerLayer extends Layer {
    */
   onclick(event) {
     let pointer = event['changedTouches'] ? event['changedTouches'][0] : event
-    let component = this.capture(pointer.offsetX * window.devicePixelRatio, pointer.offsetY * window.devicePixelRatio)
+    let component = this.capture(pointer.offsetX, pointer.offsetY)
 
     if (component === this.rootContainer) {
       return
@@ -474,6 +491,18 @@ export default class ViewerLayer extends Layer {
    * @param event 
    */
   onmouseup(event) {
+  }
+
+  onmousemove(event) {
+    let pointer = event['changedTouches'] ? event['changedTouches'][0] : event
+    let component = this.capture(pointer.offsetX, pointer.offsetY)
+
+    if (component !== this.enteredComponent) {
+      this.enteredComponent && this.onmouseleave(event)
+      component && this.onmouseenter(event)
+
+      this.enteredComponent = component
+    }
   }
 
   onmouseenter(event) {
