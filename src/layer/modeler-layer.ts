@@ -54,15 +54,6 @@ export default class ModelerLayer extends ViewerLayer {
     super.disposeRootContainer()
   }
 
-  createCSS3DRenderer() {
-    var renderer = super.createCSS3DRenderer()
-    var div = renderer.domElement
-    // only for editor mode
-    div.style.pointerEvents = 'none'
-
-    return renderer
-  }
-
   /* selection box */
   private _boundBox: THREE.BoxHelper
 
@@ -280,6 +271,25 @@ export default class ModelerLayer extends ViewerLayer {
 
     event.preventDefault()
     event.stopPropagation()
+  }
+
+  /**
+   * 
+   * @param event 
+   */
+  onmousemove(event) {
+    // let pointer = event['changedTouches'] ? event['changedTouches'][0] : event
+    // let component = this.capture(pointer.offsetX, pointer.offsetY)
+
+    // if (component !== this.enteredComponent) {
+    //   this.enteredComponent && this.onmouseleave(this.enteredComponent)
+    //   component && this.onmouseenter(component)
+
+    //   this.enteredComponent = component
+    // }
+
+    // event.preventDefault()
+    // event.stopPropagation()
   }
 
   /**

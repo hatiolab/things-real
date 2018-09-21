@@ -58,9 +58,6 @@ export default class ViewerLayer extends Layer {
     this.element.removeEventListener('mousedown', this.boundOnmousedown)
     this.element.removeEventListener('mouseup', this.boundOnmouseup)
     this.element.removeEventListener('mousemove', this.boundOnmousemove)
-
-    // this.element.removeEventListener('mouseenter', this.boundOnmouseenter)
-    // this.element.removeEventListener('mouseleave', this.boundOnmouseleave)
   }
 
   /**
@@ -72,15 +69,10 @@ export default class ViewerLayer extends Layer {
     this.boundOnmouseup = this.onmouseup.bind(this)
     this.boundOnmousemove = this.onmousemove.bind(this)
 
-    // this.boundOnmouseenter = this.onmouseenter.bind(this)
-    // this.boundOnmouseleave = this.onmouseleave.bind(this)
-
     this.element.addEventListener('click', this.boundOnclick)
     this.element.addEventListener('mousedown', this.boundOnmousedown)
     this.element.addEventListener('mouseup', this.boundOnmouseup)
     this.element.addEventListener('mousemove', this.boundOnmousemove)
-    // this.element.addEventListener('mouseenter', this.boundOnmouseenter)
-    // this.element.addEventListener('mouseleave', this.boundOnmouseleave)
   }
 
   /* object-scene */
@@ -133,7 +125,6 @@ export default class ViewerLayer extends Layer {
    * @param into 
    */
   buildOverlays(into) {
-    // this._canvas = this.createCanvas()
 
     into.appendChild(this.css3DRenderer.domElement)
     into.appendChild(this.canvas)
@@ -284,8 +275,8 @@ export default class ViewerLayer extends Layer {
     var div = renderer.domElement
     div.style.position = 'absolute'
     div.style.top = '0'
-    // only for editor mode
-    // div.style.pointerEvents = 'none'
+
+    div.style.pointerEvents = 'none'
 
     return renderer
   }
@@ -498,23 +489,26 @@ export default class ViewerLayer extends Layer {
     let component = this.capture(pointer.offsetX, pointer.offsetY)
 
     if (component !== this.enteredComponent) {
-      this.enteredComponent && this.onmouseleave(event)
-      component && this.onmouseenter(event)
+      this.enteredComponent && this.onmouseleave(this.enteredComponent)
+      component && this.onmouseenter(component)
 
       this.enteredComponent = component
     }
+
+    event.preventDefault()
+    event.stopPropagation()
   }
 
-  onmouseenter(event) {
-    let pointer = event['changedTouches'] ? event['changedTouches'][0] : event
-    let component = this.capture(pointer.offsetX, pointer.offsetY)
+  onmouseenter(component) {
+    // let pointer = event['changedTouches'] ? event['changedTouches'][0] : event
+    // let component = this.capture(pointer.offsetX, pointer.offsetY)
 
     if (component === this.rootContainer) {
       return
     }
 
-    event.preventDefault()
-    event.stopPropagation()
+    // event.preventDefault()
+    // event.stopPropagation()
 
     var hoverEvtModel: ActionModel = component.model.event && component.model.event.hover
 
@@ -525,16 +519,16 @@ export default class ViewerLayer extends Layer {
     this._doEventAction(hoverEvtModel, component, true)
   }
 
-  onmouseleave(event) {
-    let pointer = event['changedTouches'] ? event['changedTouches'][0] : event
-    let component = this.capture(pointer.offsetX, pointer.offsetY)
+  onmouseleave(component) {
+    // let pointer = event['changedTouches'] ? event['changedTouches'][0] : event
+    // let component = this.capture(pointer.offsetX, pointer.offsetY)
 
     if (component === this.rootContainer) {
       return
     }
 
-    event.preventDefault()
-    event.stopPropagation()
+    // event.preventDefault()
+    // event.stopPropagation()
 
     var hoverEvtModel: ActionModel = component.model.event && component.model.event.hover
 
