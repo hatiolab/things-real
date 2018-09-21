@@ -24,7 +24,9 @@ class ObjectText extends RealObjectMesh {
 
   buildGeometry() {
 
-    let { width, height } = this.getTextBounds()
+    // TODO component.text의 heavy한 로직을 반복적으로 실행하지 않도록, 캐싱하자.
+    var text = this.component.text
+    let { width, height } = this.getTextBounds(text)
 
     this.component.dimension = {
       width, height, depth: 1
@@ -36,8 +38,11 @@ class ObjectText extends RealObjectMesh {
   buildMaterial() {
     let { width, height } = this.component.state.dimension
 
+    // TODO component.text의 heavy한 로직을 반복적으로 실행하지 않도록, 캐싱하자.
+    var text = this.component.text
     let canvas = createCanvas(width, height)
-    this.drawTextTexture(canvas)
+
+    this.drawTextTexture(canvas, text)
 
     var texture = new THREE.CanvasTexture(canvas)
     texture.needsUpdate = true
@@ -50,22 +55,17 @@ class ObjectText extends RealObjectMesh {
     })
   }
 
-  private getTextBounds(): { width: number, height: number } {
+  private getTextBounds(text: string): { width: number, height: number } {
     let {
-      textOptions = {},
       textStyle = {}
     } = this.component.state
-
-    let {
-      text
-    } = textOptions
 
     let {
       bold = false,
       italic = false,
       fontFamily = 'serif',
       fontSize = 10,
-      lineHeight = fontSize * 1.2, // default(line-height: normal) lineHeight
+      lineHeight = 'normal' //fontSize * 1.2, // default(line-height: normal) lineHeight
     } = textStyle
 
     if (text === undefined || text == '') {
@@ -75,10 +75,7 @@ class ObjectText extends RealObjectMesh {
     }
 
     let span = document.createElement('span')
-    span.style.fontSize = fontSize + 'px'
-    span.style.fontFamily = fontFamily
-    span.style.fontStyle = italic ? 'italic' : 'normal'
-    span.style.fontWeight = bold ? 'bold' : 'normal'
+    span.style.font = fontStyle(bold, italic, fontSize, fontFamily)
     span.style.lineHeight = `${lineHeight}px`
     span.style.whiteSpace = 'pre'
     span.style.position = 'absolute'
@@ -96,15 +93,14 @@ class ObjectText extends RealObjectMesh {
     }
   }
 
-  private drawTextTexture(canvas: HTMLCanvasElement) {
+  private drawTextTexture(canvas: HTMLCanvasElement, text: string) {
 
-    var text = this.component.text
     var {
       bold = false,
       italic = false,
       fontFamily = 'serif',
       fontSize = 10,
-      lineHeight = fontSize * 1.2, // default(line-height: normal) lineHeight
+      // lineHeight = fontSize * 1.3, // default(line-height: normal) lineHeight
       fontColor = 'black'
     } = (this.component.state.textStyle || {})
 
@@ -112,7 +108,7 @@ class ObjectText extends RealObjectMesh {
     ctx.imageSmoothingEnabled = false
 
     fontSize *= PIXEL_RATIO
-    lineHeight *= PIXEL_RATIO
+    // lineHeight *= PIXEL_RATIO
 
     ctx.clearRect(0, 0, canvas.width, canvas.height)
     ctx.fillStyle = fontColor
@@ -120,12 +116,13 @@ class ObjectText extends RealObjectMesh {
     ctx.textBaseline = 'top'
     ctx.textAlign = 'left'
     ctx.strokeStyle = fontColor
+    ctx.fillText(String(text), 0, 0)
 
-    var lineText = String(text).split('\n')
-    lineText.forEach((t, i) => {
-      ctx.fillText(t, 0, Number(i) * lineHeight)
-      ctx.strokeText(t, 0, Number(i) * lineHeight)
-    })
+    // var lineText = String(text).split('\n')
+    // lineText.forEach((t, i) => {
+    //   ctx.fillText(t, 0, Number(i) * lineHeight)
+    //   ctx.strokeText(t, 0, Number(i) * lineHeight)
+    // })
   }
 
   updateAlpha() {

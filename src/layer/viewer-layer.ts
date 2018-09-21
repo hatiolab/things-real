@@ -582,7 +582,7 @@ export default class ViewerLayer extends Layer {
       case 'data-set':
         if (enter) {
           this.rootContainer.findAll(target).forEach(component => {
-            component.data = value
+            component.data = component.substitute(value)
           })
         } else if (restore) {
           // TODO restore 설정은 leave 시점에 enter 시점의 상태로 되돌린다는 뜻이다.
@@ -597,7 +597,7 @@ export default class ViewerLayer extends Layer {
         break
       default:
         // things-real 라이브러리 외부에서 처리하도록 한다.
-        this.ownerScene.trigger(action, target, value)
+        this.ownerScene.trigger(action, target, component.substitute(value))
     }
   }
 }

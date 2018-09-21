@@ -12,6 +12,9 @@ import RealObject from './threed/real-object'
 import RealObjectDummy from './threed/real-object-dummy'
 import { DataSpreadEngine } from './data'
 import { compile } from '../animation'
+import { substitute, buildSubstitutor } from './text/substitutor'
+import format from './text/format'
+import objToVal from '../util/obj-value'
 import { clonedeep, error } from '../util'
 
 type EventMap = { [selector: string]: { [delegator: string]: { [event: string]: Function } } }
@@ -324,6 +327,48 @@ export default class Component extends ModelAndState implements LifeCycleCallbac
 
   get updatedAt() {
     return this._updatedAt
+  }
+
+  /**
+   * for text
+   */
+
+  /* for simplicity */
+  get text() {
+    // TODO text는 format과 치환(substitute)등을 적용한 결과를 리턴한다.
+    var textFormat = (this.state.textOptions || {}).textFormat
+
+    return textFormat ? format(textFormat, this.textSubstitutor()) : this.textSubstitutor()
+  }
+
+  set text(text) {
+    delete this._text_substitutor
+    var t = objToVal(text)
+
+    this.textOptions = {
+      ...(this.textOptions || {}),
+      text: text === undefined ? '' : String(t)
+    }
+  }
+
+  defaultTextSubstitutor() {
+    var t = (this.state.textOptions || {}).text
+    return t == undefined ? '' : String(t)
+  }
+
+  private _text_substitutor
+
+  get textSubstitutor() {
+    var text = (this.state.textOptions || {}).text
+
+    if (!this._text_substitutor)
+      this._text_substitutor = buildSubstitutor(text, this) || this.defaultTextSubstitutor
+
+    return this._text_substitutor
+  }
+
+  substitute​​(text) {
+    return substitute(text)
   }
 
   /**

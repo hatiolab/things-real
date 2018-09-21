@@ -214,19 +214,6 @@ export class ModelAndState extends EventSource implements ComponentModel, EventC
   public templatePrefix: string
   public data: any
   public mappings: DataSpreadModel[]
-
-  /* for simplicity */
-  // TODO text는 format과 치환(substitute)등을 적용한 결과를 리턴한다.
-  get text() {
-    return (this.get('textOptions') || {}).text || ''
-  }
-
-  set text(text) {
-    this.textOptions = {
-      ...(this.textOptions || {}),
-      text: text === undefined ? '' : String(text)
-    }
-  }
 }
 
 /* 단순한 state 속성의 getter/setter 정의 방법. */
