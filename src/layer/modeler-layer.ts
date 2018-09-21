@@ -181,18 +181,13 @@ export default class ModelerLayer extends ViewerLayer {
    * @param x 
    * @param y 
    */
-  capture(x, y) {
+  capture(coords) {
     var {
       width,
       height
     } = this.canvas
 
-    var vector = new THREE.Vector2(
-      (x * PIXEL_RATIO) / width * 2 - 1,
-      -(y * PIXEL_RATIO) / height * 2 + 1
-    )
-
-    this.raycaster.setFromCamera(vector, this.camera)
+    this.raycaster.setFromCamera(coords, this.camera)
 
     /* modeler case begin */
     var activePickers = this.transformControls.activePickers
@@ -242,8 +237,8 @@ export default class ModelerLayer extends ViewerLayer {
    * @param event 
    */
   onclick(event) {
-    let pointer = event['changedTouches'] ? event['changedTouches'][0] : event
-    let component = this.capture(pointer.offsetX, pointer.offsetY)
+    let coords = this._getPosition(event['changedTouches'] ? event['changedTouches'][0] : event)
+    let component = this.capture(coords)
 
     if (component === this.rootContainer) {
       this.boundBox.visible = false
@@ -278,8 +273,8 @@ export default class ModelerLayer extends ViewerLayer {
    * @param event 
    */
   onmousemove(event) {
-    // let pointer = event['changedTouches'] ? event['changedTouches'][0] : event
-    // let component = this.capture(pointer.offsetX, pointer.offsetY)
+    let coords = this._getPosition(event['changedTouches'] ? event['changedTouches'][0] : event)
+    let component = this.capture(coords)
 
     // if (component !== this.enteredComponent) {
     //   this.enteredComponent && this.onmouseleave(this.enteredComponent)
@@ -288,8 +283,8 @@ export default class ModelerLayer extends ViewerLayer {
     //   this.enteredComponent = component
     // }
 
-    // event.preventDefault()
-    // event.stopPropagation()
+    event.preventDefault()
+    event.stopPropagation()
   }
 
   /**

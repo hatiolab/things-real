@@ -44,6 +44,7 @@ export default class EditorControls extends THREE.EventDispatcher {
 	private boundContextmenu
 	private boundOnMouseDown
 	private boundOnMouseUp
+	private boundOnMouseOut
 	private boundOnMouseWheel
 	private boundOnMouseMove
 	private boundTouchStart
@@ -58,6 +59,7 @@ export default class EditorControls extends THREE.EventDispatcher {
 		this.boundContextmenu = this.contextmenu.bind(this)
 		this.boundOnMouseDown = this.onMouseDown.bind(this)
 		this.boundOnMouseUp = this.onMouseUp.bind(this)
+		this.boundOnMouseOut = this.onMouseOut.bind(this)
 		this.boundOnMouseWheel = this.onMouseWheel.bind(this)
 		this.boundOnMouseMove = this.onMouseMove.bind(this)
 		this.boundTouchStart = this.touchStart.bind(this)
@@ -169,7 +171,7 @@ export default class EditorControls extends THREE.EventDispatcher {
 
 		this.domElement.addEventListener('mousemove', this.boundOnMouseMove, false)
 		this.domElement.addEventListener('mouseup', this.boundOnMouseUp, false)
-		this.domElement.addEventListener('mouseout', this.boundOnMouseUp, false)
+		this.domElement.addEventListener('mouseout', this.boundOnMouseOut, false)
 		this.domElement.addEventListener('dblclick', this.boundOnMouseUp, false)
 	}
 
@@ -198,10 +200,24 @@ export default class EditorControls extends THREE.EventDispatcher {
 
 		this.domElement.removeEventListener('mousemove', this.boundOnMouseMove, false);
 		this.domElement.removeEventListener('mouseup', this.boundOnMouseUp, false);
-		this.domElement.removeEventListener('mouseout', this.boundOnMouseUp, false);
+		this.domElement.removeEventListener('mouseout', this.boundOnMouseOut, false);
 		this.domElement.removeEventListener('dblclick', this.boundOnMouseUp, false);
 
 		this.state = STATE.NONE;
+	}
+
+	onMouseOut(event) {
+		var {
+			left, top, right, bottom
+		} = this.domElement.getBoundingClientRect()
+
+		var {
+			clientX: x, clientY: y
+		} = event
+
+		if (x < left || x > right || y < top || y > bottom) {
+			this.onMouseUp(event)
+		}
 	}
 
 	onMouseWheel(event) {
@@ -225,7 +241,7 @@ export default class EditorControls extends THREE.EventDispatcher {
 
 		this.domElement.removeEventListener('mousemove', this.boundOnMouseMove, false);
 		this.domElement.removeEventListener('mouseup', this.boundOnMouseUp, false);
-		this.domElement.removeEventListener('mouseout', this.boundOnMouseUp, false);
+		this.domElement.removeEventListener('mouseout', this.boundOnMouseOut, false);
 		this.domElement.removeEventListener('dblclick', this.boundOnMouseUp, false);
 
 		this.domElement.removeEventListener('touchstart', this.boundTouchStart, false);
