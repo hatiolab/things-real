@@ -398,6 +398,21 @@ export default class RootContainer extends Container {
       this.css3DScene.remove((component as DOMComponent).cssObject3D)
     }
   }
+
+
+  /**
+   * 
+   * @param after 
+   * @param before 
+   */
+  onchangewidth(after, before) {
+    this.update()
+  }
+
+  onchangeheight(after, before) {
+    this.update()
+  }
+
 }
 
 Component.register(RootContainer.type, RootContainer)

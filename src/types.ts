@@ -47,6 +47,13 @@ export interface LineStyle {
   lineJoin?: string
 }
 
+export interface FillStyle {
+  // type: 'gradient' | 'pattern',
+  type: string,
+  image?: string,
+  [propName: string]: any
+}
+
 export interface ActionModel {
   action: string,
   target: string,
@@ -67,6 +74,7 @@ export interface ComponentModel {
   textOptions?: TextOptions,
   textStyle?: TextStyle,
   lineStyle?: LineStyle,
+  // fillStyle?: FillStyle | string,
   dimension?: Dimension,
   translate?: Vector3,
   scale?: Vector3,

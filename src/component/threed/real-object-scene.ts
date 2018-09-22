@@ -9,9 +9,11 @@ export default class RealObjectScene extends THREE.Scene implements RealObject {
   protected _component
 
   constructor(component) {
-    super();
+    super()
 
-    this.component = component;
+    this.component = component
+
+    this.update()
   }
 
   dispose() {
@@ -23,8 +25,15 @@ export default class RealObjectScene extends THREE.Scene implements RealObject {
   }
 
   clear() {
+
     if (this._floor) {
-      (this._floor.material as THREE.MeshBasicMaterial).dispose()
+      this.remove(this._floor);
+
+      if (this._floor.material instanceof Array) {
+        (this._floor.material as THREE.Material[]).forEach(material => material.dispose())
+      } else {
+        this._floor.material.dispose()
+      }
       this._floor.geometry.dispose()
 
       delete this._floor
@@ -33,54 +42,16 @@ export default class RealObjectScene extends THREE.Scene implements RealObject {
 
   private _floor: THREE.Mesh
 
-  createFloor(color, width, height) {
+  get floor() {
+    return this._floor
+  }
 
-    let fillStyle = this.component.state.fillStyle
+  set floor(floor) {
 
-    var floorMaterial
-
-    if (fillStyle.type == 'pattern' && fillStyle.image) {
-
-      var textureLoader = new THREE.TextureLoader(THREE.DefaultLoadingManager)
-      textureLoader.withCredentials = 'true'
-      textureLoader.crossOrigin = 'use-credentials'
-      // textureLoader.crossOrigin = 'anonymous'
-
-      let texture = textureLoader.load(fillStyle.image, texture => {
-        texture.minFilter = THREE.LinearFilter
-        texture.repeat.set(1, 1)
-
-        this.component.invalidate() // ?
-      })
-
-      floorMaterial = [
-        new THREE.MeshLambertMaterial({
-          color
-        }),
-        new THREE.MeshLambertMaterial({
-          color
-        }),
-        new THREE.MeshLambertMaterial({
-          color
-        }),
-        new THREE.MeshLambertMaterial({
-          color
-        }),
-        new THREE.MeshLambertMaterial({
-          map: texture
-        }),
-        new THREE.MeshLambertMaterial({
-          color
-        })
-      ]
-    } else {
-      floorMaterial = new THREE.MeshLambertMaterial({
-        color
-      })
-    }
-
-    var floorGeometry = new THREE.BoxBufferGeometry(1, 1, 1);
-    var floor = new THREE.Mesh(floorGeometry, floorMaterial)
+    var {
+      width,
+      height
+    } = this.component
 
     floor.scale.set(width, height, 5);
     floor.rotation.x = -Math.PI / 2
@@ -93,42 +64,68 @@ export default class RealObjectScene extends THREE.Scene implements RealObject {
     this.add(floor)
 
     this._floor = floor
-  }
 
-  get texture() {
-    var {
-      fillStyle
-    } = this.component
-
-    if (fillStyle == 'none')
-      return
-
-
+    this.component.invalidate()
   }
 
   build() {
-    // var texture = this.texture
 
-    // if (!texture)
-    //   return
+    var {
+      fillStyle
+    } = this.component.state
 
-    // var geometry = new THREE.PlaneGeometry(1, 1)
-    // var material = new THREE.MeshBasicMaterial({
-    //   map: texture,
-    //   opacity: 1,
-    //   side: THREE.DoubleSide,
-    //   transparent: true
-    // })
+    if (!fillStyle || fillStyle == 'none') {
+      return
+    }
 
-    // this._floor = new THREE.Mesh(geometry, material)
+    var floorMaterial
+
+    if (fillStyle.type == 'pattern' && fillStyle.image) {
+
+      var textureLoader = new THREE.TextureLoader(THREE.DefaultLoadingManager)
+      // textureLoader.withCredentials = 'true'
+      // textureLoader.crossOrigin = 'use-credentials'
+      textureLoader.crossOrigin = 'anonymous'
+
+      let texture = textureLoader.load(fillStyle.image, texture => {
+        texture.minFilter = THREE.LinearFilter
+        texture.repeat.set(1, 1)
+
+        let color = 'white'
+
+        floorMaterial = [
+          new THREE.MeshLambertMaterial({
+            color
+          }),
+          new THREE.MeshLambertMaterial({
+            color
+          }),
+          new THREE.MeshLambertMaterial({
+            color
+          }),
+          new THREE.MeshLambertMaterial({
+            color
+          }),
+          new THREE.MeshLambertMaterial({
+            map: texture
+          }),
+          new THREE.MeshLambertMaterial({
+            color
+          })
+        ]
+
+        var floorGeometry = new THREE.BoxBufferGeometry(1, 1, 1);
+        this.floor = new THREE.Mesh(floorGeometry, floorMaterial)
+      })
 
 
-
-
-
-
-    // this._floor.rotateOnAxis(new THREE.Vector3(1, 0, 0), THREE.Math.degToRad(90))
-    // this._floor.scale.set(scaleValue, scaleValue, scaleValue)
+    } else if (typeof (fillStyle) == 'string') {
+      floorMaterial = new THREE.MeshLambertMaterial({
+        color: fillStyle
+      })
+      var floorGeometry = new THREE.BoxBufferGeometry(1, 1, 1);
+      this.floor = new THREE.Mesh(floorGeometry, floorMaterial)
+    }
   }
 
   update() {

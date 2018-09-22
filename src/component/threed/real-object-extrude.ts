@@ -101,7 +101,8 @@ export default class RealObjectExtrude extends AbstractRealObject {
       return
     }
 
-    var material;
+    var material
+
     if (fillStyle.type == 'pattern' && fillStyle.image) {
       var texture = (THREE.TextureLoader as any).load(this.component.renderer.app.url(fillStyle.image), texture => {
         texture.minFilter = THREE.LinearFilter
