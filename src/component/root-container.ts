@@ -257,7 +257,12 @@ export default class RootContainer extends Container {
           id: id,
           templatePrefix: ''
         })
-        component = compile(clone)
+        component = compile(clone);
+
+        ['added', 'removed', 'change'].forEach(event => {
+          component.addEventListener(event, this[`_on${event}`])
+        })
+
         this.addComponent(component)
       }
     }
@@ -274,23 +279,25 @@ export default class RootContainer extends Container {
     invalidateDataDebouncer(this)
   }
 
-  get eventMap() {
-    return {
-      '(root)': {
-        '(descendant)': {
-          added: this._onadded,
-          removed: this._onremoved,
-          change: this._onchanged
-        }
-      }
-    }
-  }
+  // get eventMap() {
+  //   return {
+  //     '(root)': {
+  //       '(descendant)': {
+  //         added: this._onadded,
+  //         removed: this._onremoved,
+  //         change: this._onchanged
+  //       }
+  //     }
+  //   }
+  // }
 
   /**
    * Scene 화면을 갱신
    */
   public invalidate() {
-    this.trigger('render')
+    this.dispatchEvent(new CustomEvent('render', {
+      bubbles: true, composed: true
+    }))
   }
 
   /**

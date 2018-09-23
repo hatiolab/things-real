@@ -597,7 +597,13 @@ export default class ViewerLayer extends Layer {
         break
       default:
         // things-real 라이브러리 외부에서 처리하도록 한다.
-        this.ownerScene.trigger(action, target, component.substitute(value))
+        this.dispatchEvent(new CustomEvent(action, {
+          bubbles: true, composed: true,
+          detail: {
+            target,
+            value: component.substitute(value)
+          }
+        }))
     }
   }
 }

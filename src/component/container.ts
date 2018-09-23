@@ -66,10 +66,16 @@ export default class Container extends Component {
     this.object3D.add(component.object3D)
     component.added(this) /* callback */
 
-    // this.trigger('add', this, component, index)
+    // component.delegate_on(this)
 
-    component.delegate_on(this)
-    component.trigger('added', this, component, index)
+    component.dispatchEvent(new CustomEvent('added', {
+      bubbles: true, composed: true,
+      detail: {
+        parent: this,
+        child: component,
+        index
+      }
+    }))
 
     if (this.started)
       component.start()
@@ -95,10 +101,15 @@ export default class Container extends Component {
     component.parent = this
     component.added(this) /* callback */
 
-    // this.trigger('add', this, component, index)
-
-    component.delegate_on(this)
-    component.trigger('added', this, component, index)
+    // component.delegate_on(this)
+    component.dispatchEvent(new CustomEvent('added', {
+      bubbles: true, composed: true,
+      detail: {
+        parent: this,
+        child: component,
+        index
+      }
+    }))
   }
 
   removeComponent(component: Component) {
@@ -113,10 +124,14 @@ export default class Container extends Component {
     component.parent = null
     component.removed(this) /* callback */
 
-    // this.trigger('remove', this, component)
-
-    component.trigger('removed', this, component)
-    component.delegate_off(this)
+    component.dispatchEvent(new CustomEvent('removed', {
+      bubbles: true, composed: true,
+      detail: {
+        parent: this,
+        child: component
+      }
+    }));
+    // component.delegate_off(this)
   }
 
   moveChildAt(index, child) {

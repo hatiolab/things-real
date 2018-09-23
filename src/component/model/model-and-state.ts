@@ -4,11 +4,10 @@
 
 import { Vector3, Dimension, ComponentModel, DataSpreadModel, TextOptions } from '../../types'
 import EventCallback from '../callback/event-callback'
-import { EventSource } from '../../event'
 import { clonedeep } from '../../util'
 import { isEqual } from 'lodash'
 
-export class ModelAndState extends EventSource implements ComponentModel, EventCallback {
+export class ModelAndState extends EventTarget implements ComponentModel, EventCallback {
 
   /**
    * @param {ComponentModel} model ComponentModel
@@ -116,8 +115,16 @@ export class ModelAndState extends EventSource implements ComponentModel, EventC
      * state속성이 제거되면, state에도 영향을 미치며, onchange 이벤트를 발생시킬 수 있다. 
      */
     if (changed) {
-      this.onchange && this.onchange(after, before);
-      this.trigger('change', after, before)
+      this.onchange && this.onchange(after, before)
+
+      this.dispatchEvent(new CustomEvent('change', {
+        bubbles: true,
+        composed: true,
+        detail: {
+          after,
+          before
+        }
+      }))
     }
   }
 
@@ -153,12 +160,18 @@ export class ModelAndState extends EventSource implements ComponentModel, EventC
         changed = true
       }
 
-      delete this._state[key];
+      delete this._state[key]
     })
 
     if (changed) {
-      this.onchange && this.onchange(after, before);
-      this.trigger('change', after, before)
+      this.onchange && this.onchange(after, before)
+
+      this.dispatchEvent(new CustomEvent('change', {
+        bubbles: true, composed: true,
+        detail: {
+          after, before
+        }
+      }))
     }
   }
 
@@ -197,7 +210,13 @@ export class ModelAndState extends EventSource implements ComponentModel, EventC
 
     if (changed) {
       this.onchange && this.onchange(after, before)
-      this.trigger('change', after, before)
+
+      this.dispatchEvent(new CustomEvent('change', {
+        bubbles: true, composed: true,
+        detail: {
+          after, before
+        }
+      }))
     }
   }
 

@@ -2,7 +2,7 @@
  * Copyright © HatioLab Inc. All rights reserved.
  */
 
-import { EventSource } from '../event'
+// import { EventSource } from '../event'
 import TimeCapsule from './timecapsule'
 import SnapshotTaker from './snapshot-taker'
 
@@ -14,16 +14,19 @@ function recovery(state, snapshotProvider) {
   }
 }
 
-export class SnapshotCommander extends EventSource {
+export class SnapshotCommander {
 
   private snapshotProvider
   private timecapsule
   private snapshot_taker
+  private event_target
 
-  constructor(snapshotProvider: SnapshotProvider) {
-    super()
+  constructor(snapshotProvider: SnapshotProvider, event_target?: EventTarget) {
+    // super()
 
     this.snapshotProvider = snapshotProvider
+
+    this.event_target = event_target
 
     this.timecapsule = new TimeCapsule(20)
     var self = this
@@ -53,7 +56,14 @@ export class SnapshotCommander extends EventSource {
 
     this.snapshot_taker.touch()
 
-    this.trigger('execute', command, /* undoable */ true, /* redoable */ false)
+    this.event_target && this.event_target.dispatchEvent(new CustomEvent('execute', {
+      bubbles: true, composed: true,
+      detail: {
+        command,
+        undoable: true,
+        redoable: false
+      }
+    }))
   }
 
   undo() {
@@ -62,7 +72,13 @@ export class SnapshotCommander extends EventSource {
 
     recovery(this.timecapsule.backward(), this.snapshotProvider)
 
-    this.trigger('undo', this.undoable(), this.redoable())
+    this.event_target && this.event_target.dispatchEvent(new CustomEvent('undo', {
+      bubbles: true, composed: true,
+      detail: {
+        undoable: this.undoable(),
+        redoable: this.redoable()
+      }
+    }))
   }
 
   redo() {
@@ -71,7 +87,13 @@ export class SnapshotCommander extends EventSource {
 
     recovery(this.timecapsule.forward(), this.snapshotProvider)
 
-    this.trigger('redo', this.undoable(), this.redoable())
+    this.event_target && this.event_target.dispatchEvent(new CustomEvent('redo', {
+      bubbles: true, composed: true,
+      detail: {
+        undoable: this.undoable(),
+        redoable: this.redoable()
+      }
+    }))
   }
 
   undoable() {
@@ -84,6 +106,9 @@ export class SnapshotCommander extends EventSource {
 
   reset() {
     this.timecapsule && this.timecapsule.reset()
-    this.trigger('command-reset')
+
+    this.event_target && this.event_target.dispatchEvent(new CustomEvent('command-reset', {
+      bubbles: true, composed: true
+    }))
   }
 }

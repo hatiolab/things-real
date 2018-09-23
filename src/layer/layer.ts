@@ -2,14 +2,14 @@
  * Copyright © HatioLab Inc. All rights reserved.
  */
 
-import { EventSource } from '../event'
+// import { EventSource } from '../event'
 import { RootContainer } from '../component'
 import { Scene } from '../scene'
 
 /**
  * RealSceneRenderer
  */
-export default abstract class Layer extends EventSource {
+export default abstract class Layer extends EventTarget {
 
   /**
    * RealSceneRenderer constructor
@@ -44,10 +44,13 @@ export default abstract class Layer extends EventSource {
   private throttle_render() {
     if (!this._draw_reserved) {
       requestAnimationFrame(() => {
-        this._draw_reserved = false;
+        this._draw_reserved = false
 
-        this.trigger('redraw');
-        this.render();
+        this.dispatchEvent(new CustomEvent('redraw', {
+          bubbles: true, composed: true
+        }))
+
+        this.render()
       })
     }
     this._draw_reserved = true;
@@ -85,9 +88,7 @@ export default abstract class Layer extends EventSource {
     if (rootContainer) {
       this._rootContainer = rootContainer
 
-      this._rootContainer.on('render', () => {
-        this.invalidate()
-      })
+      this._rootContainer.addEventListener('render', this.invalidate)
 
       this.invalidate()
     }
@@ -100,8 +101,7 @@ export default abstract class Layer extends EventSource {
     if (!this._rootContainer) {
       return
     }
-    this._rootContainer.off('render')
-    // delete this._rootContainer
+    this._rootContainer.removeEventListener('render', this.invalidate)
   }
 
   /**

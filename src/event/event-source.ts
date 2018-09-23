@@ -7,7 +7,7 @@ import { once, isEmpty } from 'lodash'
 type Handler = { callback: Function, context: object }
 type HandlersMap = { [s: string]: Handler[]; }
 
-export default class EventSource {
+export default class EventSource extends EventTarget {
 
   private handlersMap: HandlersMap = {}
   private delegators: EventSource[] = []
@@ -105,6 +105,7 @@ export default class EventSource {
   }
 
   delegate(name: string, ...rest) {
+
     this.delegateEvents(name, ...rest)
 
     if (isEmpty(this.handlersMap)) {
@@ -134,13 +135,22 @@ export default class EventSource {
    * @param name 
    */
   trigger(name: string, ...originRest) {
-    var rest = originRest.slice()
-    rest.push({
-      origin: this,
-      deliverer: this,
-      name
-    })
 
-    this.delegate(name, ...rest)
+    this.dispatchEvent(new CustomEvent(name, {
+      bubbles: true,
+      composed: true,
+      detail: {
+        ...originRest
+      }
+    }));
+
+    // var rest = originRest.slice()
+    // rest.push({
+    //   origin: this,
+    //   deliverer: this,
+    //   name
+    // })
+
+    // this.delegate(name, ...rest)
   }
 }

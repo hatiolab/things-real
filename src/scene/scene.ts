@@ -6,12 +6,12 @@ import { SceneModelVersion, SceneConfig, SceneModel, SceneMode, FitMode, Compone
 import { Component, RootContainer } from '../component'
 import { CommandChange, SnapshotCommander } from '../command'
 import { Layer, ModelerLayer, ViewerLayer } from '../layer'
-import { EventSource } from '../event'
+// import { EventSource } from '../event'
 import SceneModelMigrator from '../migrator/scene-model-migrator'
 import { clonedeep, fullscreen, error } from '../util'
 import { compile } from '../real'
 
-export default class Scene extends EventSource {
+export default class Scene extends EventTarget {
   private _sceneMode: SceneMode
   private _fitMode: FitMode
   private _targetEl: HTMLElement
@@ -58,9 +58,9 @@ export default class Scene extends EventSource {
     this._snapshotCommander = new SnapshotCommander({
       take: () => { return this.model },
       putback: model => { this.model = model as SceneModel }
-    })
+    }, this /* event_target */)
 
-    this._snapshotCommander.delegate_on(this)
+    // this._snapshotCommander.delegate_on(this)
 
     window.addEventListener('resize', () => {
       this.resize()
@@ -69,7 +69,7 @@ export default class Scene extends EventSource {
 
   dispose() {
     // TODO implement
-    this._snapshotCommander.delegate_off(this)
+    // this._snapshotCommander.delegate_off(this)
     this._layer.dispose()
     this._rootContainer && this._rootContainer.dispose()
   }
@@ -196,7 +196,13 @@ export default class Scene extends EventSource {
     var before = this._selected
     this._selected = components
 
-    this.trigger('selected', this._selected, before)
+    this.dispatchEvent(new CustomEvent('selected', {
+      bubbles: true, composed: true,
+      detail: {
+        after: this._selected,
+        before
+      }
+    }))
   }
 
   get selected() {
