@@ -53,9 +53,10 @@ export default class RealObjectScene extends THREE.Scene implements RealObject {
       height
     } = this.component
 
-    floor.scale.set(width, height, 5);
+    floor.scale.set(width, height, 1);
     floor.rotation.x = -Math.PI / 2
-    floor.position.y = -2
+    // floor.position.y = -2
+    floor.position.y = 0
 
     floor.name = 'floor'
 
@@ -78,8 +79,6 @@ export default class RealObjectScene extends THREE.Scene implements RealObject {
       return
     }
 
-    var floorMaterial
-
     if (fillStyle.type == 'pattern' && fillStyle.image) {
 
       var textureLoader = new THREE.TextureLoader(THREE.DefaultLoadingManager)
@@ -87,43 +86,24 @@ export default class RealObjectScene extends THREE.Scene implements RealObject {
       // textureLoader.crossOrigin = 'use-credentials'
       textureLoader.crossOrigin = 'anonymous'
 
-      let texture = textureLoader.load(fillStyle.image, texture => {
+      textureLoader.load(fillStyle.image, texture => {
         texture.minFilter = THREE.LinearFilter
         texture.repeat.set(1, 1)
 
-        let color = 'white'
+        // texture.wrapS = THREE.RepeatWrapping
+        // texture.wrapT = THREE.RepeatWrapping
 
-        floorMaterial = [
-          new THREE.MeshLambertMaterial({
-            color
-          }),
-          new THREE.MeshLambertMaterial({
-            color
-          }),
-          new THREE.MeshLambertMaterial({
-            color
-          }),
-          new THREE.MeshLambertMaterial({
-            color
-          }),
-          new THREE.MeshLambertMaterial({
-            map: texture
-          }),
-          new THREE.MeshLambertMaterial({
-            color
-          })
-        ]
+        // texture.repeat.set(4, 4);
 
-        var floorGeometry = new THREE.BoxBufferGeometry(1, 1, 1);
+        var floorGeometry = new THREE.PlaneBufferGeometry()
+        var floorMaterial = new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide })
+
         this.floor = new THREE.Mesh(floorGeometry, floorMaterial)
       })
-
-
     } else if (typeof (fillStyle) == 'string') {
-      floorMaterial = new THREE.MeshLambertMaterial({
-        color: fillStyle
-      })
-      var floorGeometry = new THREE.BoxBufferGeometry(1, 1, 1);
+      var floorGeometry = new THREE.PlaneBufferGeometry()
+      var floorMaterial = new THREE.MeshBasicMaterial({ color: fillStyle, side: THREE.DoubleSide })
+
       this.floor = new THREE.Mesh(floorGeometry, floorMaterial)
     }
   }
