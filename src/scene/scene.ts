@@ -80,7 +80,7 @@ export default class Scene extends EventSource {
 
   get model(): SceneModel {
     var hierarchy = this.rootContainer.hierarchy
-    hierarchy.sceneModelVersion = this.sceneModelVersion
+    hierarchy.version = this.sceneModelVersion
 
     return hierarchy
   }
