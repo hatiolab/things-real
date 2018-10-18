@@ -3,7 +3,7 @@
  */
 
 import RealObject from './real-object'
-import { Component } from '..'
+import Component from '../component'
 
 import * as THREE from 'three'
 import { applyAlpha } from './common';
@@ -137,7 +137,7 @@ export default abstract class RealObjectMesh extends THREE.Mesh implements RealO
 
   protected abstract buildGeometry(): THREE.Geometry | THREE.BufferGeometry
 
-  buildMaterial(): THREE.MeshMaterialType | THREE.MeshMaterialType[] {
+  buildMaterial() /* : THREE.MeshMaterialType | THREE.MeshMaterialType[] */ {
 
     var {
       fillStyle,

@@ -3,8 +3,8 @@
  */
 
 import EventSource from './event-source'
-import { match } from '../component/model'
-import { warn } from '../util'
+import { match } from '../component/model/selector'
+import { warn } from '../util/logger'
 
 type HandlerMap = { [s: string]: Function; }
 

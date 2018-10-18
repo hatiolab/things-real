@@ -6,7 +6,7 @@
   Inspired by http://learningthreejs.com/blog/2013/04/30/closing-the-gap-between-html-and-webgl/
 */
 
-import { Component } from '..'
+import Component from '../component'
 import RealObjectMesh from './real-object-mesh'
 import { CSS3DObject } from '../../threed/renderers/css-3d-renderer'
 
@@ -25,7 +25,7 @@ export default class RealObjectDomElement extends RealObjectMesh {
     return new THREE.PlaneGeometry(width, height)
   }
 
-  buildMaterial(): THREE.MeshMaterialType | THREE.MeshMaterialType[] {
+  buildMaterial() /* : THREE.MeshMaterialType | THREE.MeshMaterialType[] */ {
 
     var material = new THREE.MeshBasicMaterial()
 

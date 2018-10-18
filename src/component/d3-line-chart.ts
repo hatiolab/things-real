@@ -28,7 +28,7 @@ export default class D3LineChart extends D3Chart {
     svg.selectAll("*").remove()
 
     var parseTime = d3.timeParse("%d-%b-%y")
-    var data = after.map(datum => {
+    var data: any = after.map(datum => {
       return {
         ...datum,
         date: parseTime(datum.date)
@@ -39,11 +39,11 @@ export default class D3LineChart extends D3Chart {
     var y = d3.scaleLinear().rangeRound([height, 0])
 
     var line = d3.line()
-      .x(function (d) { return x(d.date); })
-      .y(function (d) { return y(d.close); })
+      .x(function (d) { return x((d as any).date); })
+      .y(function (d) { return y((d as any).close); })
 
-    x.domain(d3.extent(data, function (d) { return d.date; }));
-    y.domain(d3.extent(data, function (d) { return d.close; }));
+    x.domain(d3.extent(data, function (d) { return (d as any).date; }) as any);
+    y.domain(d3.extent(data, function (d) { return (d as any).close; }) as any);
 
     var g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")")
 

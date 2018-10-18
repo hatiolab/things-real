@@ -48,7 +48,7 @@ export default class D3BarChart extends D3Chart {
     var g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
     x.domain(after.map(function (d) { return d.letter; }));
-    y.domain([0, d3.max(after, function (d) { return d.frequency; })]);
+    y.domain([0, d3.max(after as ArrayLike<{}>, function (d) { return (d as any).frequency; })]);
 
     g.append("g")
       .attr("class", "axis axis--x")
@@ -69,10 +69,10 @@ export default class D3BarChart extends D3Chart {
       .data(after)
       .enter().append("rect")
       .attr("class", "bar")
-      .attr("x", function (d) { return x(d.letter); })
-      .attr("y", function (d) { return y(d.frequency); })
+      .attr("x", function (d) { return x((d as any).letter); })
+      .attr("y", function (d) { return y((d as any).frequency); })
       .attr("width", x.bandwidth())
-      .attr("height", function (d) { return height - y(d.frequency); });
+      .attr("height", function (d) { return height - y((d as any).frequency); });
   }
 }
 

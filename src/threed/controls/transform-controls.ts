@@ -11,7 +11,7 @@ import {
 
 var changeEvent = { type: 'change' }
 var mouseDownEvent = { type: 'mouseDown' }
-var mouseUpEvent = { type: 'mouseUp', mode: this._mode }
+var mouseUpEvent = { type: 'mouseUp', mode: '' }
 var objectChangeEvent = { type: 'objectChange' }
 
 export default class TransformControls extends THREE.Object3D {

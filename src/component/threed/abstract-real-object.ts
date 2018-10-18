@@ -2,7 +2,7 @@
  * Copyright © HatioLab Inc. All rights reserved.
  */
 
-import { Component } from '..'
+import Component from '../component'
 import RealObject from './real-object'
 
 import * as THREE from 'three'

@@ -2,20 +2,20 @@
  * Copyright © HatioLab Inc. All rights reserved.
  */
 
-import { registry, residence } from './registry'
-import { LifeCycleCallback } from './callback'
-import { ModelAndState, select } from './model'
+import { registry, residence } from './registry/index'
+import { LifeCycleCallback } from './callback/index'
+import { ModelAndState, select } from './model/index'
 import { Class, ComponentModel, Nature } from '../types'
 import Container from './container'
 import RootContainer from './root-container'
 import RealObject from './threed/real-object'
 import RealObjectDummy from './threed/real-object-dummy'
-import { DataSpreadEngine } from './data'
-import { compile } from '../animation'
+import { DataSpreadEngine } from './data/index'
+import { compile } from '../animation/index'
 import { substitute, buildSubstitutor } from './text/substitutor'
 import format from './text/format'
 import objToVal from '../util/obj-value'
-import { clonedeep, error } from '../util'
+import { clonedeep, error } from '../util/index'
 
 type EventMap = { [selector: string]: { [delegator: string]: { [event: string]: Function } } }
 
@@ -367,7 +367,7 @@ export default class Component extends ModelAndState implements LifeCycleCallbac
     return this._text_substitutor
   }
 
-  substitute​​(text) {
+  substitute(text) {
     return substitute(text)
   }
 

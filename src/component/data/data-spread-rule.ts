@@ -3,7 +3,7 @@
  */
 
 import buildEvaluator from './evaluator'
-import { buildAccessor } from '../../util'
+import buildAccessor from '../../util/obj-accessor'
 
 function propType(property) {
   switch (property) {

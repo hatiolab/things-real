@@ -2,7 +2,7 @@
  * Copyright © HatioLab Inc. All rights reserved.
  */
 
-import { Scene } from '../scene'
+import Scene from '../scene/scene'
 import Layer from './layer'
 import EditorControls from '../threed/controls/editor-controls'
 import { CSS3DRenderer } from '../threed/renderers/css-3d-renderer'

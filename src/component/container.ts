@@ -5,9 +5,9 @@
 import { ComponentModel } from '../types'
 import Component from './component'
 
-import { select } from './model'
-import { AbsoluteLayout } from '../layout'
-import { clonedeep } from '../util'
+import { select } from './model/selector'
+import AbsoluteLayout from '../layout/absolute'
+import clonedeep from '../util/clone-deep'
 
 export default class Container extends Component {
 

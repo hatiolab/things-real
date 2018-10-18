@@ -2,7 +2,7 @@
  * Copyright © HatioLab Inc. All rights reserved.
  */
 
-import { error, warn, debug } from '../util'
+import { error, warn, debug } from '../util/logger'
 
 export default class TimeCapsule {
   private maxsize: number

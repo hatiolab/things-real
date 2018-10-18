@@ -54,7 +54,7 @@ module.exports = (env, argv) => {
     devServer: {
       // contentBase: path.join(__dirname, 'tutorials'),
       contentBase: path.join(__dirname, './'),
-      compress: true,
+      compress: false,
       port: 9000
     }
   }

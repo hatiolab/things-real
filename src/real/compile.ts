@@ -3,7 +3,7 @@
  */
 
 import { ComponentModel } from '../types'
-import { Component } from '../component'
+import Component from '../component/component'
 import { warn } from '../util/logger'
 
 export default function compile(model: ComponentModel): Component {

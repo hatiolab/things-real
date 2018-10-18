@@ -33,7 +33,7 @@ export default class D3PieChart extends D3Chart {
       .outerRadius(radius - 20)
 
     var pie = d3.pie()
-      .value(function (d) { return d.apples; })
+      .value(function (d) { return (d as any).apples; })
       .sort(null)
 
     var color = d3.scaleOrdinal(d3.schemeCategory10)
@@ -45,8 +45,8 @@ export default class D3PieChart extends D3Chart {
     var path = g.datum(data).selectAll("path")
       .data(pie)
       .enter().append("path")
-      .attr("fill", function (d, i) { return color(i); })
-      .attr("d", arc)
+      .attr("fill", function (d, i) { return color(i as any); })
+      .attr("d", arc as any)
   }
 }
 

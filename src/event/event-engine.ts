@@ -4,7 +4,7 @@
 
 import EventSource from './event-source'
 import EventPump from './event-pump'
-import { select } from '../component/model'
+import { select } from '../component/model/selector'
 
 type HandlerMap = { [s: string]: Function; }
 

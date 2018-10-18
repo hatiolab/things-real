@@ -3,13 +3,13 @@
  */
 
 import { SceneModelVersion, SceneConfig, SceneModel, SceneMode, FitMode, ComponentModel } from '../types'
-import { Component, RootContainer } from '../component'
-import { CommandChange, SnapshotCommander } from '../command'
-import { Layer, ModelerLayer, ViewerLayer } from '../layer'
-import { EventSource } from '../event'
+import { Component, RootContainer } from '../component/index'
+import { CommandChange, SnapshotCommander } from '../command/index'
+import { Layer, ModelerLayer, ViewerLayer } from '../layer/index'
+import { EventSource } from '../event/index'
 import SceneModelMigrator from '../migrator/scene-model-migrator'
-import { clonedeep, fullscreen, error } from '../util'
-import { compile } from '../real'
+import { clonedeep, fullscreen, error } from '../util/index'
+import { compile } from '../real/index'
 
 export default class Scene extends EventSource {
   private _sceneMode: SceneMode

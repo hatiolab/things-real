@@ -752,7 +752,7 @@ function newImages() {
     if (!(node instanceof Element)) return Promise.resolve(node);
 
     return inlineBackground(node)
-      .then(function () {
+      .then(function (): Promise<any> {
         if (node instanceof HTMLImageElement)
           return newImage(node).inline();
         else

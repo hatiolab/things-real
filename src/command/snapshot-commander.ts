@@ -2,7 +2,7 @@
  * Copyright © HatioLab Inc. All rights reserved.
  */
 
-import { EventSource } from '../event'
+import EventSource from '../event/event-source'
 import TimeCapsule from './timecapsule'
 import SnapshotTaker from './snapshot-taker'
 

@@ -73,10 +73,10 @@ export default class ModelerLayer extends ViewerLayer {
    */
   protected createBoundBox() {
     var boundBox = new THREE.BoxHelper()
-    var material = boundBox.material
+    var material: THREE.LineBasicMaterial = boundBox.material as THREE.LineBasicMaterial;
     material.depthTest = false
     material.transparent = true;
-    (material as THREE.LineBasicMaterial).color.set(0x1faaf2)
+    material.color.set(0x1faaf2)
 
     this.rootContainer.object3D.add(boundBox)
 

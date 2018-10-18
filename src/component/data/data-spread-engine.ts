@@ -5,7 +5,7 @@
 import { DataSpreadModel } from '../../types'
 import Component from '../component'
 import DataSpreadRule from './data-spread-rule'
-import { error } from '../../util'
+import { error } from '../../util/logger'
 
 function buildSpreadRules(rules: DataSpreadModel[]) {
 

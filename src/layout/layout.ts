@@ -2,7 +2,7 @@
  * Copyright © HatioLab Inc. All rights reserved.
  */
 
-import { error } from '../util'
+import { error } from '../util/logger'
 
 var registry = {}
 

@@ -3,7 +3,7 @@
  */
 
 import { error } from '../../util/logger'
-import { objToVal } from '../../util'
+import objToVal from '../../util/obj-value'
 
 function tostring(value) {
   var v = objToVal(value)

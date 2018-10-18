@@ -4,8 +4,8 @@
 
 import { Vector3, Dimension, ComponentModel, DataSpreadModel, TextOptions } from '../../types'
 import EventCallback from '../callback/event-callback'
-import { EventSource } from '../../event'
-import { clonedeep } from '../../util'
+import EventSource from '../../event/event-source'
+import clonedeep from '../../util/clone-deep'
 import { isEqual } from 'lodash'
 
 export class ModelAndState extends EventSource implements ComponentModel, EventCallback {
