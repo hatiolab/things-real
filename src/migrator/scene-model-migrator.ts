@@ -6,7 +6,13 @@ export default class SceneModelMigrator {
     if (!model)
       return
 
-    switch (model.version || 1) {
+    /* TODO model.sceneModelVersion 부분은 삭제해야 함. */
+    // AS-IS
+    var version = model.version || model.sceneModelVersion || 1
+    // TO-BE
+    var version = model.version || 1
+
+    switch (version) {
       case 1:
         return SceneModelMigrator1.migrate(model)
         break
