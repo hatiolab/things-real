@@ -17,12 +17,7 @@ export default class RealObjectDomElement extends RealObjectMesh {
   private _cssObject3D: THREE.Object3D
 
   buildGeometry() {
-    var {
-      width,
-      height
-    } = this.component.state.dimension
-
-    return new THREE.PlaneGeometry(width, height)
+    return new THREE.PlaneGeometry(1, 1)
   }
 
   buildMaterial() /* : THREE.MeshMaterialType | THREE.MeshMaterialType[] */ {
@@ -47,7 +42,6 @@ export default class RealObjectDomElement extends RealObjectMesh {
   buildCSS3DObject() {
 
     var element = this.component.domElement
-    var cssObject: THREE.Object3D = new CSS3DObject(element)
 
     var {
       dimension
@@ -56,18 +50,21 @@ export default class RealObjectDomElement extends RealObjectMesh {
     element.style.width = dimension.width + 'px'
     element.style.height = dimension.height + 'px'
 
-    return cssObject
+    return new CSS3DObject(element)
   }
 
+  /**
+   * Component의 상태값의 변화를 Object3D에 반영 - translate, rotation, scale
+   */
   public updateTransform() {
     super.updateTransform()
 
     var {
-      scale: {
-        x: sx = 1,
-        y: sy = 1,
-        z: sz = 1
-      } = Component.UNIT_SCALE,
+      dimension: {
+        width = 1,
+        height = 1,
+        depth = 1
+      } = Component.UNIT_DIMENSION,
       translate: {
         x: tx = 0,
         y: ty = 0,
@@ -82,7 +79,9 @@ export default class RealObjectDomElement extends RealObjectMesh {
 
     this.cssObject3D.position.set(tx, ty, tz)
     this.cssObject3D.rotation.set(rx, ry, rz)
-    this.cssObject3D.scale.set(sx, sy, sz)
+
+    this.component.domElement.style.width = width + 'px'
+    this.component.domElement.style.height = height + 'px'
   }
 
   updateTranslate(after, before) {
@@ -97,13 +96,6 @@ export default class RealObjectDomElement extends RealObjectMesh {
 
     var { x = 1, y = 1, z = 1 } = after
     this.cssObject3D.rotation.set(x, y, z)
-  }
-
-  updateScale(after, before) {
-    super.updateScale(after, before)
-
-    var { x = 1, y = 1, z = 1 } = after
-    this.cssObject3D.scale.set(x, y, z)
   }
 
   updateDimension(after, before) {

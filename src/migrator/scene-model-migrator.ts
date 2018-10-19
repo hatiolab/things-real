@@ -10,7 +10,7 @@ export default class SceneModelMigrator {
     // AS-IS
     var version = model.version || model.sceneModelVersion || 1
     // TO-BE
-    var version = model.version || 1
+    // var version = model.version || 1
 
     switch (version) {
       case 1:

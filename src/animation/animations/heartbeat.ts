@@ -31,13 +31,13 @@ export default class HeartBeat extends Animation {
     }
 
     var {
-      x = 1, y = 1, z = 1
-    } = this._state.scale || {}
+      width: x = 1, height: y = 1, depth: z = 1
+    } = this._state.dimension || {}
 
     x *= ratio_x
     y *= ratio_y
     z *= ratio_z
 
-    this.client.scale = { x, y, z }
+    this.client.dimension = { width: x, height: y, depth: z }
   }
 }

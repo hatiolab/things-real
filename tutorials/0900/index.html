@@ -80,7 +80,7 @@
       transform: translate(-50%, -50%);
     `
 
-    var texts = ['Halo', 'Hello', '안녕하세요']
+    var texts = ['Halo', '안녕하세요', 'Hello']
 
     export function create() {
       scene = new Scene({
@@ -89,13 +89,14 @@
         model: {
           width: 700,
           height: 300,
+          version: 2,
           components: [{
             id: 'text',
             type: 'text',
-            dimension: {
-              // width: 100,
-              // height: 100
-            },
+            // dimension: {
+            //   // width: 100,
+            //   // height: 100
+            // },
             translate: {
               x: 0,
               y: 0,
@@ -134,13 +135,17 @@
       stop()
 
       interval = setInterval(() => {
+        texts[1] = String(Date.now()).substr(5)
         texts[2] = String(Date.now())
+        let text = texts[Math.round(Math.random() * 2)]
 
-        scene && scene.findAll('text').forEach(text => {
-          text.set({
+        console.log('text', text)
+
+        scene && scene.findAll('text').forEach(component => {
+          component.set({
             textOptions: {
-              ...text.textOptions,
-              text: texts[Math.round(Math.random() * 2)]
+              ...component.textOptions,
+              text
             }
           })
         })

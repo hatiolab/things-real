@@ -10,15 +10,16 @@ class ObjectDataSource extends RealObjectMesh {
 
   buildGeometry() {
 
-    var {
-      width = 1,
-      height = 1,
-      depth = 1
-    } = this.component.state.dimension || Component.UNIT_DIMENSION
+    // var {
+    //   width = 1,
+    //   height = 1,
+    //   depth = 1
+    // } = this.component.state.dimension || Component.UNIT_DIMENSION
 
-    var radius = Math.min(width, depth) / 2
+    // var radius = Math.min(width, depth) / 2
 
-    return new THREE.CylinderGeometry(radius, radius, height, 32)
+    // return new THREE.CylinderGeometry(radius, radius, height, 32)
+    return new THREE.CylinderGeometry(1 / 2, 1 / 2, 1, 32)
   }
 }
 
