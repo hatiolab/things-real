@@ -56,11 +56,11 @@ export default abstract class RealObjectMesh extends THREE.Mesh implements RealO
   updateTransform() {
 
     var {
-      scale: {
-        x: sx = 1,
-        y: sy = 1,
-        z: sz = 1
-      } = Component.UNIT_SCALE,
+      dimension: {
+        width: sx = 1,
+        height: sy = 1,
+        depth: sz = 1
+      } = Component.UNIT_DIMENSION,
       translate: {
         x: tx = 0,
         y: ty = 0,
@@ -98,10 +98,10 @@ export default abstract class RealObjectMesh extends THREE.Mesh implements RealO
         y: position.y,
         z: position.z
       },
-      scale: {
-        x: scale.x,
-        y: scale.y,
-        z: scale.z
+      dimension: {
+        width: scale.x,
+        height: scale.y,
+        depth: scale.z
       }
     })
   }
@@ -118,12 +118,12 @@ export default abstract class RealObjectMesh extends THREE.Mesh implements RealO
   }
 
   updateScale(after, before) {
-    var { x = 1, y = 1, z = 1 } = after
-    this.scale.set(x, y, z)
+    /* do nothing, intentionally */
   }
 
+  /* overide */
   updateDimension(after, before) {
-    this.update()
+    this.scale.set(after.width, after.height, after.depth)
   }
 
   updateAlpha() {

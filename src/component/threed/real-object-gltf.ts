@@ -13,7 +13,6 @@ import 'imports-loader?THREE=three!three/examples/js/loaders/GLTFLoader'
 export default class RealObjectGLTF extends AbstractRealObject {
 
   private static _GLTFLoader = new THREE.GLTFLoader()
-  private pivot: THREE.Object3D
   private objectSize: THREE.Vector3
 
   static get GLTFLoader() {
@@ -56,15 +55,10 @@ export default class RealObjectGLTF extends AbstractRealObject {
 
     this.objectSize = boundingBox.getSize()
 
-    // object.updateMatrix()
-
     // 오브젝트 공백을 최소로 하기위해서 clear() 를 최대한 pending함.
     this.clear()
 
-    this.pivot = new THREE.Object3D()
-    this.add(this.pivot)
-
-    this.pivot.add(object)
+    this.add(object)
 
     this._rescale()
 
@@ -96,8 +90,7 @@ export default class RealObjectGLTF extends AbstractRealObject {
       x = 1, y = 1, z = 1
     } = this.objectSize || {}
 
-    /* component 자체의 scale도 별도의 의미가 있으므로, dimension은 하위 pivot object의 scale로 조절한다. */
-    this.pivot && this.pivot.scale.set(width / x, height / y, depth / z)
+    this.scale.set(width / x, height / y, depth / z)
 
     this.component.invalidate()
   }
