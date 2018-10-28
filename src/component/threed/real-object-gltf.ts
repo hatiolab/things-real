@@ -53,7 +53,7 @@ export default class RealObjectGLTF extends AbstractRealObject {
     var center = boundingBox.getCenter(object.position)
     center.multiplyScalar(-1)
 
-    this.objectSize = boundingBox.getSize()
+    this.objectSize = boundingBox.getSize(this.objectSize)
 
     // 오브젝트 공백을 최소로 하기위해서 clear() 를 최대한 pending함.
     this.clear()
