@@ -8,6 +8,8 @@ import Component from '../component'
 import * as T from 'three'
 const THREE: any = T
 
+import { SCALE_MIN } from './common'
+
 import 'imports-loader?THREE=three!three/examples/js/loaders/GLTFLoader'
 
 export default class RealObjectGLTF extends AbstractRealObject {
@@ -90,7 +92,11 @@ export default class RealObjectGLTF extends AbstractRealObject {
       x = 1, y = 1, z = 1
     } = this.objectSize || {}
 
-    this.scale.set(width / x, height / y, depth / z)
+    this.scale.set(
+      Math.max(width / x, SCALE_MIN),
+      Math.max(height / y, SCALE_MIN),
+      Math.max(depth / z, SCALE_MIN)
+    )
 
     this.component.invalidate()
   }

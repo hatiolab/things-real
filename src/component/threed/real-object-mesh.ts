@@ -6,7 +6,7 @@ import RealObject from './real-object'
 import Component from '../component'
 
 import * as THREE from 'three'
-import { applyAlpha } from './common';
+import { applyAlpha, SCALE_MIN } from './common'
 
 export default abstract class RealObjectMesh extends THREE.Mesh implements RealObject {
   protected _component
@@ -73,9 +73,13 @@ export default abstract class RealObjectMesh extends THREE.Mesh implements RealO
       } = Component.UNIT_ROTATE
     } = this.component.state
 
-    this.position.set(tx, ty, tz);
-    this.rotation.set(rx, ry, rz);
-    this.scale.set(sx, sy, sz);
+    this.position.set(tx, ty, tz)
+    this.rotation.set(rx, ry, rz)
+    this.scale.set(
+      Math.max(sx, SCALE_MIN),
+      Math.max(sy, SCALE_MIN),
+      Math.max(sz, SCALE_MIN)
+    )
   }
 
   /**
@@ -123,7 +127,11 @@ export default abstract class RealObjectMesh extends THREE.Mesh implements RealO
 
   /* overide */
   updateDimension(after, before) {
-    this.scale.set(after.width, after.height, after.depth)
+    this.scale.set(
+      Math.max(after.width, SCALE_MIN),
+      Math.max(after.height, SCALE_MIN),
+      Math.max(after.depth, SCALE_MIN)
+    )
   }
 
   updateAlpha() {

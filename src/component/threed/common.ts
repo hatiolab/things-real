@@ -1,5 +1,6 @@
 import * as tinycolor from 'tinycolor2'
-import * as THREE from 'three'
+
+export const SCALE_MIN = 0.001
 
 export function applyAlpha(material: any, alpha, fillStyle) {
   var opacity = 1

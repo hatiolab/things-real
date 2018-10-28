@@ -7,6 +7,8 @@ import RealObject from './real-object'
 
 import * as THREE from 'three'
 
+import { SCALE_MIN } from './common'
+
 export default abstract class AbstractRealObject extends THREE.Object3D implements RealObject {
   protected _component: Component
 
@@ -69,9 +71,13 @@ export default abstract class AbstractRealObject extends THREE.Object3D implemen
       } = Component.UNIT_ROTATE
     } = this.component.state
 
-    this.position.set(tx, ty, tz);
-    this.rotation.set(rx, ry, rz);
-    this.scale.set(sx, sy, sz);
+    this.position.set(tx, ty, tz)
+    this.rotation.set(rx, ry, rz)
+    this.scale.set(
+      Math.max(sx, SCALE_MIN),
+      Math.max(sy, SCALE_MIN),
+      Math.max(sz, SCALE_MIN)
+    )
   }
 
   /**
@@ -115,7 +121,11 @@ export default abstract class AbstractRealObject extends THREE.Object3D implemen
 
   updateScale(after, before) {
     var { x = 1, y = 1, z = 1 } = after
-    this.scale.set(x, y, z)
+    this.scale.set(
+      Math.max(x, SCALE_MIN),
+      Math.max(y, SCALE_MIN),
+      Math.max(z, SCALE_MIN)
+    )
   }
 
   updateDimension(after, before) {
