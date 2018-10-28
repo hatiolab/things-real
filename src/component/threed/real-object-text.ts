@@ -67,7 +67,7 @@ export default class RealObjectText extends RealObjectMesh {
     var texture = new THREE.CanvasTexture(canvas)
     texture.wrapS = THREE.RepeatWrapping
     texture.wrapT = THREE.RepeatWrapping
-    // texture.repeat.set(4, 4)
+    texture.offset.set(0, 1 - height / poweredHeight)
     texture.repeat.set(width / poweredWidth, height / poweredHeight)
     texture.needsUpdate = true
 
@@ -138,8 +138,7 @@ export default class RealObjectText extends RealObjectMesh {
     ctx.font = fontStyle(bold, italic, fontSize, fontFamily)
     ctx.textBaseline = 'top'
     ctx.textAlign = 'left'
-    /* css-style line-height = 'normal' 에 비슷하도록 10% 위치를 baseline으로 함 */
-    ctx.fillText(String(text), 0, height * PIXEL_RATIO * 0.1)
+    ctx.fillText(String(text), 0, 0)
 
     /* TODO multiline 시 검토 */
     // var lineText = String(text).split('\n')
@@ -147,6 +146,11 @@ export default class RealObjectText extends RealObjectMesh {
     //   ctx.fillText(t, 0, Number(i) * lineHeight)
     //   ctx.strokeText(t, 0, Number(i) * lineHeight)
     // })
+  }
+
+  /* overide */
+  updateDimension(after, before) {
+    // Intentionally do nothing
   }
 
   updateAlpha() {
