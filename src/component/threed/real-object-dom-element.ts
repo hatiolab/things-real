@@ -17,7 +17,12 @@ export default class RealObjectDomElement extends RealObjectMesh {
   private _cssObject3D: THREE.Object3D
 
   buildGeometry() {
-    return new THREE.PlaneGeometry(1, 1)
+    var {
+      width,
+      height
+    } = this.component.state.dimension
+
+    return new THREE.PlaneGeometry(width, height)
   }
 
   buildMaterial() /* : THREE.MeshMaterialType | THREE.MeshMaterialType[] */ {
@@ -60,11 +65,11 @@ export default class RealObjectDomElement extends RealObjectMesh {
     super.updateTransform()
 
     var {
-      dimension: {
-        width = 1,
-        height = 1,
-        depth = 1
-      } = Component.UNIT_DIMENSION,
+      scale: {
+        x: sx = 1,
+        y: sy = 1,
+        z: sz = 1
+      } = Component.UNIT_SCALE,
       translate: {
         x: tx = 0,
         y: ty = 0,
@@ -79,9 +84,7 @@ export default class RealObjectDomElement extends RealObjectMesh {
 
     this.cssObject3D.position.set(tx, ty, tz)
     this.cssObject3D.rotation.set(rx, ry, rz)
-
-    this.component.domElement.style.width = width + 'px'
-    this.component.domElement.style.height = height + 'px'
+    this.cssObject3D.scale.set(sx, sy, sz)
   }
 
   updateTranslate(after, before) {
@@ -96,6 +99,13 @@ export default class RealObjectDomElement extends RealObjectMesh {
 
     var { x = 1, y = 1, z = 1 } = after
     this.cssObject3D.rotation.set(x, y, z)
+  }
+
+  updateScale(after, before) {
+    super.updateScale(after, before)
+
+    var { x = 1, y = 1, z = 1 } = after
+    this.cssObject3D.scale.set(x, y, z)
   }
 
   updateDimension(after, before) {

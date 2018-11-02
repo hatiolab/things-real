@@ -6,7 +6,7 @@ import RealObject from './real-object'
 import Component from '../component'
 
 import * as THREE from 'three'
-import { applyAlpha, SCALE_MIN } from './common'
+import { applyAlpha } from './common'
 
 export default abstract class RealObjectMesh extends THREE.Mesh implements RealObject {
   protected _component
@@ -56,11 +56,11 @@ export default abstract class RealObjectMesh extends THREE.Mesh implements RealO
   updateTransform() {
 
     var {
-      dimension: {
-        width: sx = 1,
-        height: sy = 1,
-        depth: sz = 1
-      } = Component.UNIT_DIMENSION,
+      scale: {
+        x: sx = 1,
+        y: sy = 1,
+        z: sz = 1
+      } = Component.UNIT_SCALE,
       translate: {
         x: tx = 0,
         y: ty = 0,
@@ -75,11 +75,7 @@ export default abstract class RealObjectMesh extends THREE.Mesh implements RealO
 
     this.position.set(tx, ty, tz)
     this.rotation.set(rx, ry, rz)
-    this.scale.set(
-      Math.max(sx, SCALE_MIN),
-      Math.max(sy, SCALE_MIN),
-      Math.max(sz, SCALE_MIN)
-    )
+    this.scale.set(sx, sy, sz)
   }
 
   /**
@@ -102,10 +98,10 @@ export default abstract class RealObjectMesh extends THREE.Mesh implements RealO
         y: position.y,
         z: position.z
       },
-      dimension: {
-        width: scale.x,
-        height: scale.y,
-        depth: scale.z
+      scale: {
+        x: scale.x,
+        y: scale.y,
+        z: scale.z
       }
     })
   }
@@ -122,16 +118,13 @@ export default abstract class RealObjectMesh extends THREE.Mesh implements RealO
   }
 
   updateScale(after, before) {
-    /* do nothing, intentionally */
+    var { x = 1, y = 1, z = 1 } = after
+    this.scale.set(x, y, z)
   }
 
   /* overide */
   updateDimension(after, before) {
-    this.scale.set(
-      Math.max(after.width, SCALE_MIN),
-      Math.max(after.height, SCALE_MIN),
-      Math.max(after.depth, SCALE_MIN)
-    )
+    this.update()
   }
 
   updateAlpha() {
