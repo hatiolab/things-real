@@ -8,13 +8,12 @@ import Component from '../component'
 import * as T from 'three'
 const THREE: any = T
 
-import { SCALE_MIN } from './common'
-
 import 'imports-loader?THREE=three!three/examples/js/loaders/GLTFLoader'
 
 export default class RealObjectGLTF extends AbstractRealObject {
 
   private static _GLTFLoader = new THREE.GLTFLoader()
+  private pivot: THREE.Object3D
   private objectSize: THREE.Vector3
 
   static get GLTFLoader() {
@@ -60,7 +59,9 @@ export default class RealObjectGLTF extends AbstractRealObject {
     // 오브젝트 공백을 최소로 하기위해서 clear() 를 최대한 pending함.
     this.clear()
 
-    this.add(object)
+    this.pivot = new THREE.Object3D()
+    this.add(this.pivot)
+    this.pivot.add(object)
 
     this._rescale()
 
@@ -92,11 +93,7 @@ export default class RealObjectGLTF extends AbstractRealObject {
       x = 1, y = 1, z = 1
     } = this.objectSize || {}
 
-    this.scale.set(
-      Math.max(width / x, SCALE_MIN),
-      Math.max(height / y, SCALE_MIN),
-      Math.max(depth / z, SCALE_MIN)
-    )
+    this.pivot && this.pivot.scale.set(width / x, height / y, depth / z)
 
     this.component.invalidate()
   }

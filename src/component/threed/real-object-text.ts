@@ -47,8 +47,7 @@ export default class RealObjectText extends RealObjectMesh {
       width, height, depth: 1
     }
 
-    // return new THREE.PlaneBufferGeometry(width, height)
-    return new THREE.PlaneBufferGeometry(1, 1)
+    return new THREE.PlaneBufferGeometry(width, height)
   }
 
   buildMaterial() {
