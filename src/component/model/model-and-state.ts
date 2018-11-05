@@ -214,11 +214,26 @@ export class ModelAndState extends EventSource implements ComponentModel, EventC
   public templatePrefix: string
   public data: any
   public mappings: DataSpreadModel[]
+  public hidden: boolean
 }
 
 /* 단순한 state 속성의 getter/setter 정의 방법. */
 [
-  'textStyle', 'textOptions', 'dimension', 'translate', 'scale', 'rotate', 'lineStyle', 'fillStyle', 'color', 'templatePrefix', 'data', 'mappings', 'animation', 'alpha'
+  'textStyle',
+  'textOptions',
+  'dimension',
+  'translate',
+  'scale',
+  'rotate',
+  'lineStyle',
+  'fillStyle',
+  'color',
+  'templatePrefix',
+  'data',
+  'mappings',
+  'animation',
+  'alpha',
+  'hidden'
 ].forEach(property => Object.defineProperty(ModelAndState.prototype, property, {
   get() {
     return this.getState(property)

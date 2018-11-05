@@ -82,6 +82,7 @@ export interface ComponentModel {
   data?: any,
   color?: any,
   style?: any,
+  hidden?: boolean,
   templatePrefix?: string,
   components?: ComponentModel[],
   mappings?: DataSpreadModel[],

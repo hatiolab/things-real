@@ -417,6 +417,10 @@ export default class Component extends ModelAndState implements LifeCycleCallbac
     this.object3D.updateAlpha(after, before)
   }
 
+  onchangehidden(after, before) {
+    this.object3D.visible = !after
+  }
+
   onchangelineStyle(after, before) {
     this.update()
   }

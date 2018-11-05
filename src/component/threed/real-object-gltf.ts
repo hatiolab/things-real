@@ -4,6 +4,7 @@
 
 import AbstractRealObject from './abstract-real-object'
 import Component from '../component'
+import RealObjectScene from './real-object-scene'
 
 import * as T from 'three'
 const THREE: any = T
@@ -69,9 +70,11 @@ export default class RealObjectGLTF extends AbstractRealObject {
     // if (animations && animations.length) {
     //   for (var i = 0; i < animations.length; i++) {
     //     var animation = animations[i]
-    //     var action = this._visualizer.mixer.clipAction(animation)
+    //     var action = (this.component.root.object3D as RealObjectScene).animationMixer.clipAction(animation)
     //     action.play()
     //   }
+    // } else {
+    //   console.log('no animations..')
     // }
   }
 

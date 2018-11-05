@@ -15,10 +15,17 @@ import * as THREE from 'three'
  */
 export default class ModelerLayer extends ViewerLayer {
 
+  constructor(ownerScene) {
+    super(ownerScene)
+
+    this.ownerScene.on('selected', this.onselectchanged.bind(this))
+  }
   /**
    * scene-renderer disposer
    */
   dispose() {
+    this.ownerScene.off('selected')
+
     super.dispose()
 
     this.disposeTransformControls()
@@ -232,6 +239,29 @@ export default class ModelerLayer extends ViewerLayer {
     return this.rootContainer
   }
 
+  onselectchanged(components, before) {
+    var component = components[0]
+
+    if (!component || component === this.rootContainer) {
+      this.boundBox.visible = false
+      this.transformControls.detach()
+
+      this.editorControls.enable()
+      this.render()
+
+    } else {
+      var object3D = component.object3D
+
+      this.transformControls.attach(object3D);
+
+      (this.boundBox as any).setFromObject(object3D).update()
+      this.boundBox.visible = true
+
+      this.editorControls.disable()
+      this.render()
+    }
+  }
+
   /**
    * 
    * @param event 
@@ -241,28 +271,10 @@ export default class ModelerLayer extends ViewerLayer {
     let component = this.capture(coords)
 
     if (component === this.rootContainer) {
-      this.boundBox.visible = false
-      this.transformControls.detach()
-
-      this.editorControls.enable()
-      this.render()
-
       this.ownerScene.selected = []
-
-      return
+    } else {
+      this.ownerScene.selected = [component]
     }
-
-    var object3D = component.object3D
-
-    this.transformControls.attach(object3D);
-
-    (this.boundBox as any).setFromObject(object3D).update()
-    this.boundBox.visible = true
-
-    this.editorControls.disable()
-    this.render()
-
-    this.ownerScene.selected = [component]
 
     event.preventDefault()
     event.stopPropagation()

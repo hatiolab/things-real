@@ -135,4 +135,14 @@ export default class RealObjectScene extends THREE.Scene implements RealObject {
   set component(component) {
     this._component = component
   }
+
+  private _animationMixer: THREE.AnimationMixer
+
+  get animationMixer() {
+    if (!this._animationMixer) {
+      this._animationMixer = new THREE.AnimationMixer(this)
+    }
+
+    return this._animationMixer
+  }
 }
