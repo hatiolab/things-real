@@ -11,12 +11,12 @@ import { SceneMode, ActionModel } from '../types'
 import { PIXEL_RATIO } from '../component/html/elements'
 
 import * as THREE from 'three'
+import { WEBVR } from '../vr/WebVR'
 
 /**
  * Real Scene Renderer for Viewer
  */
 export default class ViewerLayer extends Layer {
-
   private boundOnclick
   private boundOnmousedown
   private boundOnmouseup
@@ -122,10 +122,9 @@ export default class ViewerLayer extends Layer {
   /**
    * ViewRenderer에서는 CSS3DRenderer와 GLRendering을 위한 canvas를 오버레이로 만든다.
    * Warn: this.element는 아직 만들어지지 않은 상태에 buildOverlays가 호출됨.
-   * @param into 
+   * @param into
    */
   buildOverlays(into) {
-
     into.appendChild(this.css3DRenderer.domElement)
     into.appendChild(this.canvas)
   }
@@ -190,7 +189,10 @@ export default class ViewerLayer extends Layer {
 
   protected disposeEditorControls() {
     if (this._editorControls) {
-      this._editorControls.removeEventListener('change', this._editorControlsEventHandler)
+      this._editorControls.removeEventListener(
+        'change',
+        this._editorControlsEventHandler
+      )
       this._editorControls.dispose()
     }
   }
@@ -240,7 +242,7 @@ export default class ViewerLayer extends Layer {
   protected createGLRenderer() {
     var renderer: THREE.WebGLRenderer = new THREE.WebGLRenderer({
       canvas: this.canvas,
-      precision: "highp",
+      precision: 'highp',
       antialias: true,
       alpha: true
     })
@@ -249,6 +251,9 @@ export default class ViewerLayer extends Layer {
     renderer.setPixelRatio(PIXEL_RATIO)
     // Specify the size of the canvas
     renderer.setSize(1, 1)
+
+    renderer.vr.enabled = true
+    document.body.appendChild(WEBVR.createButton(renderer))
 
     return renderer
   }
@@ -309,7 +314,7 @@ export default class ViewerLayer extends Layer {
 
     var camera = new THREE.PerspectiveCamera()
 
-    camera.position.set(0, height, height * 3 / 4)
+    camera.position.set(0, height, (height * 3) / 4)
 
     // let frustum = Math.max(width, height) / 2;
     // this._camera = new THREE.OrthographicCamera(-frustum, frustum, frustum, -frustum, 0, 30000);
@@ -318,6 +323,7 @@ export default class ViewerLayer extends Layer {
     // this._camera.position.set(0, 0, frustum * 2);
 
     camera.lookAt(new THREE.Vector3(0, 0, 0))
+    camera.layers.enable(1)
 
     return camera
   }
@@ -357,15 +363,21 @@ export default class ViewerLayer extends Layer {
     // Nothing to do
   }
 
+  public invalidate() {
+    var render = () => {
+      this.render()
+    }
+    this.glRenderer.setAnimationLoop(render)
+  }
+
   /**
-   * 
-   * @param force 
+   *
+   * @param force
    */
   prerender(force?) {
-
     this.rootContainer.components.forEach(component => {
-      let object = component.object3D;
-      (!object['isRealObject']) && object['prerender'](force)
+      let object = component.object3D
+      !object['isRealObject'] && object['prerender'](force)
     })
   }
 
@@ -378,19 +390,18 @@ export default class ViewerLayer extends Layer {
   }
 
   /**
-   * 
-   * @param width 
-   * @param height 
+   *
+   * @param width
+   * @param height
    */
   onresize(width, height) {
-
     this.camera.near = 1
     this.camera.far = 10000
     this.camera.aspect = width / height
 
     var distance = 1000
-    var diag = Math.sqrt((height * height) + (width * width))
-    this.camera.fov = 2 * Math.atan(diag / (2 * distance)) * 180 / Math.PI
+    var diag = Math.sqrt(height * height + width * width)
+    this.camera.fov = (2 * Math.atan(diag / (2 * distance)) * 180) / Math.PI
 
     // this.camera.position.set(0, h, h * 3 / 4)
     this.camera.updateProjectionMatrix()
@@ -402,23 +413,23 @@ export default class ViewerLayer extends Layer {
   /**
    * mouse/touch pointer를 받아서 raycaster로 Object3D를 찾고,
    * Object3D를 생성한 Component를 리턴한다.
-   * @param x 
-   * @param y 
+   * @param x
+   * @param y
    */
   capture(coords) {
-    var {
-      width,
-      height
-    } = this.canvas
+    var { width, height } = this.canvas
 
     this.raycaster.setFromCamera(coords, this.camera)
 
     // TUNE-ME 자손들까지의 모든 intersects를 다 포함하는 것이면, capturable component에 해당하는 오브젝트라는 것을 보장할 수 없음.
     // 또한, component에 매핑된 오브젝트라는 것도 보장할 수 없음.
     var capturables = this.rootContainer.capturables()
-    var intersects = this.raycaster.intersectObjects(capturables.map(component => {
-      return component.object3D
-    }), true)
+    var intersects = this.raycaster.intersectObjects(
+      capturables.map(component => {
+        return component.object3D
+      }),
+      true
+    )
 
     for (let i = 0; i < intersects.length; i++) {
       let object: THREE.Object3D = intersects[i].object
@@ -446,35 +457,30 @@ export default class ViewerLayer extends Layer {
     return this.rootContainer
   }
 
-  _getPosition(event): { x, y } {
-    var {
-      width, height
-    } = this.canvas
+  _getPosition(event): { x; y } {
+    var { width, height } = this.canvas
 
-    var {
-      clientX: x, clientY: y
-    } = event
+    var { clientX: x, clientY: y } = event
 
-    var {
-      left, top
-    } = this.element.getBoundingClientRect()
+    var { left, top } = this.element.getBoundingClientRect()
 
     x -= left
     y -= top
 
     return {
-      x: (x * PIXEL_RATIO) / width * 2 - 1,
-      y: -(y * PIXEL_RATIO) / height * 2 + 1
+      x: ((x * PIXEL_RATIO) / width) * 2 - 1,
+      y: (-(y * PIXEL_RATIO) / height) * 2 + 1
     }
   }
 
   /**
-   * 
-   * @param event 
+   *
+   * @param event
    */
   onclick(event) {
-
-    let coords = this._getPosition(event['changedTouches'] ? event['changedTouches'][0] : event)
+    let coords = this._getPosition(
+      event['changedTouches'] ? event['changedTouches'][0] : event
+    )
     let component = this.capture(coords)
 
     if (component === this.rootContainer) {
@@ -484,7 +490,8 @@ export default class ViewerLayer extends Layer {
     event.preventDefault()
     event.stopPropagation()
 
-    var tapEvtModel: ActionModel = component.model.event && component.model.event.tap
+    var tapEvtModel: ActionModel =
+      component.model.event && component.model.event.tap
 
     if (!tapEvtModel) {
       return
@@ -494,25 +501,24 @@ export default class ViewerLayer extends Layer {
   }
 
   /**
-   * 
-   * @param event 
+   *
+   * @param event
    */
-  onmousedown(event) {
-  }
+  onmousedown(event) {}
 
   /**
-   * 
-   * @param event 
+   *
+   * @param event
    */
-  onmouseup(event) {
-  }
+  onmouseup(event) {}
 
   onmousemove(event) {
-    let coords = this._getPosition(event['changedTouches'] ? event['changedTouches'][0] : event)
+    let coords = this._getPosition(
+      event['changedTouches'] ? event['changedTouches'][0] : event
+    )
     let component = this.capture(coords)
 
     if (component !== this.enteredComponent) {
-
       this.enteredComponent && this.onmouseleave(this.enteredComponent)
       component && this.onmouseenter(component)
 
@@ -524,12 +530,12 @@ export default class ViewerLayer extends Layer {
   }
 
   onmouseenter(component) {
-
     if (component === this.rootContainer) {
       return
     }
 
-    var hoverEvtModel: ActionModel = component.model.event && component.model.event.hover
+    var hoverEvtModel: ActionModel =
+      component.model.event && component.model.event.hover
 
     if (!hoverEvtModel) {
       return
@@ -543,7 +549,8 @@ export default class ViewerLayer extends Layer {
       return
     }
 
-    var hoverEvtModel: ActionModel = component.model.event && component.model.event.hover
+    var hoverEvtModel: ActionModel =
+      component.model.event && component.model.event.hover
 
     if (!hoverEvtModel) {
       return
@@ -553,10 +560,8 @@ export default class ViewerLayer extends Layer {
   }
 
   _doEventAction(event: ActionModel, component, enter: boolean) {
-
     var { action, target, value, emphasize = false, restore = false } = event
-    if (!action || !target)
-      return
+    if (!action || !target) return
 
     // IMPLEMENT-ME
     if (emphasize) {
@@ -569,15 +574,17 @@ export default class ViewerLayer extends Layer {
 
     switch (action) {
       case 'data-toggle':
-        (enter || restore) && this.rootContainer.findAll(target).forEach(component => {
-          component.data = !component.data
-        })
+        ;(enter || restore) &&
+          this.rootContainer.findAll(target).forEach(component => {
+            component.data = !component.data
+          })
         break
       case 'data-tristate':
-        (enter || restore) && this.rootContainer.findAll(target).forEach(component => {
-          let number = Math.round(Math.max(Number(component.data) || 0, 0))
-          component.data = (number + (enter ? 1 : 2)) % 3
-        })
+        ;(enter || restore) &&
+          this.rootContainer.findAll(target).forEach(component => {
+            let number = Math.round(Math.max(Number(component.data) || 0, 0))
+            component.data = (number + (enter ? 1 : 2)) % 3
+          })
         break
       case 'data-set':
         if (enter) {
