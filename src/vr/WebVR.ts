@@ -151,7 +151,7 @@ export var WEBVR = {
 
       window.addEventListener(
         'vrdisplayconnect',
-        function(event: any) {
+        function(event: VRDisplayEvent) {
           showEnterVR(event.display)
         },
         false
@@ -167,7 +167,7 @@ export var WEBVR = {
 
       window.addEventListener(
         'vrdisplaypresentchange',
-        function(event: any) {
+        function(event: VRDisplayEvent) {
           button.textContent = event.display.isPresenting
             ? 'EXIT VR'
             : 'ENTER VR'
@@ -177,7 +177,7 @@ export var WEBVR = {
 
       window.addEventListener(
         'vrdisplayactivate',
-        function(event: any) {
+        function(event: VRDisplayEvent) {
           event.display.requestPresent([{ source: renderer.domElement }])
         },
         false

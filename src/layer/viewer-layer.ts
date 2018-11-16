@@ -26,6 +26,8 @@ export default class ViewerLayer extends Layer {
 
   private enteredComponent
 
+  private _onvrdisplaypresentchange
+
   /**
    * constructor
    * @param owner Real Scene
@@ -47,6 +49,11 @@ export default class ViewerLayer extends Layer {
     this.element.removeEventListener('mousedown', this.boundOnmousedown)
     this.element.removeEventListener('mouseup', this.boundOnmouseup)
     this.element.removeEventListener('mousemove', this.boundOnmousemove)
+
+    window.removeEventListener(
+      'vrdisplaypresentchange',
+      this._onvrdisplaypresentchange
+    )
 
     this.disposeEditorControls()
 
@@ -73,6 +80,19 @@ export default class ViewerLayer extends Layer {
     this.element.addEventListener('mousedown', this.boundOnmousedown)
     this.element.addEventListener('mouseup', this.boundOnmouseup)
     this.element.addEventListener('mousemove', this.boundOnmousemove)
+
+    this._onvrdisplaypresentchange = (event: VRDisplayEvent) => {
+      if (event.display.isPresenting)
+        this.glRenderer.vr.enabled = event.display.isPresenting ? true : false
+
+      this.invalidate()
+    }
+
+    window.addEventListener(
+      'vrdisplaypresentchange',
+      this._onvrdisplaypresentchange,
+      false
+    )
   }
 
   /* object-scene */
@@ -252,7 +272,6 @@ export default class ViewerLayer extends Layer {
     // Specify the size of the canvas
     renderer.setSize(1, 1)
 
-    renderer.vr.enabled = true
     document.body.appendChild(WEBVR.createButton(renderer))
 
     return renderer
@@ -323,7 +342,6 @@ export default class ViewerLayer extends Layer {
     // this._camera.position.set(0, 0, frustum * 2);
 
     camera.lookAt(new THREE.Vector3(0, 0, 0))
-    camera.layers.enable(1)
 
     return camera
   }
@@ -364,10 +382,14 @@ export default class ViewerLayer extends Layer {
   }
 
   public invalidate() {
-    var render = () => {
-      this.render()
+    if (this.glRenderer.vr.enabled) {
+      var render = () => {
+        this.render()
+      }
+      this.glRenderer.setAnimationLoop(render)
+    } else {
+      super.invalidate()
     }
-    this.glRenderer.setAnimationLoop(render)
   }
 
   /**
@@ -385,7 +407,9 @@ export default class ViewerLayer extends Layer {
    * gl-renderer와 css3d-render를 render 한다.
    */
   render() {
-    this.glRenderer.render(this.objectScene, this.camera)
+    var camera = null
+    if (!this.glRenderer.vr.enabled) camera = this.camera
+    this.glRenderer.render(this.objectScene, camera)
     this.css3DRenderer.render(this.rootContainer.css3DScene, this.camera)
   }
 
