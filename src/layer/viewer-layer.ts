@@ -27,6 +27,7 @@ export default class ViewerLayer extends Layer {
   private enteredComponent
 
   private _onvrdisplaypresentchange
+  private _vrAnimateFunction
 
   /**
    * constructor
@@ -55,6 +56,9 @@ export default class ViewerLayer extends Layer {
       this._onvrdisplaypresentchange
     )
 
+    this._onvrdisplaypresentchange = null
+    this._vrAnimateFunction = null
+
     this.disposeEditorControls()
 
     this.disposeObjectScene()
@@ -81,11 +85,22 @@ export default class ViewerLayer extends Layer {
     this.element.addEventListener('mouseup', this.boundOnmouseup)
     this.element.addEventListener('mousemove', this.boundOnmousemove)
 
-    this._onvrdisplaypresentchange = (event: VRDisplayEvent) => {
-      if (event.display.isPresenting)
-        this.glRenderer.vr.enabled = event.display.isPresenting ? true : false
+    this._vrAnimateFunction = this.render.bind(this)
 
-      this.invalidate()
+    this._onvrdisplaypresentchange = (event: VRDisplayEvent) => {
+      var isPresenting = !!event.display.isPresenting
+      var vr = this.glRenderer.vr as any
+      if (!event.display.isPresenting) {
+        this.camera.layers.enable(1)
+        var { height } = this.rootContainer.state
+
+        this.camera.position.set(0, height, (height * 3) / 4)
+        this.camera.lookAt(new THREE.Vector3(0, 0, 0))
+      } else {
+        this.glRenderer.setAnimationLoop(this._vrAnimateFunction)
+      }
+
+      vr.enabled = isPresenting
     }
 
     window.addEventListener(
@@ -381,17 +396,6 @@ export default class ViewerLayer extends Layer {
     // Nothing to do
   }
 
-  public invalidate() {
-    if (this.glRenderer.vr.enabled) {
-      var render = () => {
-        this.render()
-      }
-      this.glRenderer.setAnimationLoop(render)
-    } else {
-      super.invalidate()
-    }
-  }
-
   /**
    *
    * @param force
@@ -407,9 +411,7 @@ export default class ViewerLayer extends Layer {
    * gl-renderer와 css3d-render를 render 한다.
    */
   render() {
-    var camera = null
-    if (!this.glRenderer.vr.enabled) camera = this.camera
-    this.glRenderer.render(this.objectScene, camera)
+    this.glRenderer.render(this.objectScene, this.camera)
     this.css3DRenderer.render(this.rootContainer.css3DScene, this.camera)
   }
 
