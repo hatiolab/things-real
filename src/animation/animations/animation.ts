@@ -6,17 +6,15 @@ import * as Delta from '../delta'
 import { ComponentModel } from '../../types'
 
 function makeEaseOut(delta, options) {
-  return function (progress) {
+  return function(progress) {
     return 1 - delta(1 - progress, options)
   }
 }
 
 function makeEaseInOut(delta, options) {
-  return function (progress) {
-    if (progress < .5)
-      return delta(2 * progress, options) / 2
-    else
-      return (2 - delta(2 * (1 - progress), options)) / 2
+  return function(progress) {
+    if (progress < 0.5) return delta(2 * progress, options) / 2
+    else return (2 - delta(2 * (1 - progress), options)) / 2
   }
 }
 
@@ -39,21 +37,13 @@ export default abstract class Animation {
     this.client = client
     this.config = config
 
-    var {
-      delta = 'linear', /* delta function */
-      options,
-      ease
-    } = this.config
+    var { delta = 'linear' /* delta function */, options, ease } = this.config
 
-    if (typeof delta === 'string')
-      delta = Delta[delta]
+    if (typeof delta === 'string') delta = Delta[delta]
 
-    if (ease == 'out')
-      this.delta = makeEaseOut(delta, options)
-    else if (ease == 'inout')
-      this.delta = makeEaseInOut(delta, options)
-    else
-      this.delta = delta
+    if (ease == 'out') this.delta = makeEaseOut(delta, options)
+    else if (ease == 'inout') this.delta = makeEaseInOut(delta, options)
+    else this.delta = delta
 
     this.init()
   }
@@ -64,17 +54,12 @@ export default abstract class Animation {
     delete this.client
   }
 
-  init() { }
+  init() {}
 
   start() {
-    if (this._started)
-      return;
+    if (this._started) return
 
-    var {
-      duration = 2000,
-      delay = 0,
-      repeat = false
-    } = this.config
+    var { duration = 2000, delay = 0, repeat = false } = this.config
 
     this._started = true
     this._state = this.client.state
@@ -83,9 +68,7 @@ export default abstract class Animation {
       let started_at = 0
 
       let callback = () => {
-
-        if (!this._started)
-          return
+        if (!this._started) return
 
         if (started_at == 0) {
           started_at = performance.now()
@@ -93,7 +76,7 @@ export default abstract class Animation {
         }
 
         let time_passed = performance.now() - started_at
-        let delay_culc = delay / duration;
+        let delay_culc = delay / duration
         let progress = time_passed / duration
 
         let dx = repeat ? progress % (1 + delay_culc) : Math.min(progress, 1)
@@ -103,19 +86,21 @@ export default abstract class Animation {
 
         if (progress >= 1 && (!repeat || !this._started)) {
           this.stop()
-          started_at = 0;
+          started_at = 0
         }
         if (this._started)
-          this._raf = requestAnimationFrame(callback)
+          // this._raf = requestAnimationFrame(callback)
+          this._raf = setTimeout(callback, 1)
       }
 
-      this._raf = requestAnimationFrame(callback)
+      // this._raf = requestAnimationFrame(callback)
+      this._raf = setTimeout(callback, 1)
     }, 0)
   }
 
   stop() {
-    if (this._raf)
-      cancelAnimationFrame(this._raf)
+    // if (this._raf) cancelAnimationFrame(this._raf)
+    if (this._raf) clearTimeout(this._raf)
     this._raf = null
 
     this._started = false
@@ -126,12 +111,9 @@ export default abstract class Animation {
   }
 
   set started(started) {
-    if (this.started == !!started)
-      return
+    if (this.started == !!started) return
 
-    if (!!started)
-      this.start()
-    else
-      this.stop()
+    if (!!started) this.start()
+    else this.stop()
   }
 }
