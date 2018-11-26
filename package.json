@@ -1,7 +1,7 @@
 {
   "name": "@hatiolab/things-real",
   "description": "3D modeling library",
-  "version": "0.1.24",
+  "version": "0.1.25",
   "main": "dist/things-real.js",
   "license": "MIT",
   "scripts": {
@@ -31,6 +31,7 @@
     "sinon": "^7.1.0",
     "ts-loader": "^5.2.2",
     "typescript": "^3.0.1",
+    "uglifyjs-webpack-plugin": "^2.0.1",
     "webpack": "^4.23.1",
     "webpack-cleanup-plugin": "^0.5.1",
     "webpack-cli": "^3.0.8",
