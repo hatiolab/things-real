@@ -9,10 +9,6 @@ import * as THREE from 'three'
 
 class ObjectCone extends RealObjectMesh {
 
-  static get type() {
-    return 'cone'
-  }
-
   buildGeometry() {
 
     var {
@@ -28,6 +24,10 @@ class ObjectCone extends RealObjectMesh {
 }
 
 export default class Cone extends Component {
+  static get type() {
+    return 'cone'
+  }
+
   buildObject3D() {
     return new ObjectCone(this)
   }
