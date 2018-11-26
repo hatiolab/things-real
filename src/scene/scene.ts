@@ -184,7 +184,7 @@ export default class Scene extends EventSource {
 
   remove(components: Component | Component[]) {
     if (!(components instanceof Array)) {
-      this.add([components])
+      this.remove([components])
       return
     }
 
