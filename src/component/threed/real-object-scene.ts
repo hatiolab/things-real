@@ -55,7 +55,6 @@ export default class RealObjectScene extends THREE.Scene implements RealObject {
 
     floor.scale.set(width, height, 1);
     floor.rotation.x = -Math.PI / 2
-    // floor.position.y = -2
     floor.position.y = 0
 
     floor.name = 'floor'
