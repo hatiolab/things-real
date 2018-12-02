@@ -61,12 +61,10 @@ export default function animate(config) {
         }
 
         if (started) {
-          requestAnimationFrame(_)
           requestVRAnimationFrame(_)
         }
       }
 
-      requestAnimationFrame(_)
       requestVRAnimationFrame(_)
 
       return this

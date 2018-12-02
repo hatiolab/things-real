@@ -8,37 +8,31 @@
 import { error } from './logger'
 
 var callbacks = []
-var started = false
 
 export function requestVRAnimationFrame(callback: FrameRequestCallback): number {
-  return started && callbacks.push(callback)
+  return callbacks.push(callback)
 }
 
 export function cancelVRAnimationFrame(ncallback) {
-  if (started && callbacks[ncallback - 1]) {
+  if (callbacks[ncallback - 1]) {
     callbacks[ncallback - 1] = undefined
   }
 }
 
-export function startVRAnimationFrame() {
-  started = true
-  callbacks = []
-}
-
-export function stopVRAnimationFrame() {
-  started = false
-  callbacks = []
-}
-
 export function callVRAnimationFrame() {
-  callbacks.forEach(callback => {
+  var copied = callbacks.slice()
+  callbacks = []
+  copied.forEach(callback => {
     try {
       callback && callback()
     } catch (e) {
       error(e)
     }
   })
-
-  callbacks = []
 }
 
+requestAnimationFrame(function autocall() {
+  requestAnimationFrame(autocall)
+
+  callVRAnimationFrame()
+})

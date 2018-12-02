@@ -12,7 +12,7 @@ import { PIXEL_RATIO } from '../component/html/elements'
 
 import * as THREE from 'three'
 import { WEBVR } from '../vr/WebVR'
-import { startVRAnimationFrame, stopVRAnimationFrame, callVRAnimationFrame } from '../util/custom-animation-frame'
+import { callVRAnimationFrame } from '../util/custom-animation-frame'
 
 /**
  * Real Scene Renderer for Viewer
@@ -495,7 +495,6 @@ export default class ViewerLayer extends Layer {
     var isPresenting = !!event.display.isPresenting
 
     if (!isPresenting) {
-      stopVRAnimationFrame()
 
       this.camera.layers.enable(1)
       var { height } = this.rootContainer.state
@@ -503,8 +502,8 @@ export default class ViewerLayer extends Layer {
       this.camera.position.set(0, height, (height * 3) / 4)
       this.camera.lookAt(new THREE.Vector3(0, 0, 0))
 
+      this.glRenderer.setAnimationLoop(null)
     } else {
-      startVRAnimationFrame()
 
       this.glRenderer.setAnimationLoop(() => this.render4vr())
     }

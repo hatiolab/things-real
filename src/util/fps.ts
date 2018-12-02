@@ -23,12 +23,6 @@ export function measure() {
   count = 0
 }
 
-requestAnimationFrame(function repeat() {
-  requestAnimationFrame(repeat)
-
-  measure()
-})
-
 requestVRAnimationFrame(function repeat() {
   requestVRAnimationFrame(repeat)
 

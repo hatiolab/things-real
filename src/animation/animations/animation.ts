@@ -29,7 +29,6 @@ export default abstract class Animation {
   protected config
   private _started: boolean = false
   private delta
-  private _raf
   private _vraf
   protected _state: ComponentModel
 
@@ -91,22 +90,15 @@ export default abstract class Animation {
           started_at = 0
         }
         if (this._started) {
-          this._raf = requestAnimationFrame(callback)
           this._vraf = requestVRAnimationFrame(callback)
         }
       }
 
-      this._raf = requestAnimationFrame(callback)
       this._vraf = requestVRAnimationFrame(callback)
     }, 0)
   }
 
   stop() {
-    if (this._raf) {
-      cancelAnimationFrame(this._raf)
-      this._raf = null
-    }
-
     if (this._vraf) {
       cancelVRAnimationFrame(this._vraf)
       this._vraf = null
