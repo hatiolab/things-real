@@ -1,7 +1,7 @@
 {
   "name": "@hatiolab/things-real",
   "description": "3D modeling library",
-  "version": "0.1.27",
+  "version": "0.1.28",
   "main": "dist/things-real.js",
   "license": "MIT",
   "scripts": {
@@ -9,7 +9,7 @@
     "build": "webpack --mode production",
     "build:tsc": "tsc",
     "build:dev": "webpack",
-    "start:dev": "webpack-dev-server"
+    "start:dev": "webpack-dev-server --host 0.0.0.0"
   },
   "devDependencies": {
     "@types/chai": "^4.1.7",
@@ -45,9 +45,9 @@
     "@types/tinycolor2": "^1.4.1",
     "d3": "^5.7.0",
     "imports-loader": "^0.8.0",
-    "lit-html": "^0.12.0",
+    "lit-html": "^0.14.0",
     "lodash-es": "^4.17.11",
-    "three": "^0.97.0",
+    "three": "^0.99.0",
     "tinycolor2": "^1.4.1"
   }
 }
