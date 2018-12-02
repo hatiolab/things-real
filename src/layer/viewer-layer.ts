@@ -12,11 +12,7 @@ import { PIXEL_RATIO } from '../component/html/elements'
 
 import * as THREE from 'three'
 import { WEBVR } from '../vr/WebVR'
-import {
-  startCustomAF,
-  stopCustomAF,
-  executeCustomAF
-} from '../util/custom-animation-frame'
+import { startVRAnimationFrame, stopVRAnimationFrame, callVRAnimationFrame } from '../util/custom-animation-frame'
 
 /**
  * Real Scene Renderer for Viewer
@@ -403,7 +399,7 @@ export default class ViewerLayer extends Layer {
    * gl-renderer만 render 한다.(CSS3DRenderer는 VR을 지원하지 않는다.)
    */
   render4vr() {
-    executeCustomAF()
+    callVRAnimationFrame()
     this.glRenderer.render(this.objectScene, this.camera)
   }
 
@@ -499,7 +495,7 @@ export default class ViewerLayer extends Layer {
     var isPresenting = !!event.display.isPresenting
 
     if (!isPresenting) {
-      stopCustomAF()
+      stopVRAnimationFrame()
 
       this.camera.layers.enable(1)
       var { height } = this.rootContainer.state
@@ -508,7 +504,7 @@ export default class ViewerLayer extends Layer {
       this.camera.lookAt(new THREE.Vector3(0, 0, 0))
 
     } else {
-      startCustomAF()
+      startVRAnimationFrame()
 
       this.glRenderer.setAnimationLoop(() => this.render4vr())
     }
