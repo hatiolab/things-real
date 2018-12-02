@@ -5,13 +5,13 @@
 import * as Delta from './delta'
 
 function makeEaseOut(delta, options) {
-  return function(progress) {
+  return function (progress) {
     return 1 - delta(1 - progress, options)
   }
 }
 
 function makeEaseInOut(delta, options) {
-  return function(progress) {
+  return function (progress) {
     if (progress < 0.5) return delta(2 * progress, options) / 2
     else return (2 - delta(2 * (1 - progress), options)) / 2
   }
@@ -36,7 +36,7 @@ export default function animate(config) {
   var started = false
 
   return {
-    start: function() {
+    start: function () {
       if (started) return this
 
       started = true
@@ -60,18 +60,16 @@ export default function animate(config) {
         }
 
         if (started) {
-          // requestAnimationFrame(_)
-          setTimeout(_, 1)
+          requestAnimationFrame(_)
         }
       }
 
-      // requestAnimationFrame(_)
-      setTimeout(_, 1)
+      requestAnimationFrame(_)
 
       return this
     },
 
-    stop: function() {
+    stop: function () {
       started = false
 
       return this

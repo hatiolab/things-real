@@ -12,6 +12,11 @@ import { PIXEL_RATIO } from '../component/html/elements'
 
 import * as THREE from 'three'
 import { WEBVR } from '../vr/WebVR'
+import {
+  startCustomAF,
+  stopCustomAF,
+  executeCustomAF
+} from '../util/custom-animation-frame'
 
 /**
  * Real Scene Renderer for Viewer
@@ -24,10 +29,9 @@ export default class ViewerLayer extends Layer {
   // private boundOnmouseenter
   // private boundOnmouseleave
 
-  private enteredComponent
+  private boundOnvrdisplaypresentchange
 
-  private _onvrdisplaypresentchange
-  private _vrAnimateFunction
+  private enteredComponent
 
   /**
    * constructor
@@ -53,11 +57,8 @@ export default class ViewerLayer extends Layer {
 
     window.removeEventListener(
       'vrdisplaypresentchange',
-      this._onvrdisplaypresentchange
+      this.boundOnvrdisplaypresentchange
     )
-
-    this._onvrdisplaypresentchange = null
-    this._vrAnimateFunction = null
 
     this.disposeEditorControls()
 
@@ -79,33 +80,16 @@ export default class ViewerLayer extends Layer {
     this.boundOnmousedown = this.onmousedown.bind(this)
     this.boundOnmouseup = this.onmouseup.bind(this)
     this.boundOnmousemove = this.onmousemove.bind(this)
+    this.boundOnvrdisplaypresentchange = this.onvrdisplaypresentchange.bind(this)
 
     this.element.addEventListener('click', this.boundOnclick)
     this.element.addEventListener('mousedown', this.boundOnmousedown)
     this.element.addEventListener('mouseup', this.boundOnmouseup)
     this.element.addEventListener('mousemove', this.boundOnmousemove)
 
-    this._vrAnimateFunction = this.render.bind(this)
-
-    this._onvrdisplaypresentchange = (event: VRDisplayEvent) => {
-      var isPresenting = !!event.display.isPresenting
-      var vr = this.glRenderer.vr as any
-      if (!event.display.isPresenting) {
-        this.camera.layers.enable(1)
-        var { height } = this.rootContainer.state
-
-        this.camera.position.set(0, height, (height * 3) / 4)
-        this.camera.lookAt(new THREE.Vector3(0, 0, 0))
-      } else {
-        this.glRenderer.setAnimationLoop(this._vrAnimateFunction)
-      }
-
-      vr.enabled = isPresenting
-    }
-
     window.addEventListener(
       'vrdisplaypresentchange',
-      this._onvrdisplaypresentchange,
+      this.boundOnvrdisplaypresentchange,
       false
     )
   }
@@ -416,6 +400,14 @@ export default class ViewerLayer extends Layer {
   }
 
   /**
+   * gl-renderer만 render 한다.(CSS3DRenderer는 VR을 지원하지 않는다.)
+   */
+  render4vr() {
+    executeCustomAF()
+    this.glRenderer.render(this.objectScene, this.camera)
+  }
+
+  /**
    *
    * @param width
    * @param height
@@ -503,6 +495,32 @@ export default class ViewerLayer extends Layer {
    *
    * @param event
    */
+  onvrdisplaypresentchange(event: VRDisplayEvent) {
+    var isPresenting = !!event.display.isPresenting
+
+    if (!isPresenting) {
+      stopCustomAF()
+
+      this.camera.layers.enable(1)
+      var { height } = this.rootContainer.state
+
+      this.camera.position.set(0, height, (height * 3) / 4)
+      this.camera.lookAt(new THREE.Vector3(0, 0, 0))
+
+    } else {
+      startCustomAF()
+
+      this.glRenderer.setAnimationLoop(() => this.render4vr())
+    }
+
+    var vr = this.glRenderer.vr as any
+    vr.enabled = isPresenting
+  }
+
+  /**
+   *
+   * @param event
+   */
   onclick(event) {
     let coords = this._getPosition(
       event['changedTouches'] ? event['changedTouches'][0] : event
@@ -530,13 +548,13 @@ export default class ViewerLayer extends Layer {
    *
    * @param event
    */
-  onmousedown(event) {}
+  onmousedown(event) { }
 
   /**
    *
    * @param event
    */
-  onmouseup(event) {}
+  onmouseup(event) { }
 
   onmousemove(event) {
     let coords = this._getPosition(
@@ -600,13 +618,13 @@ export default class ViewerLayer extends Layer {
 
     switch (action) {
       case 'data-toggle':
-        ;(enter || restore) &&
+        ; (enter || restore) &&
           this.rootContainer.findAll(target).forEach(component => {
             component.data = !component.data
           })
         break
       case 'data-tristate':
-        ;(enter || restore) &&
+        ; (enter || restore) &&
           this.rootContainer.findAll(target).forEach(component => {
             let number = Math.round(Math.max(Number(component.data) || 0, 0))
             component.data = (number + (enter ? 1 : 2)) % 3

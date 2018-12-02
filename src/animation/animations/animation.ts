@@ -6,13 +6,13 @@ import * as Delta from '../delta'
 import { ComponentModel } from '../../types'
 
 function makeEaseOut(delta, options) {
-  return function(progress) {
+  return function (progress) {
     return 1 - delta(1 - progress, options)
   }
 }
 
 function makeEaseInOut(delta, options) {
-  return function(progress) {
+  return function (progress) {
     if (progress < 0.5) return delta(2 * progress, options) / 2
     else return (2 - delta(2 * (1 - progress), options)) / 2
   }
@@ -54,7 +54,7 @@ export default abstract class Animation {
     delete this.client
   }
 
-  init() {}
+  init() { }
 
   start() {
     if (this._started) return
@@ -89,18 +89,18 @@ export default abstract class Animation {
           started_at = 0
         }
         if (this._started)
-          // this._raf = requestAnimationFrame(callback)
-          this._raf = setTimeout(callback, 1)
+          this._raf = requestAnimationFrame(callback)
       }
 
-      // this._raf = requestAnimationFrame(callback)
-      this._raf = setTimeout(callback, 1)
+      this._raf = requestAnimationFrame(callback)
     }, 0)
   }
 
   stop() {
-    // if (this._raf) cancelAnimationFrame(this._raf)
-    if (this._raf) clearTimeout(this._raf)
+    if (this._raf) {
+      cancelAnimationFrame(this._raf)
+    }
+
     this._raf = null
 
     this._started = false

@@ -169,8 +169,8 @@ export function CSS3DRenderer() {
 
         matrix.copy(camera.matrixWorldInverse);
         matrix.transpose();
-        matrix.copyPosition(object.matrixWorld);
-        matrix.scale(object.scale);
+        matrix.copyPosition((object as CSS3DSprite).matrixWorld);
+        matrix.scale((object as CSS3DSprite).scale);
 
         matrix.elements[3] = 0;
         matrix.elements[7] = 0;
@@ -181,11 +181,11 @@ export function CSS3DRenderer() {
 
       } else {
 
-        style = getObjectCSSMatrix(object.matrixWorld, cameraCSSMatrix);
+        style = getObjectCSSMatrix((object as any).matrixWorld, cameraCSSMatrix);
 
       }
 
-      var element = object.element;
+      var element = (object as any).element;
       var cachedStyle = cache.objects.get(object);
 
       if (cachedStyle === undefined || cachedStyle !== style) {
