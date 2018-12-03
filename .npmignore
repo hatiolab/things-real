@@ -3,6 +3,7 @@ docs/
 licenses/
 node_modules/
 test/
+dist/**/
 dist-client/
 karma.unit.js
 webpack.config.js
@@ -18,3 +19,4 @@ npm-debug.log
 .yarnclean
 .DS_Store
 *.log
+*.d.ts
