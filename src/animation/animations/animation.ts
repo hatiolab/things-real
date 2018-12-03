@@ -4,7 +4,7 @@
 
 import * as Delta from '../delta'
 import { ComponentModel } from '../../types'
-import { requestVRAnimationFrame, cancelVRAnimationFrame } from '../../util/custom-animation-frame';
+import { requestCustomAnimationFrame, cancelCustomAnimationFrame } from '../../util/custom-animation-frame';
 
 function makeEaseOut(delta, options) {
   return function (progress) {
@@ -90,17 +90,17 @@ export default abstract class Animation {
           started_at = 0
         }
         if (this._started) {
-          this._vraf = requestVRAnimationFrame(callback)
+          this._vraf = requestCustomAnimationFrame(callback)
         }
       }
 
-      this._vraf = requestVRAnimationFrame(callback)
+      this._vraf = requestCustomAnimationFrame(callback)
     }, 0)
   }
 
   stop() {
     if (this._vraf) {
-      cancelVRAnimationFrame(this._vraf)
+      cancelCustomAnimationFrame(this._vraf)
       this._vraf = null
     }
 

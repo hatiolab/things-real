@@ -3,7 +3,7 @@
  */
 
 import * as Delta from './delta'
-import { requestVRAnimationFrame } from '../util/custom-animation-frame'
+import { requestCustomAnimationFrame } from '../util/custom-animation-frame'
 
 function makeEaseOut(delta, options) {
   return function (progress) {
@@ -61,11 +61,11 @@ export default function animate(config) {
         }
 
         if (started) {
-          requestVRAnimationFrame(_)
+          requestCustomAnimationFrame(_)
         }
       }
 
-      requestVRAnimationFrame(_)
+      requestCustomAnimationFrame(_)
 
       return this
     },

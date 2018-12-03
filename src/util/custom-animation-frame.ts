@@ -9,17 +9,17 @@ import { error } from './logger'
 
 var callbacks = []
 
-export function requestVRAnimationFrame(callback: FrameRequestCallback): number {
+export function requestCustomAnimationFrame(callback: FrameRequestCallback): number {
   return callbacks.push(callback)
 }
 
-export function cancelVRAnimationFrame(ncallback) {
+export function cancelCustomAnimationFrame(ncallback) {
   if (callbacks[ncallback - 1]) {
     callbacks[ncallback - 1] = undefined
   }
 }
 
-export function callVRAnimationFrame() {
+export function callFrameAnimation() {
   var copied = callbacks.slice()
   callbacks = []
   copied.forEach(callback => {
@@ -30,9 +30,3 @@ export function callVRAnimationFrame() {
     }
   })
 }
-
-requestAnimationFrame(function autocall() {
-  requestAnimationFrame(autocall)
-
-  callVRAnimationFrame()
-})

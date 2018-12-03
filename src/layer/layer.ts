@@ -36,23 +36,6 @@ export default abstract class Layer extends EventSource {
    */
   ready() { }
 
-  /**
-   * throttle render
-   */
-  private _draw_reserved: boolean = false
-
-  private throttle_render() {
-    if (!this._draw_reserved) {
-      requestAnimationFrame(() => {
-        this._draw_reserved = false;
-
-        this.trigger('redraw');
-        this.render();
-      })
-    }
-    this._draw_reserved = true;
-  }
-
   /* owner Scene */
   private _ownerScene: Scene
 
@@ -254,6 +237,7 @@ export default abstract class Layer extends EventSource {
    * render
    * @param context 
    */
+
   protected abstract render(context?)
 
   /**
@@ -267,9 +251,5 @@ export default abstract class Layer extends EventSource {
    * 화면을 그리는 로직은 render() 에서 구현하지만,
    * 화면을 갱신하기 위해서는 invalidate() 를 호출하라.
    */
-  public invalidate() {
-    // throttle 로직으로 호출을 최소화
-    // 빈번히 반복되는 invalidate()에 대해 비효율적으로 render()가 호출되는 것을 방지하기 위함
-    this.throttle_render()
-  }
+  public abstract invalidate()
 }

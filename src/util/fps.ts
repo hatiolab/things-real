@@ -2,7 +2,7 @@
  * Copyright © HatioLab Inc. All rights reserved.
  */
 
-import { requestVRAnimationFrame } from '../util/custom-animation-frame'
+import { requestCustomAnimationFrame } from '../util/custom-animation-frame'
 
 var fps = 0
 
@@ -23,8 +23,8 @@ export function measure() {
   count = 0
 }
 
-requestVRAnimationFrame(function repeat() {
-  requestVRAnimationFrame(repeat)
+requestCustomAnimationFrame(function repeat() {
+  requestCustomAnimationFrame(repeat)
 
   measure()
 })

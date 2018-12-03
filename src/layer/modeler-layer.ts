@@ -6,7 +6,6 @@ import ViewerLayer from './viewer-layer'
 import RealObjectScene from '../component/threed/real-object-scene'
 import TransformControls from '../threed/controls/transform-controls'
 import CommandChange from '../command/command-change'
-import { PIXEL_RATIO } from '../component/html/elements'
 
 import * as THREE from 'three'
 

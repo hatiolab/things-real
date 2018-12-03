@@ -12,7 +12,7 @@ import { PIXEL_RATIO } from '../component/html/elements'
 
 import * as THREE from 'three'
 import { WEBVR } from '../vr/WebVR'
-import { callVRAnimationFrame } from '../util/custom-animation-frame'
+import { callFrameAnimation } from '../util/custom-animation-frame'
 
 /**
  * Real Scene Renderer for Viewer
@@ -269,6 +269,8 @@ export default class ViewerLayer extends Layer {
 
     document.body.appendChild(WEBVR.createButton(renderer))
 
+    renderer.setAnimationLoop(this.render.bind(this))
+
     return renderer
   }
 
@@ -388,19 +390,35 @@ export default class ViewerLayer extends Layer {
   }
 
   /**
-   * gl-renderer와 css3d-render를 render 한다.
+   * render
+   * @param context 
    */
-  render() {
-    this.glRenderer.render(this.objectScene, this.camera)
-    this.css3DRenderer.render(this.rootContainer.css3DScene, this.camera)
+
+  private _draw_reserved = false
+
+  protected render(context?) {
+    callFrameAnimation()
+
+    var vr = this.glRenderer.vr as any
+
+    if (vr.enabled || this._draw_reserved) {
+
+      this.glRenderer.render(this.objectScene, this.camera)
+      this.css3DRenderer.render(this.rootContainer.css3DScene, this.camera)
+
+      this.trigger('redraw')
+    }
+
+    this._draw_reserved = false
   }
 
   /**
-   * gl-renderer만 render 한다.(CSS3DRenderer는 VR을 지원하지 않는다.)
+   * 화면을 갱신하는 render() 함수호출을 최소화하기 위한 기능을 함.
+   * 화면을 그리는 로직은 render() 에서 구현하지만,
+   * 화면을 갱신하기 위해서는 invalidate() 를 호출하라.
    */
-  render4vr() {
-    callVRAnimationFrame()
-    this.glRenderer.render(this.objectScene, this.camera)
+  public invalidate() {
+    this._draw_reserved = true
   }
 
   /**
@@ -502,14 +520,17 @@ export default class ViewerLayer extends Layer {
       this.camera.position.set(0, height, (height * 3) / 4)
       this.camera.lookAt(new THREE.Vector3(0, 0, 0))
 
-      this.glRenderer.setAnimationLoop(null)
+      // this.glRenderer.setAnimationLoop(null)
     } else {
 
-      this.glRenderer.setAnimationLoop(() => this.render4vr())
+
+      // this.glRenderer.setAnimationLoop(() => this.render4vr())
     }
 
     var vr = this.glRenderer.vr as any
     vr.enabled = isPresenting
+
+    this.invalidate()
   }
 
   /**
