@@ -1,7 +1,7 @@
 {
   "name": "@hatiolab/things-real",
   "description": "3D modeling library",
-  "version": "0.1.30",
+  "version": "0.1.31",
   "main": "dist/things-real.js",
   "license": "MIT",
   "scripts": {
