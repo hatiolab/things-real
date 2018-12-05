@@ -125,22 +125,41 @@ export default abstract class RealObjectMesh extends THREE.Mesh
   buildMaterial(): THREE.Material /* : THREE.MeshMaterialType | THREE.MeshMaterialType[] */ {
     var { fillStyle, alpha } = this.component.state
 
-    var color = 'black'
-
-    if (typeof fillStyle == 'string' && fillStyle != 'none') {
-      color = fillStyle
+    var params = {
+      color: 'black'
     }
 
-    return new THREE.MeshLambertMaterial({ color })
+    if (typeof fillStyle == 'object') {
+      var textureLoader = new THREE.TextureLoader(THREE.DefaultLoadingManager)
+      // textureLoader.withCredentials = 'true'
+      // textureLoader.crossOrigin = 'use-credentials'
+      textureLoader.crossOrigin = 'anonymous'
+
+      textureLoader.load(fillStyle.image, texture => {
+        texture.minFilter = THREE.LinearFilter
+        texture.repeat.set(1, 1);
+
+        this.material = new THREE.MeshLambertMaterial({
+          map: texture
+        })
+        this.component.invalidate()
+      })
+    } else {
+      params = {
+        color: fillStyle || 'white'
+      }
+    }
+
+    return new THREE.MeshLambertMaterial(params)
   }
 
   clear() {
     this.traverse((mesh: any) => {
       if (mesh.isMesh) {
         mesh.geometry.dispose()
-        ;(mesh.material.length ? mesh.material : [mesh.material]).forEach(
-          m => m.dispose && m.dispose()
-        )
+          ; (mesh.material.length ? mesh.material : [mesh.material]).forEach(
+            m => m.dispose && m.dispose()
+          )
       }
     })
   }

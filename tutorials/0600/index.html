@@ -142,8 +142,16 @@
             }
           }, {
             id: 'first-cube',
-            type: 'cube',
-            color: 'red',
+            type: 'rect',
+            fillStyle: {
+              type: 'pattern',
+              image: 'https://i.imgur.com/fHyEMsl.jpg'
+            },
+            lineStyle: {
+              strokeStyle: 'red',
+              lineWidth: 1,
+              lineDash: 'solid'
+            },
             dimension: {
               width: 100,
               height: 100,
@@ -157,7 +165,10 @@
           }, {
             id: 'second-cube',
             type: 'cube',
-            color: 'green',
+            fillStyle: {
+              type: 'pattern',
+              image: 'https://i.imgur.com/fHyEMsl.jpg'
+            },
             dimension: {
               width: 100,
               height: 100,

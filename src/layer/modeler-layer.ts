@@ -246,7 +246,7 @@ export default class ModelerLayer extends ViewerLayer {
       this.transformControls.detach()
 
       this.editorControls.enable()
-      this.render()
+      this.invalidate()
 
     } else {
       var object3D = component.object3D
@@ -257,7 +257,7 @@ export default class ModelerLayer extends ViewerLayer {
       this.boundBox.visible = true
 
       this.editorControls.disable()
-      this.render()
+      this.invalidate()
     }
   }
 

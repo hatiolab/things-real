@@ -6,7 +6,7 @@
  */
 
 export var WEBVR = {
-  createButton: function(renderer, options?) {
+  createButton: function (renderer, options?) {
     if (options && options.frameOfReferenceType) {
       renderer.vr.setFrameOfReferenceType(options.frameOfReferenceType)
     }
@@ -20,14 +20,14 @@ export var WEBVR = {
 
       button.textContent = 'ENTER VR'
 
-      button.onmouseenter = function() {
+      button.onmouseenter = function () {
         button.style.opacity = '1.0'
       }
-      button.onmouseleave = function() {
+      button.onmouseleave = function () {
         button.style.opacity = '0.5'
       }
 
-      button.onclick = function() {
+      button.onclick = function () {
         device.isPresenting
           ? device.exitPresent()
           : device.requestPresent([{ source: renderer.domElement }])
@@ -67,14 +67,14 @@ export var WEBVR = {
 
       button.textContent = 'ENTER VR'
 
-      button.onmouseenter = function() {
+      button.onmouseenter = function () {
         button.style.opacity = '1.0'
       }
-      button.onmouseleave = function() {
+      button.onmouseleave = function () {
         button.style.opacity = '0.5'
       }
 
-      button.onclick = function() {
+      button.onclick = function () {
         if (currentSession === null) {
           device
             .requestSession({
@@ -127,20 +127,20 @@ export var WEBVR = {
       button.style.display = 'none'
 
       stylizeElement(button)
-      ;(navigator as any).xr
-        .requestDevice()
-        .then(function(device) {
-          device
-            .supportsSession({
-              immersive: true,
-              exclusive: true /* DEPRECATED */
-            })
-            .then(function() {
-              showEnterXR(device)
-            })
-            .catch(showVRNotFound)
-        })
-        .catch(showVRNotFound)
+        ; (navigator as any).xr
+          .requestDevice()
+          .then(function (device) {
+            device
+              .supportsSession({
+                immersive: true,
+                exclusive: true /* DEPRECATED */
+              })
+              .then(function () {
+                showEnterXR(device)
+              })
+              .catch(showVRNotFound)
+          })
+          .catch(showVRNotFound)
 
       return button
     } else if ('getVRDisplays' in navigator) {
@@ -151,7 +151,7 @@ export var WEBVR = {
 
       window.addEventListener(
         'vrdisplayconnect',
-        function(event: VRDisplayEvent) {
+        function (event: VRDisplayEvent) {
           showEnterVR(event.display)
         },
         false
@@ -159,7 +159,7 @@ export var WEBVR = {
 
       window.addEventListener(
         'vrdisplaydisconnect',
-        function(event) {
+        function (event) {
           showVRNotFound()
         },
         false
@@ -167,7 +167,7 @@ export var WEBVR = {
 
       window.addEventListener(
         'vrdisplaypresentchange',
-        function(event: VRDisplayEvent) {
+        function (event: VRDisplayEvent) {
           button.textContent = event.display.isPresenting
             ? 'EXIT VR'
             : 'ENTER VR'
@@ -177,7 +177,7 @@ export var WEBVR = {
 
       window.addEventListener(
         'vrdisplayactivate',
-        function(event: VRDisplayEvent) {
+        function (event: VRDisplayEvent) {
           event.display.requestPresent([{ source: renderer.domElement }])
         },
         false
@@ -185,7 +185,7 @@ export var WEBVR = {
 
       navigator
         .getVRDisplays()
-        .then(function(displays) {
+        .then(function (displays) {
           if (displays.length > 0) {
             showEnterVR(displays[0])
           } else {
@@ -208,26 +208,5 @@ export var WEBVR = {
 
       return message
     }
-  },
-
-  // DEPRECATED
-
-  checkAvailability: function() {
-    console.warn('WEBVR.checkAvailability has been deprecated.')
-    return new Promise(function() {})
-  },
-
-  getMessageContainer: function() {
-    console.warn('WEBVR.getMessageContainer has been deprecated.')
-    return document.createElement('div')
-  },
-
-  getButton: function() {
-    console.warn('WEBVR.getButton has been deprecated.')
-    return document.createElement('div')
-  },
-
-  getVRDisplay: function() {
-    console.warn('WEBVR.getVRDisplay has been deprecated.')
   }
 }

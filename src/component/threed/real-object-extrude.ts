@@ -93,43 +93,35 @@ export default class RealObjectExtrude extends AbstractRealObject {
 
   createMaterial() {
     var {
-      fillStyle,
-      alpha = 1
+      fillStyle = 'black'
     } = this.component.state
 
-    if (!fillStyle) {
-      return
-    }
+    var params: { color?} = {}
 
-    var material
+    if (typeof fillStyle == 'object' && fillStyle.type == 'pattern' && fillStyle.image) {
 
-    if (fillStyle.type == 'pattern' && fillStyle.image) {
-      var texture = (THREE.TextureLoader as any).load(this.component.renderer.app.url(fillStyle.image), texture => {
+      var textureLoader = new THREE.TextureLoader(THREE.DefaultLoadingManager)
+      // textureLoader.withCredentials = 'true'
+      // textureLoader.crossOrigin = 'use-credentials'
+      textureLoader.crossOrigin = 'anonymous'
+
+      textureLoader.load(fillStyle.image, texture => {
         texture.minFilter = THREE.LinearFilter
-        // this.component.renderer.render_threed()
-      })
+        texture.repeat.set(1, 1);
 
-      material = [
-        new THREE.MeshLambertMaterial({
+        this._mainMesh.material = new THREE.MeshLambertMaterial({
           map: texture,
           side: THREE.DoubleSide
-        }),
-        new THREE.MeshLambertMaterial({
-          color: fillStyle,
-          side: THREE.DoubleSide
         })
-      ]
-    } else {
-      let params: { color?} = {}
-
-      if (fillStyle && fillStyle !== 'transparent') {
+        this.component.invalidate()
+      })
+    } else if (typeof fillStyle == 'string') {
+      if (fillStyle !== 'transparent') {
         params.color = fillStyle
       }
-
-      material = new THREE.MeshLambertMaterial(params)
     }
 
-    return material;
+    return new THREE.MeshLambertMaterial(params);
   }
 
   createMesh(geometry, material) {
@@ -144,8 +136,7 @@ export default class RealObjectExtrude extends AbstractRealObject {
   createSideMesh(geometry, shape) {
     var {
       dimension,
-      lineStyle = {},
-      alpha = 1
+      lineStyle = {}
     } = this.component.state
 
     var {
@@ -189,12 +180,12 @@ export default class RealObjectExtrude extends AbstractRealObject {
 
   updateAlpha() {
     var {
-      alpha,
+      alpha = 1,
       fillStyle,
       lineStyle
     } = this.component.state
 
-    applyAlpha(this._mainMesh.material, alpha, fillStyle)
-    applyAlpha(this._sideMesh.material, alpha, lineStyle && lineStyle.strokeStyle)
+    this._mainMesh && applyAlpha(this._mainMesh.material, alpha, fillStyle)
+    this._sideMesh && applyAlpha(this._sideMesh.material, alpha, lineStyle && lineStyle.strokeStyle)
   }
 }
