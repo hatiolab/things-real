@@ -152,7 +152,8 @@ export default class RealObjectExtrude extends AbstractRealObject {
     hole.setFromPoints(shape.getPoints())
 
     var sideMaterial = new THREE.MeshLambertMaterial({
-      color: strokeStyle
+      color: strokeStyle,
+      side: THREE.DoubleSide
     })
 
     // prevent overlapped layers flickering

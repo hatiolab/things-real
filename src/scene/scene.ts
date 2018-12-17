@@ -2,259 +2,297 @@
  * Copyright © HatioLab Inc. All rights reserved.
  */
 
-import { SceneModelVersion, SceneConfig, SceneModel, SceneMode, FitMode, ComponentModel } from '../types'
-import { Component, RootContainer } from '../component/index'
-import { CommandChange, SnapshotCommander } from '../command/index'
-import { Layer, ModelerLayer, ViewerLayer } from '../layer/index'
-import { EventSource } from '../event/index'
-import SceneModelMigrator from '../migrator/scene-model-migrator'
-import { clonedeep, fullscreen, error } from '../util/index'
-import { compile } from '../real/index'
+import {
+  SceneModelVersion,
+  SceneConfig,
+  SceneModel,
+  SceneMode,
+  FitMode,
+  ComponentModel
+} from "../types";
+import { Component, RootContainer } from "../component/index";
+import { CommandChange, SnapshotCommander } from "../command/index";
+import { Layer, ModelerLayer, ViewerLayer } from "../layer/index";
+import { EventSource } from "../event/index";
+import SceneModelMigrator from "../migrator/scene-model-migrator";
+import { clonedeep, fullscreen, error } from "../util/index";
+import { compile } from "../real/index";
 
 export default class Scene extends EventSource {
-  private _sceneMode: SceneMode
-  private _fitMode: FitMode
-  private _targetEl: HTMLElement
-  private _snapshotCommander: SnapshotCommander
+  private _sceneMode: SceneMode;
+  private _fitMode: FitMode;
+  private _targetEl: HTMLElement;
+  private _snapshotCommander: SnapshotCommander;
 
-  private _rootContainer: RootContainer
-  private _layer: Layer
+  private _rootContainer: RootContainer;
+  private _layer: Layer;
 
-  private _baseUrl: string
-  private _selected: Component[]
+  private _baseUrl: string;
+  private _selected: Component[];
 
   constructor(config: SceneConfig) {
-    super()
-
-    if (typeof (config.targetEl) == 'string') {
-      this._targetEl = document.getElementById(config.targetEl);
-      if (!this._targetEl)
-        throw `target element '${config.targetEl}' is not exist`
-
-      if (this._targetEl.firstChild)
-        throw `target element '${config.targetEl}' is not empty`
-    } else {
-      this._targetEl = config.targetEl;
-    }
-
-    if (this._targetEl && this._targetEl.style) {
-      this._targetEl.style.cursor = "default"
-      this._targetEl.style.overflow = "hidden"
-    }
+    super();
 
     /** root-container */
-    this._sceneMode = config.mode | SceneMode.VIEW
-    this._fitMode = config.fit | FitMode.RATIO
+    this._sceneMode = config.mode | SceneMode.VIEW;
+    this._fitMode = config.fit | FitMode.RATIO;
 
-    this.model = config.model
+    this.model = config.model;
 
-    /** layer */
-    this._layer = this.mode == SceneMode.VIEW ?
-      new ViewerLayer(this) : new ModelerLayer(this)
-
-    this._layer.target = this._targetEl
+    this.setTargetEl(config.targetEl);
 
     /** commander */
     this._snapshotCommander = new SnapshotCommander({
-      take: () => { return this.model },
-      putback: model => { this.model = model as SceneModel }
-    })
+      take: () => {
+        return this.model;
+      },
+      putback: model => {
+        this.model = model as SceneModel;
+      }
+    });
 
-    this._snapshotCommander.delegate_on(this)
+    this._snapshotCommander.delegate_on(this);
 
-    window.addEventListener('resize', () => {
-      this.resize()
-    }, false)
+    window.addEventListener(
+      "resize",
+      () => {
+        this.resize();
+      },
+      false
+    );
   }
 
   dispose() {
     // TODO implement
-    this._snapshotCommander.delegate_off(this)
-    this._layer.dispose()
-    this._rootContainer && this._rootContainer.dispose()
+    this._snapshotCommander.delegate_off(this);
+    this._layer.dispose();
+    this._rootContainer && this._rootContainer.dispose();
+  }
+
+  private setTargetEl(targetEl) {
+    var targetEl;
+
+    if (typeof targetEl == "string") {
+      targetEl = document.getElementById(targetEl);
+      if (!targetEl) throw `target element '${targetEl}' is not exist`;
+
+      if (targetEl.firstChild)
+        throw `target element '${targetEl}' is not empty`;
+    } else if (targetEl instanceof HTMLElement) {
+      targetEl = targetEl;
+    }
+
+    this._targetEl = targetEl;
+
+    if (this._targetEl && this._targetEl.style) {
+      this._targetEl.style.cursor = "default";
+      this._targetEl.style.overflow = "hidden";
+    }
+
+    /** layer */
+    this._layer =
+      this.mode == SceneMode.VIEW
+        ? new ViewerLayer(this)
+        : new ModelerLayer(this);
+
+    this._layer.target = this._targetEl;
+
+    this.fit(this._fitMode);
+  }
+
+  get target(): HTMLElement {
+    return this._targetEl;
+  }
+
+  set target(targetEl: HTMLElement) {
+    this.setTargetEl(targetEl);
   }
 
   get mode() {
-    return this._sceneMode
+    return this._sceneMode;
   }
 
   get model(): SceneModel {
-    var hierarchy = this.rootContainer.hierarchy
-    hierarchy.version = this.sceneModelVersion
+    var hierarchy = this.rootContainer.hierarchy;
+    hierarchy.version = this.sceneModelVersion;
 
-    return hierarchy
+    return hierarchy;
   }
 
   get sceneModelVersion(): number {
-    return SceneModelVersion
+    return SceneModelVersion;
   }
 
   set model(model) {
-    this._rootContainer && this._rootContainer.dispose()
+    this._rootContainer && this._rootContainer.dispose();
 
     this._rootContainer = compile({
       ...SceneModelMigrator.migrate(model),
-      type: 'root'
-    }) as RootContainer
+      type: "root"
+    }) as RootContainer;
 
-    this._layer && this._layer.setRootContainer(this._rootContainer)
+    this._layer && this._layer.setRootContainer(this._rootContainer);
 
     if (this.mode == SceneMode.VIEW) {
-      this._rootContainer.start()
+      this._rootContainer.start();
     }
   }
 
   // for things-scene compatible
   get root() {
-    return this._rootContainer
+    return this._rootContainer;
   }
 
   get fitMode(): FitMode {
-    return this._fitMode
+    return this._fitMode;
   }
 
   get rootContainer(): RootContainer {
-    return this._rootContainer
+    return this._rootContainer;
   }
 
   get commander(): SnapshotCommander {
-    return this._snapshotCommander
+    return this._snapshotCommander;
   }
 
-  set transformMode(mode: { mode?, space?, size?}) {
+  set transformMode(mode: { mode?; space?; size? }) {
     if (this.mode == SceneMode.VIEW) {
-      return
+      return;
     }
 
     /* edit mode 에서만 적용되는 transformMode 를 효과적으로 처리하는 방법은 ? */
-    (this._layer as any).transformMode = mode
+    (this._layer as any).transformMode = mode;
   }
 
   get baseUrl() {
-    return this._baseUrl
+    return this._baseUrl;
   }
 
   set baseUrl(baseUrl: string) {
-    this._baseUrl = baseUrl
+    this._baseUrl = baseUrl;
   }
 
   fit(mode: FitMode): void {
-    this._fitMode = mode
-    this._layer.resize()
+    if (mode !== undefined) this._fitMode = mode;
+    this._layer.resize();
   }
 
   findAll(selector: string): Component[] {
-    return this.rootContainer.findAll(selector)
+    return this.rootContainer.findAll(selector);
   }
 
   findById(id: string): Component {
-    return this.rootContainer.findById(id)
+    return this.rootContainer.findById(id);
   }
 
   setProperties(targets: string, properties: string | object, value?: any) {
-    this.findAll(targets).forEach(component => component.setState(clonedeep(properties), value ? clonedeep(value) : value))
+    this.findAll(targets).forEach(component =>
+      component.setState(
+        clonedeep(properties),
+        value ? clonedeep(value) : value
+      )
+    );
   }
 
   setData(targets: string, value: any) {
-    this.setProperties(targets, 'data', value)
+    this.setProperties(targets, "data", value);
   }
 
   toggleData(targets: string) {
     this.findAll(targets).forEach(component => {
-      component.data = !component.data
-    })
+      component.data = !component.data;
+    });
   }
 
   tristateData(targets: string) {
     this.findAll(targets).forEach(component => {
-      component.data = (Math.round(Number(component.data) || 0) + 1) % 3
-    })
+      component.data = (Math.round(Number(component.data) || 0) + 1) % 3;
+    });
   }
 
   add(components: ComponentModel | ComponentModel[]) {
     if (!(components instanceof Array)) {
-      this.add([components])
-      return
+      this.add([components]);
+      return;
     }
 
     components.forEach(model => {
-      this.rootContainer.addComponent(compile(model))
-    })
+      this.rootContainer.addComponent(compile(model));
+    });
   }
 
   remove(components: Component | Component[]) {
     if (!(components instanceof Array)) {
-      this.remove([components])
-      return
+      this.remove([components]);
+      return;
     }
 
-    components.forEach(component => component.parent.removeComponent(component))
+    components.forEach(component =>
+      component.parent.removeComponent(component)
+    );
   }
 
   set selected(components: Component[]) {
+    var before = this._selected;
+    this._selected = components;
 
-    var before = this._selected
-    this._selected = components
-
-    this.trigger('selected', this._selected, before)
+    this.trigger("selected", this._selected, before);
   }
 
   get selected() {
-    return this._selected
+    return this._selected;
   }
 
   get identities() {
-    return this.root.identities
+    return this.root.identities;
   }
 
   copy() {
+    var copied = this.selected
+      .filter(component => !component.isRoot)
+      .map(component => component.hierarchy);
 
-    var copied = this.selected.filter(component => !component.isRoot)
-      .map(component => component.hierarchy)
-
-    if (copied.length == 0)
-      return
+    if (copied.length == 0) return;
 
     return JSON.stringify(copied, null, 2);
   }
 
   cut() {
-    var copied = this.copy()
-    this.remove(this.selected)
+    var copied = this.copy();
+    this.remove(this.selected);
 
-    return copied
+    return copied;
   }
 
   paste(copied) {
-    if (!copied)
-      return
+    if (!copied) return;
 
     try {
-      this.add(JSON.parse(copied))
+      this.add(JSON.parse(copied));
     } catch (e) {
-      error(e, copied)
+      error(e, copied);
     }
   }
 
   undo() {
-    this.commander.undo()
+    this.commander.undo();
   }
 
   redo() {
-    this.commander.redo()
+    this.commander.redo();
   }
 
   undoableChange(changeFunc) {
-    CommandChange.around(this.commander, changeFunc)
+    CommandChange.around(this.commander, changeFunc);
   }
 
   resize() {
-    this._layer.resize()
+    this._layer.resize();
   }
 
   fullscreen(mode?: FitMode) {
     fullscreen(this._targetEl, () => {
-      this.fit(mode)
-    })
+      this.fit(mode);
+    });
   }
 }
