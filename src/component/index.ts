@@ -12,6 +12,7 @@ export { default as Cone } from "./cone";
 export { default as Sphere } from "./sphere";
 export { default as Sky } from "./sky";
 export { default as Rect } from "./rect";
+export { default as Ellipse } from "./ellipse";
 export { default as Path } from "./path";
 export { default as DomComponent } from "./dom";
 export { default as Text } from "./text";

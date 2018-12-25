@@ -1,177 +1,188 @@
 <html>
+  <head>
+    <style>
+      #wrapper {
+        width: 100%;
+        height: 500px;
+      }
+      #scene {
+        width: 100%;
+        height: 100%;
+        background-color: navy;
+        overflow: hidden;
+      }
+    </style>
+    <script src="../../things-real.js"></script>
+  </head>
 
-<head>
-  <style>
-  #wrapper {
-    width: 100%;
-    height: 500px;
-  }
-  #scene {
-    width: 100%;
-    height: 100%;
-    background-color: navy;
-    overflow: hidden;
-  }
-  </style>
-  <script src="../../things-real.js"></script>
-</head>
+  <body>
+    <h1>3D Modeling Library - REAL</h1>
+    <div id="wrapper"><div id="scene"></div></div>
 
-<body>
-  <h1>3D Modeling Library - REAL</h1>
-  <div id="wrapper">
-    <div id="scene"></div>
-  </div>
+    <p>
+      <button id="create">Create</button> <button id="dispose">Dispose</button>
+      <button id="undo">Undo</button> <button id="redo">Redo</button>
+      <button id="start">Start</button> <button id="stop">Stop</button>
+      <button id="fullscreen">Full-Screen</button>
+    </p>
 
-  <p>
-    <button id='create'>Create</button>
-    <button id='dispose'>Dispose</button>
-    <button id='undo'>Undo</button>
-    <button id='redo'>Redo</button>
-    <button id='start'>Start</button>
-    <button id='stop'>Stop</button>
-    <button id='fullscreen'>Full-Screen</button>
-  </p>
+    <script type="module">
+      import { html, render } from "../../node_modules/lit-html/lit-html.js";
 
-  <script type="module">
-    import { html, render } from '../../node_modules/lit-html/lit-html.js';
+      document.querySelectorAll("button").forEach(button => {
+        let id = button.id;
+        button.addEventListener("click", e => {
+          eval(id).call();
+        });
+      });
 
-    document.querySelectorAll('button').forEach(button => {
-      let id = button.id
-      button.addEventListener('click', e => {
-        eval(id).call()
-      })
-    })
+      var { Scene, SceneMode, FitMode } = REAL;
 
-    var {
-      Scene,
-      SceneMode,
-      FitMode
-    } = REAL;
+      var dimension = {
+        width: 10,
+        height: 10,
+        depth: 10
+      };
 
-    var dimension = {
-      width: 10,
-      height: 10,
-      depth: 10
-    }
+      var scale = {
+        x: 1,
+        y: 1,
+        z: 1
+      };
 
-    var scale = {
-      x: 1,
-      y: 1,
-      z: 1
-    }
+      var translate = {
+        x: 50,
+        y: 1,
+        z: 1
+      };
 
-    var translate = {
-      x: 50,
-      y: 1,
-      z: 1
-    }
+      var rotate = {
+        x: 0.1,
+        y: 0.2,
+        z: 0.3
+      };
 
-    var rotate = {
-      x: 0.1,
-      y: 0.2,
-      z: 0.3
-    }
+      var path = [
+        { x: -1, y: 0 },
+        { x: -2, y: 1 },
+        { x: -3, y: 3 },
+        { x: 0, y: 5 },
+        { x: 3, y: 3 },
+        { x: 2, y: 1 },
+        { x: 1, y: 0 },
+        { x: 2, y: -1 },
+        { x: 3, y: -3 },
+        { x: 0, y: -5 },
+        { x: -3, y: -3 },
+        { x: -2, y: -1 }
+      ];
 
-    var path = [{x: -1, y: 0}, {x: -2, y: 1}, {x: -3, y: 3}, 
-      {x: 0, y: 5}, {x: 3, y: 3}, {x: 2, y: 1}, {x: 1, y:0},
-      {x: 2, y: -1}, {x: 3, y: -3}, {x: 0, y: -5},
-      {x: -3, y: -3}, {x: -2, y: -1}]
+      var colors = ["red", "cyan", "blue", "green", "yellow"];
+      var types = [
+        "cube",
+        "cylinder",
+        "sphere",
+        "cone",
+        "rect",
+        "path",
+        "ellipse"
+      ];
+      var src = "http://www.hatiolab.com/assets/img/logo.png";
 
-    var colors = ['red', 'cyan', 'blue', 'green', 'yellow']
-    var types = ['cube', 'cylinder', 'sphere', 'cone', 'rect', 'path']
-    var src = 'http://www.hatiolab.com/assets/img/logo.png'
+      var scene;
+      var interval;
 
-    var scene
-    var interval
+      export function create() {
+        scene = new Scene({
+          targetEl: "scene",
+          mode: SceneMode.EDIT,
+          model: {
+            width: 700,
+            height: 300,
+            version: 2,
+            components: [
+              {
+                id: "first-cube",
+                type: "cube",
+                color: "navy",
+                dimension,
+                scale,
+                translate,
+                rotate
+              }
+            ].concat(
+              Array.from(Array(100).keys()).map(idx => {
+                return {
+                  type: types[idx % types.length],
+                  color: colors[idx % colors.length],
+                  dimension,
+                  scale,
+                  translate: {
+                    x: Number(idx) * 10 - 500,
+                    y: Number(idx) * 10 - 500,
+                    z: Number(idx) * 10 - 500
+                  },
+                  rotate,
+                  path,
+                  round: 10,
+                  lineStyle: {
+                    lineWidth: 2,
+                    strokeStyle: colors[(idx + 2) % colors.length]
+                  },
+                  fillStyle: colors[(idx + 1) % colors.length],
+                  curved: true,
+                  src
+                };
+              })
+            )
+          },
+          fit: FitMode.RATIO
+        });
+      }
 
-    export function create() {
-      scene = new Scene({
-        targetEl: 'scene',
-        mode: SceneMode.EDIT,
-        model: {
-          width: 700,
-          height: 300,
-          version: 2,
-          components: [{
-            id: 'first-cube',
-            type: 'cube',
-            color: 'navy',
-            dimension,
-            scale,
-            translate,
-            rotate
-          }].concat(Array.from(Array(100).keys()).map(idx => {
-            return {
-              type: types[idx % types.length],
-              color: colors[idx % colors.length],
-              dimension,
-              scale,
-              translate: {
-                x: Number(idx) * 10 - 500,
-                y: Number(idx) * 10 - 500,
-                z: Number(idx) * 10 - 500
-              },
-              rotate,
-              path,
-              round: 10,
-              lineStyle: {
-                lineWidth: 2,
-                strokeStyle: colors[(idx + 2) % colors.length]
-              },
-              fillStyle: colors[(idx + 1) % colors.length],
-              curved: true,
-              src
-            }
-          }))
-        },
-        fit: FitMode.RATIO
-      })
-    }
+      function dispose() {
+        scene && scene.dispose();
+        stop();
+        scene = undefined;
+      }
 
-    function dispose() {
-      scene && scene.dispose()
-      stop()
-      scene = undefined
-    }
+      function undo() {
+        scene && scene.undo();
+      }
 
-    function undo() {
-      scene && scene.undo()
-    }
+      function redo() {
+        scene && scene.redo();
+      }
 
-    function redo() {
-      scene && scene.redo()
-    }
+      function start() {
+        stop();
 
-    function start() {
-      stop()
+        interval = setInterval(() => {
+          scene &&
+            scene.findAll("cube").forEach(cube => {
+              let r = cube.state.rotate || rotate;
 
-      interval = setInterval(() => {
-        scene && scene.findAll('cube').forEach(cube => {
-          let r = cube.state.rotate || rotate
+              cube.set({
+                rotate: {
+                  x: r.x + 0.1,
+                  y: r.y + 0.1,
+                  z: r.z + 0.1
+                }
+              });
+            });
+        }, 100);
+      }
 
-          cube.set({
-            rotate: {
-              x: r.x + 0.1,
-              y: r.y + 0.1,
-              z: r.z + 0.1
-            }
-          })
-        })
-      }, 100)
-    }
+      function stop() {
+        clearInterval(interval);
+        interval = undefined;
+      }
 
-    function stop() {
-      clearInterval(interval)
-      interval = undefined
-    }
+      function fullscreen() {
+        scene && scene.fullscreen(FitMode.RATIO);
+      }
 
-    function fullscreen() {
-      scene && scene.fullscreen(FitMode.RATIO)
-    }
-
-    create()
-
-  </script>
-</body>
-
+      create();
+    </script>
+  </body>
 </html>
