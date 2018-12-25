@@ -1738,6 +1738,11 @@ dashdash@^1.12.0:
   dependencies:
     assert-plus "^1.0.0"
 
+dat-gui@^0.5.0:
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/dat-gui/-/dat-gui-0.5.0.tgz#1212da836109747d0ac220bad7b07c17daa03583"
+  integrity sha1-EhLag2EJdH0KwiC617B8F9qgNYM=
+
 date-format@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/date-format/-/date-format-1.2.0.tgz#615e828e233dd1ab9bb9ae0950e0ceccfa6ecad8"
@@ -2149,6 +2154,11 @@ etag@~1.8.1:
   version "1.8.1"
   resolved "https://registry.yarnpkg.com/etag/-/etag-1.8.1.tgz#41ae2eeb65efa62268aebfea83ac7d79299b0887"
   integrity sha1-Qa4u62XvpiJorr/qg6x9eSmbCIc=
+
+eventemitter3@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/eventemitter3/-/eventemitter3-1.2.0.tgz#1c86991d816ad1e504750e73874224ecf3bec508"
+  integrity sha1-HIaZHYFq0eUEdQ5zh0Ik7PO+xQg=
 
 eventemitter3@^3.0.0:
   version "3.1.0"
@@ -4781,6 +4791,17 @@ raw-body@2.3.3:
     iconv-lite "0.4.23"
     unpipe "1.0.0"
 
+ray-input@^0.1.3:
+  version "0.1.3"
+  resolved "https://registry.yarnpkg.com/ray-input/-/ray-input-0.1.3.tgz#38fd88edaafc12677e57ab49ddae88d68084f638"
+  integrity sha512-C9R4JP47jq1tSSkjuG8tl87TDAvX/mWmDvqejP6z3/KdPjQkUyi8C7IN0JDNFZZmX8kWdBx/Po8uvIaImV1jPQ==
+  dependencies:
+    dat-gui "^0.5.0"
+    eventemitter3 "^1.2.0"
+    three "^0.81.2"
+    webvr-boilerplate "^0.4.6"
+    webvr-polyfill "^0.9.15"
+
 rc@^1.2.7:
   version "1.2.8"
   resolved "https://registry.yarnpkg.com/rc/-/rc-1.2.8.tgz#cd924bf5200a075b83c188cd6b9e211b7fc0d3ed"
@@ -5611,6 +5632,11 @@ text-encoding@^0.6.4:
   resolved "https://registry.yarnpkg.com/text-encoding/-/text-encoding-0.6.4.tgz#e399a982257a276dae428bb92845cb71bdc26d19"
   integrity sha1-45mpgiV6J22uQou5KEXLcb3CbRk=
 
+three@^0.81.2:
+  version "0.81.2"
+  resolved "https://registry.yarnpkg.com/three/-/three-0.81.2.tgz#100c078dcfbb0a235e3d433066b1b26b145c69c3"
+  integrity sha1-EAwHjc+7CiNePUMwZrGyaxRcacM=
+
 three@^0.99.0:
   version "0.99.0"
   resolved "https://registry.yarnpkg.com/three/-/three-0.99.0.tgz#65711fda7a16501da83948121437d824df1fea19"
@@ -6187,6 +6213,18 @@ websocket-extensions@>=0.1.1:
   version "0.1.3"
   resolved "https://registry.yarnpkg.com/websocket-extensions/-/websocket-extensions-0.1.3.tgz#5d2ff22977003ec687a4b87073dfbbac146ccf29"
   integrity sha512-nqHUnMXmBzT0w570r2JpJxfiSD1IzoI+HGVdd3aZ0yNi3ngvQ4jv1dtHt5VGxfI2yj5yqImPhOK4vmIh2xMbGg==
+
+webvr-boilerplate@^0.4.6:
+  version "0.4.9"
+  resolved "https://registry.yarnpkg.com/webvr-boilerplate/-/webvr-boilerplate-0.4.9.tgz#01e122b94a128749fb788c8c2e1e9fbfb2ade4c9"
+  integrity sha1-AeEiuUoSh0n7eIyMLh6fv7Kt5Mk=
+  dependencies:
+    webvr-polyfill "^0.9.5"
+
+webvr-polyfill@^0.9.15, webvr-polyfill@^0.9.5:
+  version "0.9.41"
+  resolved "https://registry.yarnpkg.com/webvr-polyfill/-/webvr-polyfill-0.9.41.tgz#dcaaed05ea8e14a44b629679ca32b9a35780e0e3"
+  integrity sha512-xgZPm7DXd2iUn4wh+/ubh1AzYWaHlx6VCmpxgTvoKzi1sMz9ePChQvsq1tm18aUfuzs6dtMrnNWoaQIwl81QsQ==
 
 which-module@^2.0.0:
   version "2.0.0"

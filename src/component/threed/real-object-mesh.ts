@@ -2,53 +2,54 @@
  * Copyright © HatioLab Inc. All rights reserved.
  */
 
-import RealObject from './real-object'
-import Component from '../component'
+import RealObject from "./real-object";
+import Component from "../component";
 
-import * as THREE from 'three'
-import { applyAlpha } from './common'
+import * as THREE from "three";
+import { applyAlpha } from "./common";
+import { error } from "../../util/logger";
 
 export default abstract class RealObjectMesh extends THREE.Mesh
   implements RealObject {
-  protected _component
+  protected _component;
 
   constructor(component) {
-    super()
+    super();
 
-    this.component = component
+    this.component = component;
   }
 
   get isRealObject() {
-    return true
+    return true;
   }
 
   build() {
-    this.geometry = this.buildGeometry()
-    this.material = this.buildMaterial()
+    this.geometry = this.buildGeometry();
+    this.material = this.buildMaterial();
   }
 
   dispose() {
-    this.clear()
+    this.clear();
   }
 
   get component() {
-    return this._component
+    return this._component;
   }
 
   set component(component) {
-    this.clear()
+    this.clear();
 
-    this._component = component
+    this._component = component;
 
-    this.update()
+    this.update();
   }
 
   update() {
-    this.clear()
-    this.build()
+    this.clear();
+    this.build();
 
-    this.updateTransform()
-    this.updateAlpha()
+    this.updateTransform();
+    this.updateAlpha();
   }
 
   /**
@@ -59,20 +60,20 @@ export default abstract class RealObjectMesh extends THREE.Mesh
       scale: { x: sx = 1, y: sy = 1, z: sz = 1 } = Component.UNIT_SCALE,
       translate: { x: tx = 0, y: ty = 0, z: tz = 0 } = Component.UNIT_TRANSLATE,
       rotate: { x: rx = 0, y: ry = 0, z: rz = 0 } = Component.UNIT_ROTATE
-    } = this.component.state
+    } = this.component.state;
 
-    this.position.set(tx, ty, tz)
-    this.rotation.set(rx, ry, rz)
-    this.scale.set(sx, sy, sz)
+    this.position.set(tx, ty, tz);
+    this.rotation.set(rx, ry, rz);
+    this.scale.set(sx, sy, sz);
   }
 
   /**
    * Object3D 모델의 변화를 Component의 모델값에 반영
    */
   updateTransformReverse() {
-    var rotation = this.rotation
-    var position = this.position
-    var scale = this.scale
+    var rotation = this.rotation;
+    var position = this.position;
+    var scale = this.scale;
 
     this.component.setModel({
       rotate: {
@@ -90,77 +91,76 @@ export default abstract class RealObjectMesh extends THREE.Mesh
         y: scale.y,
         z: scale.z
       }
-    })
+    });
   }
 
   /* update functions - 전체적인 rebuilding이 필요하지 않은 update 기능 들임 */
   updateTranslate(after, before) {
-    var { x = 0, y = 0, z = 0 } = after
-    this.position.set(x, y, z)
+    var { x = 0, y = 0, z = 0 } = after;
+    this.position.set(x, y, z);
   }
 
   updateRotate(after, before) {
-    var { x = 0, y = 0, z = 0 } = after
-    this.rotation.set(x, y, z)
+    var { x = 0, y = 0, z = 0 } = after;
+    this.rotation.set(x, y, z);
   }
 
   updateScale(after, before) {
-    var { x = 1, y = 1, z = 1 } = after
-    this.scale.set(x, y, z)
+    var { x = 1, y = 1, z = 1 } = after;
+    this.scale.set(x, y, z);
   }
 
   /* overide */
   updateDimension(after, before) {
-    this.update()
+    this.update();
   }
 
   updateAlpha() {
-    var { alpha = 1, fillStyle } = this.component.state
+    var { alpha = 1, fillStyle } = this.component.state;
 
-    applyAlpha(this.material, alpha, fillStyle)
+    applyAlpha(this.material, alpha, fillStyle);
   }
 
-  protected abstract buildGeometry(): THREE.Geometry | THREE.BufferGeometry
+  updateCamera() {}
+
+  protected abstract buildGeometry(): THREE.Geometry | THREE.BufferGeometry;
 
   buildMaterial(): THREE.Material /* : THREE.MeshMaterialType | THREE.MeshMaterialType[] */ {
-    var { fillStyle, alpha } = this.component.state
+    var { fillStyle } = this.component.state;
 
-    var params = {
-      color: 'black'
-    }
+    var params: any = {};
 
-    if (typeof fillStyle == 'object') {
-      var textureLoader = new THREE.TextureLoader(THREE.DefaultLoadingManager)
-      // textureLoader.withCredentials = 'true'
-      // textureLoader.crossOrigin = 'use-credentials'
-      textureLoader.crossOrigin = 'anonymous'
-
-      textureLoader.load(fillStyle.image, texture => {
-        texture.minFilter = THREE.LinearFilter
-        texture.repeat.set(1, 1);
-
-        this.material = new THREE.MeshLambertMaterial({
-          map: texture
-        })
-        this.component.invalidate()
-      })
+    if (typeof fillStyle == "object") {
+      params = {
+        map: new THREE.TextureLoader(THREE.DefaultLoadingManager).load(
+          fillStyle.image,
+          () => {
+            this.component.invalidate();
+          },
+          e => {
+            error(e);
+          }
+        )
+      };
     } else {
       params = {
-        color: fillStyle || 'white'
-      }
+        color: fillStyle || "#FFF"
+      };
     }
 
-    return new THREE.MeshLambertMaterial(params)
+    const material = new THREE.MeshLambertMaterial(params);
+
+    return material;
   }
 
   clear() {
     this.traverse((mesh: any) => {
       if (mesh.isMesh) {
-        mesh.geometry.dispose()
-          ; (mesh.material.length ? mesh.material : [mesh.material]).forEach(
-            m => m.dispose && m.dispose()
-          )
+        mesh.geometry.dispose();
+        (mesh.material.length ? mesh.material : [mesh.material]).forEach(
+          m => m.dispose && m.dispose()
+        );
       }
-    })
+    });
   }
 }

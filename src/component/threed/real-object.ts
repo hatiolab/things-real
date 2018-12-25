@@ -2,41 +2,46 @@
  * Copyright © HatioLab Inc. All rights reserved.
  */
 
-import Component from '../component'
-import * as THREE from 'three'
+import Component from "../component";
+import * as THREE from "three";
+import SystemDataSource from "../system";
 
 export default interface RealObject extends THREE.Object3D {
-  component: Component
-  isRealObject
+  component: Component;
+  isRealObject;
 
-  dispose()
+  dispose();
 
   /**
    * Component의 상태 속성을 3D 오브젝트에 반영한다.
    */
-  update()
+  update();
 
   /**
    * Component의 dimension 상태 속성을 오브젝트에 반영한다.
    */
-  updateDimension(after, before)
+  updateDimension(after, before);
   /**
    * Component의 translate 상태 속성을 오브젝트에 반영한다.
    */
-  updateTranslate(after, before)
+  updateTranslate(after, before);
   /**
    * Component의 rotate 상태 속성을 오브젝트에 반영한다.
    */
-  updateRotate(after, before)
+  updateRotate(after, before);
   /**
    * Component의 scale 상태 속성을 오브젝트에 반영한다.
    */
-  updateScale(after, before)
+  updateScale(after, before);
   /**
    * Component의 alpha 상태 속성을 오브젝트에 반영한다.
    */
-  updateAlpha(after, before)
+  updateAlpha(after, before);
+  /**
+   * Component의 camera 상태 속성을 오브젝트에 반영한다.
+   */
+  updateCamera(after, before);
 
-  updateTransform()
-  updateTransformReverse()
+  updateTransform();
+  updateTransformReverse();
 }

@@ -185,7 +185,7 @@ export var WEBVR = {
 
       navigator
         .getVRDisplays()
-        .then(function(displays) {
+        .then(displays => {
           if (displays.length > 0) {
             showEnterVR(displays[0]);
           } else {

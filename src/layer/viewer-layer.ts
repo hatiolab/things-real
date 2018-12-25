@@ -7,12 +7,17 @@ import Layer from "./layer";
 import EditorControls from "../threed/controls/editor-controls";
 import { CSS3DRenderer } from "../threed/renderers/css-3d-renderer";
 import RealObjectScene from "../component/threed/real-object-scene";
-import { SceneMode, ActionModel } from "../types";
+import { SceneMode, ActionModel, CameraView } from "../types";
 import { PIXEL_RATIO } from "../component/html/elements";
+import CameraControl from "./controls/camera-control";
 
 import * as THREE from "three";
+window["THREE"] = THREE;
+
 import { WEBVR } from "../vr/WebVR";
+import RayInput from "ray-input/build/ray.min"; // to prevent uglify-js compile error
 import { callFrameAnimation } from "../util/custom-animation-frame";
+import { PerspectiveCamera } from "three";
 
 /**
  * Real Scene Renderer for Viewer
@@ -35,9 +40,6 @@ export default class ViewerLayer extends Layer {
    */
   constructor(owner: Scene) {
     super(owner);
-
-    // editorControls을 만들기 위해 강제로 getter를 access 함.
-    this.editorControls;
   }
 
   /**
@@ -62,7 +64,8 @@ export default class ViewerLayer extends Layer {
     this.disposeGLRenderer();
     this.disposeCSS3DRenderer();
     this.disposeLights();
-    this.disposeCamera();
+    this.disposeCameras();
+    // this.disposeDefaultCamera();
     this.disposeRaycaster();
 
     this.disposeCanvas();
@@ -72,6 +75,9 @@ export default class ViewerLayer extends Layer {
    * Lifecycle Target Element에 attach된 후, render() 전에 호출됨
    */
   ready() {
+    // editorControls을 만들기 위해 강제로 getter를 access 함.
+    this.editorControls;
+
     this.boundOnclick = this.onclick.bind(this);
     this.boundOnmousedown = this.onmousedown.bind(this);
     this.boundOnmouseup = this.onmouseup.bind(this);
@@ -90,6 +96,21 @@ export default class ViewerLayer extends Layer {
       this.boundOnvrdisplaypresentchange,
       false
     );
+  }
+
+  /* ray-input */
+  private _rayInput: RayInput;
+
+  get rayInput() {
+    if (!this._rayInput) {
+      this._rayInput = new RayInput(
+        this.activeCamera,
+        this.glRenderer.domElement
+      );
+      this._rayInput.setSize(this.glRenderer.getSize());
+    }
+
+    return this._rayInput;
   }
 
   /* object-scene */
@@ -194,7 +215,7 @@ export default class ViewerLayer extends Layer {
   }
 
   protected createEditorControls(): EditorControls {
-    var editorControls = new EditorControls(this.camera, this.element);
+    var editorControls = new EditorControls(this.activeCamera, this.element);
 
     this._editorControlsEventHandler = (() => {
       this.invalidate();
@@ -325,39 +346,59 @@ export default class ViewerLayer extends Layer {
   }
 
   /* camera */
-  private _camera: THREE.PerspectiveCamera;
 
   /**
-   * camera getter
+   * activeCamera getter
    */
-  get camera() {
-    if (!this._camera) {
-      this._camera = this.createCamera();
+
+  private _activeCamera: any;
+  private _cameraControl: CameraControl;
+
+  get cameraControl() {
+    if (!this._cameraControl) {
+      this._cameraControl = new CameraControl(this);
     }
 
-    return this._camera;
+    return this._cameraControl;
   }
 
-  protected createCamera() {
-    var { width, height } = this.rootContainer.state;
-
-    var camera = new THREE.PerspectiveCamera();
-
-    camera.position.set(0, height, (height * 3) / 4);
-
-    // let frustum = Math.max(width, height) / 2;
-    // this._camera = new THREE.OrthographicCamera(-frustum, frustum, frustum, -frustum, 0, 30000);
-    // this._camera.position.set(0, frustum * 2, 0);
-    // this._camera.position.set(0, frustum * 2, frustum * 2);
-    // this._camera.position.set(0, 0, frustum * 2);
-
-    camera.lookAt(new THREE.Vector3(0, 0, 0));
-
-    return camera;
+  switchCamera(camera: CameraView | THREE.Camera) {
+    switch (camera) {
+      case CameraView.PERSPECTIVE:
+        this.cameraControl.switchCamera("perspective");
+        break;
+      case CameraView.LEFT:
+        this.cameraControl.switchCamera("orthographic", "left");
+        break;
+      case CameraView.RIGHT:
+        this.cameraControl.switchCamera("orthographic", "right");
+        break;
+      case CameraView.TOP:
+        this.cameraControl.switchCamera("orthographic", "top");
+        break;
+      case CameraView.BOTTOM:
+        this.cameraControl.switchCamera("orthographic", "bottom");
+        break;
+      default:
+        this.cameraControl.switchCamera(camera);
+    }
   }
 
-  protected disposeCamera() {
-    // Nothing to do
+  get activeCamera() {
+    if (!this._activeCamera) {
+      // default camera is perspective camera
+      this.switchCamera(CameraView.PERSPECTIVE);
+    }
+
+    return this._activeCamera;
+  }
+
+  set activeCamera(camera) {
+    this._activeCamera = camera;
+  }
+
+  disposeCameras() {
+    this._cameraControl && this._cameraControl.dispose();
   }
 
   /* lights */
@@ -415,8 +456,11 @@ export default class ViewerLayer extends Layer {
     var vr = this.glRenderer.vr as any;
 
     if (vr.enabled || this._draw_reserved) {
-      this.glRenderer.render(this.objectScene, this.camera);
-      this.css3DRenderer.render(this.rootContainer.css3DScene, this.camera);
+      this.glRenderer.render(this.objectScene, this.activeCamera);
+      this.css3DRenderer.render(
+        this.rootContainer.css3DScene,
+        this.activeCamera
+      );
 
       this.trigger("redraw");
     }
@@ -439,16 +483,17 @@ export default class ViewerLayer extends Layer {
    * @param height
    */
   onresize(width, height) {
-    this.camera.near = 1;
-    this.camera.far = 10000;
-    this.camera.aspect = width / height;
+    if (this.activeCamera.isPerspectiveCamera) {
+      this.activeCamera.aspect = width / height;
+      var distance = 1000;
+      var diag = Math.sqrt(height * height + width * width);
 
-    var distance = 1000;
-    var diag = Math.sqrt(height * height + width * width);
-    this.camera.fov = (2 * Math.atan(diag / (2 * distance)) * 180) / Math.PI;
+      this.activeCamera.fov =
+        (2 * Math.atan(diag / (2 * distance)) * 180) / Math.PI;
+    } else {
+    }
 
-    // this.camera.position.set(0, h, h * 3 / 4)
-    this.camera.updateProjectionMatrix();
+    this.activeCamera.updateProjectionMatrix();
 
     this.css3DRenderer.setSize(width, height);
     this.glRenderer.setSize(width, height, true);
@@ -463,7 +508,7 @@ export default class ViewerLayer extends Layer {
   capture(coords) {
     var { width, height } = this.canvas;
 
-    this.raycaster.setFromCamera(coords, this.camera);
+    this.raycaster.setFromCamera(coords, this.activeCamera);
 
     // TUNE-ME 자손들까지의 모든 intersects를 다 포함하는 것이면, capturable component에 해당하는 오브젝트라는 것을 보장할 수 없음.
     // 또한, component에 매핑된 오브젝트라는 것도 보장할 수 없음.
@@ -518,22 +563,89 @@ export default class ViewerLayer extends Layer {
   }
 
   /**
+   * VR RayInput Event Handlers
+   * @param event
+   */
+
+  onSelected(mesh) {
+    if (!mesh) {
+      return;
+    }
+
+    if (mesh.material) mesh.material.opacity = 1;
+  }
+
+  onDeselected(mesh) {
+    if (!mesh) {
+      return;
+    }
+
+    if (mesh.material) mesh.material.opacity = 0.5;
+  }
+
+  bindRayInputs() {
+    this.objectScene.add(this.rayInput.getMesh());
+
+    console.log(this.rayInput.getMesh());
+
+    this.rootContainer.components.forEach(component => {
+      console.log("component added to rayInput", component);
+      // Track the box for ray inputs.
+      this.rayInput.add(component.object3D);
+
+      // Set up a bunch of event listeners.
+      this.rayInput.on("rayover", this.onSelected);
+      this.rayInput.on("rayout", this.onDeselected);
+      this.rayInput.on("raydown", this.onSelected);
+      this.rayInput.on("rayup", this.onDeselected);
+    });
+  }
+
+  unbindRayInputs() {
+    this.objectScene.remove(this.rayInput.getMesh());
+
+    this.rootContainer.components.forEach(component => {
+      // Track the box for ray inputs.
+      this.rayInput.remove(component.object3D);
+
+      // Set up a bunch of event listeners.
+      this.rayInput.off("rayover", this.onSelected);
+      this.rayInput.off("rayout", this.onDeselected);
+      this.rayInput.off("raydown", this.onSelected);
+      this.rayInput.off("rayup", this.onDeselected);
+    });
+  }
+
+  /**
    *
    * @param event
    */
   onvrdisplaypresentchange(event: VRDisplayEvent) {
-    var isPresenting = !!event.display.isPresenting;
-
-    if (!isPresenting) {
-      this.camera.layers.enable(1);
-      var { height } = this.rootContainer.state;
-
-      this.camera.position.set(0, height, (height * 3) / 4);
-      this.camera.lookAt(new THREE.Vector3(0, 0, 0));
-    }
+    var { display } = event;
+    var isPresenting = !!display.isPresenting;
 
     var vr = this.glRenderer.vr as any;
     vr.enabled = isPresenting;
+
+    setTimeout(() => {
+      if (!isPresenting) {
+        this.activeCamera.layers.enable(1);
+        var { height } = this.rootContainer.state;
+
+        this.activeCamera.position.set(0, height, (height * 3) / 4);
+        this.activeCamera.lookAt(new THREE.Vector3(0, 0, 0));
+
+        this.unbindRayInputs();
+      } else {
+        display.depthNear = this.activeCamera.near;
+        display.depthFar = this.activeCamera.far;
+
+        // this.activeCamera.position.set(0, height, (height * 3) / 4);
+        // this.activeCamera.lookAt(new THREE.Vector3(100, 100, 100));
+
+        this.bindRayInputs();
+      }
+    }, 100);
 
     this.invalidate();
   }
