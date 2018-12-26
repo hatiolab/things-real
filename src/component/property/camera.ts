@@ -3,7 +3,7 @@ import Component from "../component";
 
 const DEFAULT = {
   active: false,
-  far: 10000,
+  far: 100000,
   fov: 80,
   near: 0.005,
   spectator: false,

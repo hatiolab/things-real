@@ -5,7 +5,7 @@
 import { registry, residence } from "./registry/index";
 import { LifeCycleCallback } from "./callback/index";
 import { ModelAndState, select } from "./model/index";
-import { Class, ComponentModel, Nature } from "../types";
+import { Class, ComponentModel, CameraModel, Nature } from "../types";
 import Container from "./container";
 import RootContainer from "./root-container";
 import RealObject from "./threed/real-object";
@@ -449,11 +449,14 @@ export default class Component extends ModelAndState
     this.update();
   }
 
-  onchangecamera(after, before) {
+  onchangecamera(after?: CameraModel, before?: CameraModel) {
     this.object3D.updateCamera(after, before);
 
-    if (after.active !== before.active) {
-      if (after.active)
+    let afterActive = after && after.active;
+    let beforeActive = before && before.active;
+
+    if (afterActive !== beforeActive) {
+      if (afterActive)
         this.trigger("active-camera", this, this.object3D.camera);
       else this.trigger("deactive-camera", this, this.object3D.camera);
     }

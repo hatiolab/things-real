@@ -82,6 +82,25 @@ export default class CameraController {
     };
   }
 
+  _findRecursive(container) {
+    let found = (container.components || []).find(component => {
+      let camera = component.state.camera;
+      return camera && camera.active;
+    });
+
+    if (found) return found;
+
+    for (let i = 0; i < container.components.length; i++) {
+      let component = container.components[i];
+      found = component.isContainer && this._findRecursive(component);
+      if (found) return found;
+    }
+  }
+
+  findActiveCamera() {
+    return this._findRecursive(this.layer.rootContainer);
+  }
+
   switchCamera(
     camera: "perspective" | "orthographic" | THREE.Camera = "perspective",
     dir?: "left" | "top" | "bottom" | "right"

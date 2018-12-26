@@ -2,7 +2,7 @@ import * as THREE from "three";
 
 const DEFAULT = {
   active: false,
-  far: 10000,
+  far: 100000,
   fov: 80,
   near: 0.005,
   spectator: false,
@@ -28,17 +28,11 @@ export function updateCamera(camera, options) {
     aspect = window.innerWidth / window.innerHeight
   } = options;
 
-  // Update properties.
   camera.aspect = aspect;
   camera.far = far;
   camera.fov = fov;
   camera.near = near;
   camera.zoom = zoom;
-
-  // camera.lookAt(0, 0, 1);
-
-  // camera.updateMatrixWorld();
-  // camera.parent.updateMatrixWorld();
 
   camera.updateProjectionMatrix();
 }

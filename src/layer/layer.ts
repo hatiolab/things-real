@@ -77,12 +77,17 @@ export default abstract class Layer extends EventSource {
       });
 
       this._rootContainer.on("active-camera", (component, camera, hint) => {
-        this.switchCamera(camera);
+        this.activateCamera(camera);
       });
 
       this._rootContainer.on("deactive-camera", (component, camera, hint) => {
-        // this.switchCamera();
+        this.inactivateCamera(camera);
       });
+
+      var activeCameraComponent = this.cameraControl.findActiveCamera();
+      this.activateCamera(
+        activeCameraComponent && activeCameraComponent.object3D.camera
+      );
 
       this.invalidate();
     }
@@ -279,7 +284,13 @@ export default abstract class Layer extends EventSource {
     return this._cameraControl;
   }
 
-  switchCamera(camera?: CameraView | THREE.Camera) {
+  inactivateCamera(camera?: CameraView | THREE.Camera) {
+    if (this._activeCamera === camera) {
+      this.activateCamera();
+    }
+  }
+
+  activateCamera(camera?: CameraView | THREE.Camera) {
     if (camera === undefined) {
       this.cameraControl.switchCamera("perspective");
       return;
@@ -311,7 +322,7 @@ export default abstract class Layer extends EventSource {
   get activeCamera() {
     if (!this._activeCamera) {
       // default camera is perspective camera
-      this.switchCamera(CameraView.PERSPECTIVE);
+      this.activateCamera(CameraView.PERSPECTIVE);
     }
 
     return this._activeCamera;
