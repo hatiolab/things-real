@@ -451,6 +451,12 @@ export default class Component extends ModelAndState
 
   onchangecamera(after, before) {
     this.object3D.updateCamera(after, before);
+
+    if (after.active !== before.active) {
+      if (after.active)
+        this.trigger("active-camera", this, this.object3D.camera);
+      else this.trigger("deactive-camera", this, this.object3D.camera);
+    }
   }
 }
 

@@ -5,6 +5,8 @@
 import * as THREE from "three";
 import RealObject from "./real-object";
 
+import { createCamera, updateCamera } from "../camera/camera";
+
 import { error } from "../../util/logger";
 
 export default class RealObjectScene extends THREE.Scene implements RealObject {
@@ -41,6 +43,26 @@ export default class RealObjectScene extends THREE.Scene implements RealObject {
 
       delete this._floor;
     }
+  }
+
+  private _camera: THREE.Camera;
+
+  get camera() {
+    if (!this._camera) {
+      let { camera: options = {} } = this.component.state;
+      if (options) {
+        this._camera = createCamera(this, options);
+      }
+    }
+
+    return this._camera;
+  }
+
+  set camera(camera) {
+    if (this._camera === camera) return;
+    if (this._camera) this.remove(this._camera);
+    this._camera = camera;
+    if (this._camera) this.add(this._camera);
   }
 
   private _floor: THREE.Mesh;
@@ -119,7 +141,9 @@ export default class RealObjectScene extends THREE.Scene implements RealObject {
   updateRotate() {}
   updateScale() {}
   updateAlpha() {}
-  updateCamera() {}
+  updateCamera(after, before) {
+    updateCamera(this.camera, after);
+  }
 
   get isRealObject() {
     return true;

@@ -8,6 +8,7 @@ import RealObject from "./real-object";
 import * as THREE from "three";
 
 import { SCALE_MIN } from "./common";
+import { createCamera, updateCamera } from "../camera/camera";
 
 export default abstract class AbstractRealObject extends THREE.Object3D
   implements RealObject {
@@ -39,6 +40,26 @@ export default abstract class AbstractRealObject extends THREE.Object3D
     this._component = component;
 
     this.update();
+  }
+
+  private _camera: THREE.Camera;
+
+  get camera() {
+    if (!this._camera) {
+      let { camera: options = {} } = this.component.state;
+      if (options) {
+        createCamera(this, options);
+      }
+    }
+
+    return this._camera;
+  }
+
+  set camera(camera) {
+    if (this._camera === camera) return;
+    if (this._camera) this.remove(this._camera);
+    this._camera = camera;
+    if (this._camera) this.add(this._camera);
   }
 
   update() {
@@ -121,7 +142,9 @@ export default abstract class AbstractRealObject extends THREE.Object3D
 
   updateAlpha() {}
 
-  updateCamera() {}
+  updateCamera(after, before) {
+    updateCamera(this.camera, after);
+  }
 
   protected abstract build();
 

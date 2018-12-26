@@ -130,7 +130,7 @@ export enum FitMode {
 }
 
 export enum CameraView {
-  PERSPECTIVE,
+  PERSPECTIVE = 1,
   TOP,
   BOTTOM,
   LEFT,

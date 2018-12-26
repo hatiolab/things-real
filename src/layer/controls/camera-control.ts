@@ -84,7 +84,7 @@ export default class CameraController {
 
   switchCamera(
     camera: "perspective" | "orthographic" | THREE.Camera = "perspective",
-    dir?
+    dir?: "left" | "top" | "bottom" | "right"
   ) {
     if (camera === "perspective") {
       this.saveOrthoCamera(this.currentCamera, this.currentOrthoDir);

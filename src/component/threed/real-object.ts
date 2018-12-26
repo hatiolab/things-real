@@ -4,11 +4,11 @@
 
 import Component from "../component";
 import * as THREE from "three";
-import SystemDataSource from "../system";
 
 export default interface RealObject extends THREE.Object3D {
   component: Component;
   isRealObject;
+  camera;
 
   dispose();
 

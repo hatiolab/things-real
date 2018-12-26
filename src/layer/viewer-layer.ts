@@ -7,17 +7,15 @@ import Layer from "./layer";
 import EditorControls from "../threed/controls/editor-controls";
 import { CSS3DRenderer } from "../threed/renderers/css-3d-renderer";
 import RealObjectScene from "../component/threed/real-object-scene";
-import { SceneMode, ActionModel, CameraView } from "../types";
+import { SceneMode, ActionModel } from "../types";
 import { PIXEL_RATIO } from "../component/html/elements";
-import CameraControl from "./controls/camera-control";
 
 import * as THREE from "three";
-window["THREE"] = THREE;
+window["THREE"] = THREE; // for ray-input
 
 import { WEBVR } from "../vr/WebVR";
 import RayInput from "ray-input/build/ray.min"; // to prevent uglify-js compile error
 import { callFrameAnimation } from "../util/custom-animation-frame";
-import { PerspectiveCamera } from "three";
 
 /**
  * Real Scene Renderer for Viewer
@@ -64,8 +62,6 @@ export default class ViewerLayer extends Layer {
     this.disposeGLRenderer();
     this.disposeCSS3DRenderer();
     this.disposeLights();
-    this.disposeCameras();
-    // this.disposeDefaultCamera();
     this.disposeRaycaster();
 
     this.disposeCanvas();
@@ -342,93 +338,6 @@ export default class ViewerLayer extends Layer {
   }
 
   protected disposeCSS3DRenderer() {
-    // Nothing to do
-  }
-
-  /* camera */
-
-  /**
-   * activeCamera getter
-   */
-
-  private _activeCamera: any;
-  private _cameraControl: CameraControl;
-
-  get cameraControl() {
-    if (!this._cameraControl) {
-      this._cameraControl = new CameraControl(this);
-    }
-
-    return this._cameraControl;
-  }
-
-  switchCamera(camera: CameraView | THREE.Camera) {
-    switch (camera) {
-      case CameraView.PERSPECTIVE:
-        this.cameraControl.switchCamera("perspective");
-        break;
-      case CameraView.LEFT:
-        this.cameraControl.switchCamera("orthographic", "left");
-        break;
-      case CameraView.RIGHT:
-        this.cameraControl.switchCamera("orthographic", "right");
-        break;
-      case CameraView.TOP:
-        this.cameraControl.switchCamera("orthographic", "top");
-        break;
-      case CameraView.BOTTOM:
-        this.cameraControl.switchCamera("orthographic", "bottom");
-        break;
-      default:
-        this.cameraControl.switchCamera(camera);
-    }
-  }
-
-  get activeCamera() {
-    if (!this._activeCamera) {
-      // default camera is perspective camera
-      this.switchCamera(CameraView.PERSPECTIVE);
-    }
-
-    return this._activeCamera;
-  }
-
-  set activeCamera(camera) {
-    this._activeCamera = camera;
-  }
-
-  disposeCameras() {
-    this._cameraControl && this._cameraControl.dispose();
-  }
-
-  /* lights */
-  private _lights: THREE.Light[];
-
-  /**
-   * lights getter
-   */
-  get lights() {
-    if (!this._lights) {
-      this._lights = this.createLights();
-    }
-
-    return this._lights;
-  }
-
-  /**
-   * lights creator
-   */
-  createLights() {
-    return [
-      new THREE.AmbientLight(0x777777),
-      new THREE.DirectionalLight(0xffffff, 0.5)
-    ];
-  }
-
-  /**
-   * lights disposer
-   */
-  disposeLights() {
     // Nothing to do
   }
 
