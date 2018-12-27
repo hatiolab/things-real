@@ -410,27 +410,27 @@ export default class Component extends ModelAndState
   }
 
   onchangetranslate(after, before) {
-    this.object3D.updateTranslate(after, before);
+    this.object3D.updateTranslate();
   }
 
   onchangerotate(after, before) {
-    this.object3D.updateRotate(after, before);
+    this.object3D.updateRotate();
   }
 
   onchangescale(after, before) {
-    this.object3D.updateScale(after, before);
+    this.object3D.updateScale();
   }
 
   onchangedimension(after, before) {
-    this.object3D.updateDimension(after, before);
+    this.object3D.updateDimension();
   }
 
   onchangealpha(after, before) {
-    this.object3D.updateAlpha(after, before);
+    this.object3D.updateAlpha();
   }
 
   onchangehidden(after, before) {
-    this.object3D.visible = !after;
+    this.object3D.updateHidden();
   }
 
   onchangelineStyle(after, before) {
@@ -450,7 +450,7 @@ export default class Component extends ModelAndState
   }
 
   onchangecamera(after?: CameraModel, before?: CameraModel) {
-    this.object3D.updateCamera(after, before);
+    this.object3D.updateCamera();
 
     let afterActive = after && after.active;
     let beforeActive = before && before.active;

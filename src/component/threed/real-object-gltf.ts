@@ -96,7 +96,7 @@ export default class RealObjectGLTF extends AbstractRealObject {
     this.component.invalidate();
   }
 
-  updateDimension(after, before) {
+  updateDimension() {
     this._rescale();
   }
 }

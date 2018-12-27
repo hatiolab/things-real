@@ -10,7 +10,6 @@ import * as THREE from "three";
 import { createCamera, updateCamera } from "../camera/camera";
 import { applyAlpha } from "./common";
 import { error } from "../../util/logger";
-import { create } from "d3";
 
 export default abstract class RealObjectMesh extends THREE.Mesh
   implements RealObject {
@@ -73,6 +72,7 @@ export default abstract class RealObjectMesh extends THREE.Mesh
 
     this.updateTransform();
     this.updateAlpha();
+    this.updateHidden();
   }
 
   /**
@@ -118,23 +118,23 @@ export default abstract class RealObjectMesh extends THREE.Mesh
   }
 
   /* update functions - 전체적인 rebuilding이 필요하지 않은 update 기능 들임 */
-  updateTranslate(after, before) {
-    var { x = 0, y = 0, z = 0 } = after;
+  updateTranslate() {
+    var { x = 0, y = 0, z = 0 } = this.component.state.translate;
     this.position.set(x, y, z);
   }
 
-  updateRotate(after, before) {
-    var { x = 0, y = 0, z = 0 } = after;
+  updateRotate() {
+    var { x = 0, y = 0, z = 0 } = this.component.state.rotate;
     this.rotation.set(x, y, z);
   }
 
-  updateScale(after, before) {
-    var { x = 1, y = 1, z = 1 } = after;
+  updateScale() {
+    var { x = 1, y = 1, z = 1 } = this.component.state.scale;
     this.scale.set(x, y, z);
   }
 
   /* overide */
-  updateDimension(after, before) {
+  updateDimension() {
     this.update();
   }
 
@@ -144,8 +144,12 @@ export default abstract class RealObjectMesh extends THREE.Mesh
     applyAlpha(this.material, alpha, fillStyle);
   }
 
-  updateCamera(after, before) {
-    updateCamera(this.camera, after);
+  updateHidden() {
+    this.visible = !this.component.state.hidden;
+  }
+
+  updateCamera() {
+    updateCamera(this.camera, this.component.state.camera);
   }
 
   protected abstract buildGeometry(): THREE.Geometry | THREE.BufferGeometry;

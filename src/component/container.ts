@@ -2,32 +2,31 @@
  * Copyright © HatioLab Inc. All rights reserved.
  */
 
-import { ComponentModel } from '../types'
-import Component from './component'
+import { ComponentModel } from "../types";
+import Component from "./component";
 
-import { select } from './model/selector'
-import AbsoluteLayout from '../layout/absolute'
-import clonedeep from '../util/clone-deep'
+import { select } from "./model/selector";
+import AbsoluteLayout from "../layout/absolute";
+import clonedeep from "../util/clone-deep";
 
 export default class Container extends Component {
-
   static get type() {
-    return 'container'
+    return "container";
   }
 
   constructor(model: ComponentModel) {
-    super(model)
+    super(model);
 
     this._components = [];
   }
 
   dispose() {
-    this.components.slice().forEach(component => component.dispose())
+    this.components.slice().forEach(component => component.dispose());
 
     super.dispose();
   }
 
-  private _components: Component[] = []
+  private _components: Component[] = [];
 
   get components() {
     return this._components;
@@ -37,166 +36,156 @@ export default class Container extends Component {
     var model = clonedeep(this.model);
 
     if (this.components)
-      model.components = this.components.map(c => { return c.hierarchy })
+      model.components = this.components.map(c => {
+        return c.hierarchy;
+      });
 
-    return model
+    return model;
   }
 
   get isContainer() {
-    return true
+    return true;
   }
 
   get layout() {
-    return AbsoluteLayout
+    return AbsoluteLayout;
   }
 
   addComponent(component: Component) {
-    var oldContainer = component.parent
+    var oldContainer = component.parent;
 
     if (oldContainer) {
-      if (this === oldContainer)
-        return
+      if (this === oldContainer) return;
 
-      oldContainer.removeComponent(component)
+      oldContainer.removeComponent(component);
     }
 
-    var index = (this._components.push(component) - 1)
+    var index = this._components.push(component) - 1;
 
-    component.parent = this
-    this.object3D.add(component.object3D)
-    component.added(this) /* callback */
+    component.parent = this;
+    this.object3D.add(component.object3D);
+    component.added(this); /* callback */
 
     // this.trigger('add', this, component, index)
 
-    component.delegate_on(this)
-    component.trigger('added', this, component, index)
+    component.delegate_on(this);
+    component.trigger("added", this, component, index);
 
-    if (this.started)
-      component.start()
+    if (this.started) component.start();
 
     // this.root && this.root.isReady && component.ready()
   }
 
   insertComponentAt(component, index) {
-    var oldContainer = component.parent
+    var oldContainer = component.parent;
 
     if (oldContainer) {
-      oldContainer.removeComponent(component)
+      oldContainer.removeComponent(component);
     }
 
     // TODO index가 유효하지 않은 경우(예를 들면, index가 전체 컴포넌트 개수보다 큰 경우)에 대한 검증
-    var head = this._components.splice(0, index)
-    this._components = head.concat(component, this._components)
-    this.object3D.add(component.object3D)
+    var head = this._components.splice(0, index);
+    this._components = head.concat(component, this._components);
+    this.object3D.add(component.object3D);
 
     // 실제 적용된 인덱스를 다시 구한다.
-    index = this._components.indexOf(component)
+    index = this._components.indexOf(component);
 
-    component.parent = this
-    component.added(this) /* callback */
+    component.parent = this;
+    component.added(this); /* callback */
 
     // this.trigger('add', this, component, index)
 
-    component.delegate_on(this)
-    component.trigger('added', this, component, index)
+    component.delegate_on(this);
+    component.trigger("added", this, component, index);
   }
 
   removeComponent(component: Component) {
-    var idx = this.components.indexOf(component)
+    var idx = this.components.indexOf(component);
 
-    if (idx == -1)
-      return
+    if (idx == -1) return;
 
-    this.components.splice(idx, 1)
-    this.object3D.remove(component.object3D)
+    this.components.splice(idx, 1);
+    this.object3D.remove(component.object3D);
 
-    component.parent = null
-    component.removed(this) /* callback */
+    component.parent = null;
+    component.removed(this); /* callback */
 
     // this.trigger('remove', this, component)
 
-    component.trigger('removed', this, component)
-    component.delegate_off(this)
+    component.trigger("removed", this, component);
+    component.delegate_off(this);
   }
 
   moveChildAt(index, child) {
-    var oldIndex = this.indexOf(child)
-    if (oldIndex == -1)
-      return
+    var oldIndex = this.indexOf(child);
+    if (oldIndex == -1) return;
 
-    var head = this._components.splice(0, oldIndex)
-    var tail = this._components.splice(1)
+    var head = this._components.splice(0, oldIndex);
+    var tail = this._components.splice(1);
 
-    this._components = head.concat(tail)
+    this._components = head.concat(tail);
 
-    index = Math.max(0, index)
-    index = Math.min(index, this._components.length)
+    index = Math.max(0, index);
+    index = Math.min(index, this._components.length);
 
-    head = this._components.splice(0, index)
-    this._components = head.concat(child, this._components)
+    head = this._components.splice(0, index);
+    this._components = head.concat(child, this._components);
   }
 
   moveChildForward(child) {
-    var index = this.indexOf(child)
-    if (index == -1 || index == this._components.length - 1)
-      return
+    var index = this.indexOf(child);
+    if (index == -1 || index == this._components.length - 1) return;
 
-    this._components[index] = this._components[index + 1]
-    this._components[index + 1] = child
+    this._components[index] = this._components[index + 1];
+    this._components[index + 1] = child;
   }
 
   moveChildBackward(child) {
-    var index = this.indexOf(child)
-    if (index == -1 || index == 0)
-      return
+    var index = this.indexOf(child);
+    if (index == -1 || index == 0) return;
 
-    this._components[index] = this._components[index - 1]
-    this._components[index - 1] = child
+    this._components[index] = this._components[index - 1];
+    this._components[index - 1] = child;
   }
 
   moveChildToFront(child) {
-    var index = this.indexOf(child)
-    if (index == -1 || index == this._components.length - 1)
-      return
+    var index = this.indexOf(child);
+    if (index == -1 || index == this._components.length - 1) return;
 
-    var head = this._components.splice(0, index)
-    var tail = this._components.splice(1)
+    var head = this._components.splice(0, index);
+    var tail = this._components.splice(1);
 
-    this._components = head.concat(tail, this._components)
+    this._components = head.concat(tail, this._components);
   }
 
   moveChildToBack(child) {
-    var index = this.indexOf(child)
-    if (index == -1 || index == 0)
-      return
+    var index = this.indexOf(child);
+    if (index == -1 || index == 0) return;
 
-    var head = this._components.splice(0, index)
-    var tail = this._components.splice(0)
+    var head = this._components.splice(0, index);
+    var tail = this._components.splice(0);
 
-    this._components = this._components.concat(head, tail)
+    this._components = this._components.concat(head, tail);
   }
 
   capturables() {
-    return this.layout.capturables(this)
+    return this.layout.capturables(this);
   }
 
   findAll(s, ...others) {
-    if (typeof s === 'string')
-      return select(s, this, others[0] || this) // others[0] means (self)
+    if (typeof s === "string") return select(s, this, others[0] || this); // others[0] means (self)
 
-    if (typeof s !== 'function')
-      return
+    if (typeof s !== "function") return;
 
-    var found = []
+    var found = [];
 
     for (let i = this.components.length - 1; i >= 0; i--) {
-      let components = this.components[i].findAll(s, ...others)
-      if (components)
-        found = found.concat(components);
+      let components = this.components[i].findAll(s, ...others);
+      if (components) found = found.concat(components);
     }
 
-    if (s(this, ...others))
-      found.push(this)
+    if (s(this, ...others)) found.push(this);
 
     return found;
   }
@@ -204,36 +193,32 @@ export default class Container extends Component {
   traverse(fn, context) {
     fn.call(context, this);
 
-    if (this.components.length == 0)
-      return
+    if (this.components.length == 0) return;
 
     this.components.forEach(component => {
-      if (component.isContainer)
-        (component as Container).traverse(fn, context);
-      else
-        fn.call(context, component);
-    })
+      if (component.isContainer) (component as Container).traverse(fn, context);
+      else fn.call(context, component);
+    });
   }
 
   indexOf(component) {
-    return this.components.indexOf(component)
+    return this.components.indexOf(component);
   }
 
   start() {
-    super.start()
+    super.start();
 
-    this.components.forEach(component => component.start())
+    this.components.forEach(component => component.start());
   }
 
   stop() {
-    super.stop()
+    super.stop();
 
-    this.components.forEach(component => component.stop())
+    this.components.forEach(component => component.stop());
   }
 }
 
 Component.register(Container.type, Container);
-
 
 // import * as selector from '../model/selector'
 // import { Layout, AbsoluteLayout } from '../layout'
@@ -275,7 +260,6 @@ Component.register(Container.type, Container);
 //         component.reflow()
 //     })
 //   }
-
 
 //   add(comp) {
 //     if (!(comp instanceof Array))
@@ -323,7 +307,6 @@ Component.register(Container.type, Container);
 //     return (this._components || EMPTY).length
 //   }
 
-
 //   symmetryX(x) {
 
 //     super.symmetryX(x)
@@ -332,7 +315,6 @@ Component.register(Container.type, Container);
 //       component.symmetryX(0)
 //     })
 //   }
-
 
 //   findFirst(s, ...others) {
 //     if (typeof s === 'string')
@@ -352,7 +334,6 @@ Component.register(Container.type, Container);
 
 //     return null;
 //   }
-
 
 //   contains(x, y) {
 //     // 효율을 위해서, contains를 호출하기 전에 x, y좌표값은 이 컴포넌트에 대해서 이미 transcoord 된 상태이다.

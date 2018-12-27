@@ -68,6 +68,7 @@ export default abstract class AbstractRealObject extends THREE.Object3D
 
     this.updateTransform();
     this.updateAlpha();
+    this.updateHidden();
   }
 
   /**
@@ -117,18 +118,18 @@ export default abstract class AbstractRealObject extends THREE.Object3D
   }
 
   /* update functions - 전체적인 rebuilding이 필요하지 않은 update 기능 들임 */
-  updateTranslate(after, before) {
-    var { x = 0, y = 0, z = 0 } = after;
+  updateTranslate() {
+    var { x = 0, y = 0, z = 0 } = this.component.state.translate;
     this.position.set(x, y, z);
   }
 
-  updateRotate(after, before) {
-    var { x = 0, y = 0, z = 0 } = after;
+  updateRotate() {
+    var { x = 0, y = 0, z = 0 } = this.component.state.rotate;
     this.rotation.set(x, y, z);
   }
 
-  updateScale(after, before) {
-    var { x = 1, y = 1, z = 1 } = after;
+  updateScale() {
+    var { x = 1, y = 1, z = 1 } = this.component.state.scale;
     this.scale.set(
       Math.max(x, SCALE_MIN),
       Math.max(y, SCALE_MIN),
@@ -136,14 +137,18 @@ export default abstract class AbstractRealObject extends THREE.Object3D
     );
   }
 
-  updateDimension(after, before) {
+  updateDimension() {
     this.update();
   }
 
   updateAlpha() {}
 
-  updateCamera(after, before) {
-    updateCamera(this.camera, after);
+  updateHidden() {
+    this.visible = !this.component.state.hidden;
+  }
+
+  updateCamera() {
+    updateCamera(this.camera, this.component.state.camera);
   }
 
   protected abstract build();

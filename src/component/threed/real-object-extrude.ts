@@ -101,7 +101,7 @@ export default class RealObjectExtrude extends AbstractRealObject {
             error(e);
           }
         ),
-        side: THREE.DoubleSide
+        side: THREE.FrontSide
       };
     } else if (typeof fillStyle == "string") {
       if (fillStyle !== "transparent") {
@@ -135,7 +135,7 @@ export default class RealObjectExtrude extends AbstractRealObject {
 
     var sideMaterial = new THREE.MeshLambertMaterial({
       color: strokeStyle,
-      side: THREE.DoubleSide
+      side: THREE.FrontSide
     });
 
     // prevent overlapped layers flickering

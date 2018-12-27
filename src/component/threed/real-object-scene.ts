@@ -132,6 +132,7 @@ export default class RealObjectScene extends THREE.Scene implements RealObject {
 
     this.updateTransform();
     this.updateAlpha();
+    this.updateHidden();
   }
 
   updateTransform() {}
@@ -141,8 +142,9 @@ export default class RealObjectScene extends THREE.Scene implements RealObject {
   updateRotate() {}
   updateScale() {}
   updateAlpha() {}
-  updateCamera(after, before) {
-    updateCamera(this.camera, after);
+  updateHidden() {}
+  updateCamera() {
+    updateCamera(this.camera, this.component.state.camera);
   }
 
   get isRealObject() {

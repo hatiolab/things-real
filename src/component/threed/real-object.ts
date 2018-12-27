@@ -20,27 +20,31 @@ export default interface RealObject extends THREE.Object3D {
   /**
    * Component의 dimension 상태 속성을 오브젝트에 반영한다.
    */
-  updateDimension(after, before);
+  updateDimension();
   /**
    * Component의 translate 상태 속성을 오브젝트에 반영한다.
    */
-  updateTranslate(after, before);
+  updateTranslate();
   /**
    * Component의 rotate 상태 속성을 오브젝트에 반영한다.
    */
-  updateRotate(after, before);
+  updateRotate();
   /**
    * Component의 scale 상태 속성을 오브젝트에 반영한다.
    */
-  updateScale(after, before);
+  updateScale();
   /**
    * Component의 alpha 상태 속성을 오브젝트에 반영한다.
    */
-  updateAlpha(after, before);
+  updateAlpha();
+  /**
+   * Component의 hidden 상태 속성을 오브젝트에 반영한다.
+   */
+  updateHidden();
   /**
    * Component의 camera 상태 속성을 오브젝트에 반영한다.
    */
-  updateCamera(after, before);
+  updateCamera();
 
   updateTransform();
   updateTransformReverse();

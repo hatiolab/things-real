@@ -183,7 +183,7 @@ export default class ViewerLayer extends Layer {
     var canvas = document.createElement("canvas");
     canvas.style.position = "absolute";
     canvas.style.top = "0";
-    // canvas.style.background = 'transparent'
+    canvas.style.background = "transparent";
     canvas.style.pointerEvents = "none";
 
     return canvas;
@@ -392,17 +392,7 @@ export default class ViewerLayer extends Layer {
    * @param height
    */
   onresize(width, height) {
-    if (this.activeCamera.isPerspectiveCamera) {
-      this.activeCamera.aspect = width / height;
-      var distance = 1000;
-      var diag = Math.sqrt(height * height + width * width);
-
-      this.activeCamera.fov =
-        (2 * Math.atan(diag / (2 * distance)) * 180) / Math.PI;
-    } else {
-    }
-
-    this.activeCamera.updateProjectionMatrix();
+    super.onresize(width, height);
 
     this.css3DRenderer.setSize(width, height);
     this.glRenderer.setSize(width, height, true);

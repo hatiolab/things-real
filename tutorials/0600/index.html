@@ -1,258 +1,255 @@
 <html>
+  <head>
+    <style>
+      #wrapper {
+        width: 100%;
+        height: 500px;
+      }
+      #scene {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+      }
+    </style>
+    <script src="../../things-real.js"></script>
+  </head>
 
-<head>
-  <style>
-  #wrapper {
-    width: 100%;
-    height: 500px;
-  }
-  #scene {
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-  }
-  </style>
-  <script src="../../things-real.js"></script>
-</head>
+  <body>
+    <h1>3D Modeling Library - REAL</h1>
+    <div id="wrapper"><div id="scene"></div></div>
 
-<body>
-  <h1>3D Modeling Library - REAL</h1>
-  <div id="wrapper">
-    <div id="scene"></div>
-  </div>
+    <p>
+      <button id="create">Create</button> <button id="dispose">Dispose</button>
+      <button id="undo">Undo</button> <button id="redo">Redo</button>
+      <button id="start">Start</button> <button id="stop">Stop</button>
+      <button id="setTranslateMode">Translate</button>
+      <button id="setRotateMode">Rotate</button>
+      <button id="setScaleMode">Scale</button>
+      <button id="fullscreen">Full-Screen</button>
+    </p>
 
-  <p>
-    <button id='create'>Create</button>
-    <button id='dispose'>Dispose</button>
-    <button id='undo'>Undo</button>
-    <button id='redo'>Redo</button>
-    <button id='start'>Start</button>
-    <button id='stop'>Stop</button>
-    <button id='setTranslateMode'>Translate</button>
-    <button id='setRotateMode'>Rotate</button>
-    <button id='setScaleMode'>Scale</button>
-    <button id='fullscreen'>Full-Screen</button>
-  </p>
+    <script type="module">
+      import { html, render } from "../../node_modules/lit-html/lit-html.js";
 
-  <script type="module">
-    import { html, render } from '../../node_modules/lit-html/lit-html.js';
+      document.querySelectorAll("button").forEach(button => {
+        let id = button.id;
+        button.addEventListener("click", e => {
+          eval(id).call();
+        });
+      });
 
-    document.querySelectorAll('button').forEach(button => {
-      let id = button.id
-      button.addEventListener('click', e => {
-        eval(id).call()
-      })
-    })
+      var { Scene, SceneMode, FitMode } = REAL;
 
-    var {
-      Scene,
-      SceneMode,
-      FitMode
-    } = REAL;
+      var dimension = {
+        width: 200,
+        height: 200
+      };
 
-    var dimension = {
-      width: 200,
-      height: 200
-    }
+      var scale = {
+        x: 1,
+        y: 1,
+        z: 1
+      };
 
-    var scale = {
-      x: 1,
-      y: 1,
-      z: 1
-    }
+      var rotate = {
+        x: 0,
+        y: 0,
+        z: 0
+      };
 
-    var rotate = {
-      x: 0,
-      y: 0,
-      z: 0
-    }
+      var src = "https://www.w3schools.com/howto/img_paris.jpg";
 
-    var src = 'https://www.w3schools.com/howto/img_paris.jpg'
+      var scene;
+      var interval;
 
-    var scene
-    var interval
-
-    var textStyle = `
+      var textStyle = `
       color: yellow;
       margin: 0;
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-    `
+    `;
 
-    export function create() {
-      scene = new Scene({
-        targetEl: 'scene',
-        mode: SceneMode.EDIT,
-        model: {
-          width: 700,
-          height: 300,
-          version: 2,
-          components: [{
-            id: 'first',
-            type: 'dom',
-            tagName: 'div',
-            dimension,
-            translate: {
-              x: -250,
-              y: 100,
-              z: 0
-            },
-            rotate,
-            scale,
-            options: {
-              innerHTML: `
+      export function create() {
+        scene = new Scene({
+          targetEl: "scene",
+          mode: SceneMode.EDIT,
+          model: {
+            width: 700,
+            height: 300,
+            version: 2,
+            components: [
+              {
+                id: "first",
+                type: "dom",
+                tagName: "div",
+                dimension,
+                translate: {
+                  x: -250,
+                  y: 100,
+                  z: 0
+                },
+                rotate,
+                scale,
+                options: {
+                  innerHTML: `
                 <h1 style="${textStyle}">HAHAHA</h1>
               `,
-              style: 'background-color: red;'
-            }
-          }, {
-            id: 'second',
-            type: 'dom',
-            tagName: 'img',
-            dimension,
-            translate: {
-              x: 0,
-              y: 100,
-              z: 0
-            },
-            rotate,
-            scale,
-            options: {
-              src
-            }
-          }, {
-            id: 'third',
-            type: 'dom',
-            tagName: 'video',
-            dimension,
-            translate: {
-              x: 250,
-              y: 100,
-              z: 0
-            },
-            rotate,
-            scale,
-            options: {
-              src: 'http://techslides.com/demos/sample-videos/small.webm',
-              controls: true,
-              autoplay: true,
-              style: 'background-color: gray;'
-            }
-          }, {
-            id: 'first-cube',
-            type: 'rect',
-            fillStyle: {
-              type: 'pattern',
-              image: 'data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20245.82%20141.73%22%3E%3Cdefs%3E%3Cstyle%3E.a%7Bfill%3A%23fff%3Bfill-rule%3Aevenodd%3B%7D%3C%2Fstyle%3E%3C%2Fdefs%3E%3Ctitle%3Emask%3C%2Ftitle%3E%3Cpath%20class%3D%22a%22%20d%3D%22M175.56%2C111.37c-22.52%2C0-40.77-18.84-40.77-42.07S153%2C27.24%2C175.56%2C27.24s40.77%2C18.84%2C40.77%2C42.07S198.08%2C111.37%2C175.56%2C111.37ZM26.84%2C69.31c0-23.23%2C18.25-42.07%2C40.77-42.07s40.77%2C18.84%2C40.77%2C42.07-18.26%2C42.07-40.77%2C42.07S26.84%2C92.54%2C26.84%2C69.31ZM27.27%2C0C11.54%2C0%2C0%2C12.34%2C0%2C28.58V110.9c0%2C16.24%2C11.54%2C30.83%2C27.27%2C30.83H99.57c2.17%2C0%2C4.19-1.83%2C5.4-3.7L116.47%2C118a8%2C8%2C0%2C0%2C1%2C12.52-.18l11.51%2C20.34c1.2%2C1.86%2C3.22%2C3.61%2C5.39%2C3.61h72.29c15.74%2C0%2C27.63-14.6%2C27.63-30.83V28.58C245.82%2C12.34%2C233.93%2C0%2C218.19%2C0H27.27Z%22%2F%3E%3C%2Fsvg%3E'
-            },
-            lineStyle: {
-              strokeStyle: 'red',
-              lineWidth: 1,
-              lineDash: 'solid'
-            },
-            dimension: {
-              width: 100,
-              height: 100,
-              depth: 100
-            },
-            translate: {
-              x: 200,
-              y: 50,
-              z: -150
-            }          
-          }, {
-            id: 'second-cube',
-            type: 'cube',
-            fillStyle: {
-              type: 'pattern',
-              image: 'https://i.imgur.com/fHyEMsl.jpg'
-            },
-            dimension: {
-              width: 100,
-              height: 100,
-              depth: 100
-            },
-            translate: {
-              x: -200,
-              y: 50,
-              z: 150
-            }          
-          }]
-        },
-        fit: FitMode.RATIO
-      })
-    }
+                  style: "background-color: red;"
+                }
+              },
+              {
+                id: "second",
+                type: "dom",
+                tagName: "img",
+                dimension,
+                translate: {
+                  x: 0,
+                  y: 100,
+                  z: 0
+                },
+                rotate,
+                scale,
+                options: {
+                  src
+                }
+              },
+              {
+                id: "third",
+                type: "dom",
+                tagName: "video",
+                dimension,
+                translate: {
+                  x: 250,
+                  y: 100,
+                  z: 0
+                },
+                rotate,
+                scale,
+                options: {
+                  src: "http://techslides.com/demos/sample-videos/small.webm",
+                  controls: true,
+                  autoplay: true,
+                  style: "background-color: gray;"
+                }
+              },
+              {
+                id: "first-cube",
+                type: "rect",
+                fillStyle: {
+                  type: "pattern",
+                  image:
+                    "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20245.82%20141.73%22%3E%3Cdefs%3E%3Cstyle%3E.a%7Bfill%3A%23fff%3Bfill-rule%3Aevenodd%3B%7D%3C%2Fstyle%3E%3C%2Fdefs%3E%3Ctitle%3Emask%3C%2Ftitle%3E%3Cpath%20class%3D%22a%22%20d%3D%22M175.56%2C111.37c-22.52%2C0-40.77-18.84-40.77-42.07S153%2C27.24%2C175.56%2C27.24s40.77%2C18.84%2C40.77%2C42.07S198.08%2C111.37%2C175.56%2C111.37ZM26.84%2C69.31c0-23.23%2C18.25-42.07%2C40.77-42.07s40.77%2C18.84%2C40.77%2C42.07-18.26%2C42.07-40.77%2C42.07S26.84%2C92.54%2C26.84%2C69.31ZM27.27%2C0C11.54%2C0%2C0%2C12.34%2C0%2C28.58V110.9c0%2C16.24%2C11.54%2C30.83%2C27.27%2C30.83H99.57c2.17%2C0%2C4.19-1.83%2C5.4-3.7L116.47%2C118a8%2C8%2C0%2C0%2C1%2C12.52-.18l11.51%2C20.34c1.2%2C1.86%2C3.22%2C3.61%2C5.39%2C3.61h72.29c15.74%2C0%2C27.63-14.6%2C27.63-30.83V28.58C245.82%2C12.34%2C233.93%2C0%2C218.19%2C0H27.27Z%22%2F%3E%3C%2Fsvg%3E"
+                },
+                lineStyle: {
+                  strokeStyle: "red",
+                  lineWidth: 1,
+                  lineDash: "solid"
+                },
+                dimension: {
+                  width: 100,
+                  height: 100,
+                  depth: 100
+                },
+                translate: {
+                  x: 200,
+                  y: 50,
+                  z: -150
+                }
+              },
+              {
+                id: "second-cube",
+                type: "cube",
+                fillStyle: {
+                  type: "pattern",
+                  image: "https://i.imgur.com/fHyEMsl.jpg"
+                },
+                dimension: {
+                  width: 100,
+                  height: 100,
+                  depth: 100
+                },
+                translate: {
+                  x: -200,
+                  y: 50,
+                  z: 150
+                }
+              }
+            ]
+          },
+          fit: FitMode.RATIO
+        });
+      }
 
-    function dispose() {
-      scene && scene.dispose()
-      stop()
-      scene = undefined
-    }
+      function dispose() {
+        scene && scene.dispose();
+        stop();
+        scene = undefined;
+      }
 
-    function undo() {
-      scene && scene.undo()
-    }
+      function undo() {
+        scene && scene.undo();
+      }
 
-    function redo() {
-      scene && scene.redo()
-    }
+      function redo() {
+        scene && scene.redo();
+      }
 
-    function start() {
-      stop()
+      function start() {
+        stop();
 
-      interval = setInterval(() => {
-        scene && scene.findAll('dom').forEach(dom => {
-          let r = dom.state.rotate || rotate
+        interval = setInterval(() => {
+          scene &&
+            scene.findAll("dom").forEach(dom => {
+              let r = dom.state.rotate || rotate;
 
-          dom.set({
-            rotate: {
-              x: r.x + 0.1,
-              y: r.y + 0.1,
-              z: r.z + 0.1
-            }
-          })
-        })
+              dom.set({
+                rotate: {
+                  x: r.x + 0.1,
+                  y: r.y + 0.1,
+                  z: r.z + 0.1
+                }
+              });
+            });
 
-        scene && scene.findAll('cube').forEach(cube => {
-          let d = cube.state.dimension
-          let delta = Math.random() * 10 - 5
-          cube.set({
-            dimension: {
-              width: d.width + delta,
-              height: d.height + delta,
-              depth: d.depth + delta
-            }          
-          })
-        })
-      }, 100)
-    }
+          scene &&
+            scene.findAll("cube").forEach(cube => {
+              let d = cube.state.dimension;
+              let delta = Math.random() * 10 - 5;
+              cube.set({
+                dimension: {
+                  width: d.width + delta,
+                  height: d.height + delta,
+                  depth: d.depth + delta
+                }
+              });
+            });
+        }, 100);
+      }
 
-    function stop() {
-      clearInterval(interval)
-      interval = undefined
-    }
+      function stop() {
+        clearInterval(interval);
+        interval = undefined;
+      }
 
-    function setTranslateMode() {
-      scene && (scene.transformMode = { mode: 'translate' })
-    }
+      function setTranslateMode() {
+        scene && (scene.transformMode = { mode: "translate" });
+      }
 
-    function setRotateMode() {
-      scene && (scene.transformMode = { mode: 'rotate' })
-    }
+      function setRotateMode() {
+        scene && (scene.transformMode = { mode: "rotate" });
+      }
 
-    function setScaleMode() {
-      scene && (scene.transformMode = { mode: 'scale' })
-    }
+      function setScaleMode() {
+        scene && (scene.transformMode = { mode: "scale" });
+      }
 
-    function fullscreen() {
-      scene && scene.fullscreen(FitMode.RATIO)
-    }
+      function fullscreen() {
+        scene && scene.fullscreen(FitMode.RATIO);
+      }
 
-    create()
-
-  </script>
-</body>
-
+      create();
+    </script>
+  </body>
 </html>

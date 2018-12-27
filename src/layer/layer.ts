@@ -109,7 +109,17 @@ export default abstract class Layer extends EventSource {
    * @param width
    * @param height
    */
-  onresize(width, height) {}
+  onresize(width, height) {
+    this.element.style.width = width + "px";
+    this.element.style.height = height + "px";
+
+    if (this.activeCamera.isPerspectiveCamera) {
+      this.activeCamera.aspect = width / height;
+      this.activeCamera.updateProjectionMatrix();
+    }
+
+    this.invalidate();
+  }
 
   /* resize */
   private _resizeTimeout;
@@ -141,11 +151,7 @@ export default abstract class Layer extends EventSource {
         return;
       }
 
-      this.element.style.width = width + "px";
-      this.element.style.height = height + "px";
-
-      this.onresize && this.onresize(width, height);
-      this.invalidate();
+      this.onresize(width, height);
 
       oldwidth = width;
       oldheight = height;
@@ -184,7 +190,7 @@ export default abstract class Layer extends EventSource {
 
     this.resize();
 
-    this.ready(); // TODO 필요한가 ?
+    this.ready();
   }
 
   /**
@@ -330,7 +336,9 @@ export default abstract class Layer extends EventSource {
 
   set activeCamera(camera) {
     this._activeCamera = camera;
-    this.invalidate();
+    if (this.target) {
+      this.onresize(this.target.offsetWidth, this.target.offsetHeight);
+    }
   }
 
   disposeCameras() {

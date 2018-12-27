@@ -2,10 +2,9 @@
  * Copyright © HatioLab Inc. All rights reserved.
  */
 
-import Component from '../component'
+import Component from "../component";
 
 export default interface LifeCycleCallback {
-
   /**
    * created
    * 하위 자식 컴포넌트까지 다 생성한 후에 호출된다.
