@@ -396,6 +396,8 @@ export default class ViewerLayer extends Layer {
 
     this.css3DRenderer.setSize(width, height);
     this.glRenderer.setSize(width, height, true);
+
+    this.editorControls.setObject(this.activeCamera);
   }
 
   /**

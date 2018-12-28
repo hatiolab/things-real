@@ -25,6 +25,7 @@
       <button id="setTranslateMode">Translate</button>
       <button id="setRotateMode">Rotate</button>
       <button id="setScaleMode">Scale</button>
+      <button id="topView">Top View</button>
       <button id="fullscreen">Full-Screen</button>
     </p>
 
@@ -79,6 +80,7 @@
             width: 700,
             height: 300,
             version: 2,
+            fillStyle: "yellow",
             components: [
               {
                 id: "first",
@@ -243,6 +245,10 @@
 
       function setScaleMode() {
         scene && (scene.transformMode = { mode: "scale" });
+      }
+
+      function topView() {
+        scene && (scene.activeCamera = "top");
       }
 
       function fullscreen() {

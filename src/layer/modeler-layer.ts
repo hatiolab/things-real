@@ -184,6 +184,17 @@ export default class ModelerLayer extends ViewerLayer {
 
   /**
    *
+   * @param width
+   * @param height
+   */
+  onresize(width, height) {
+    super.onresize(width, height);
+
+    this.transformControls.setCamera(this.activeCamera);
+  }
+
+  /**
+   *
    * @param x
    * @param y
    */

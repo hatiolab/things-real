@@ -134,7 +134,9 @@ export enum CameraView {
   TOP,
   BOTTOM,
   LEFT,
-  RIGHT
+  RIGHT,
+  FRONT,
+  BACK
 }
 
 export interface SceneModel extends ComponentModel {

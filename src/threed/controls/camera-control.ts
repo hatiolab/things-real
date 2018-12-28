@@ -67,11 +67,12 @@ export default class CameraController {
     // this._defaultCamera.position.set(0, frustum * 2, frustum * 2);
     // this._defaultCamera.position.set(0, 0, frustum * 2);
 
+    var max = Math.max(width, height);
     const orthoCamera = new THREE.OrthographicCamera(
-      -width,
-      width,
-      height,
-      -height,
+      -max,
+      max,
+      max,
+      -max,
       0.01,
       20000
     );
@@ -103,7 +104,7 @@ export default class CameraController {
 
   switchCamera(
     camera: "perspective" | "orthographic" | THREE.Camera = "perspective",
-    dir?: "left" | "top" | "bottom" | "right"
+    dir?: "left" | "top" | "bottom" | "right" | "front" | "back"
   ) {
     if (camera === "perspective") {
       this.saveOrthoCamera(this.currentCamera, this.currentOrthoDir);

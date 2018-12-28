@@ -6,7 +6,7 @@ import EventSource from "../event/event-source";
 import { CameraView } from "../types";
 import RootContainer from "../component/root-container";
 import Scene from "../scene/scene";
-import CameraControl from "./controls/camera-control";
+import CameraControl from "../threed/controls/camera-control";
 
 import * as THREE from "three";
 
@@ -115,8 +115,25 @@ export default abstract class Layer extends EventSource {
 
     if (this.activeCamera.isPerspectiveCamera) {
       this.activeCamera.aspect = width / height;
-      this.activeCamera.updateProjectionMatrix();
+    } else {
+      let { width: modelWidth, height: modelHeight } = this.rootContainer.state;
+
+      let containerRatio = height / width;
+      let modelRatio = modelHeight / modelWidth;
+
+      if (containerRatio > modelRatio) {
+        this.activeCamera.left = -modelWidth / 2;
+        this.activeCamera.right = modelWidth / 2;
+        this.activeCamera.top = (modelWidth * containerRatio) / 2;
+        this.activeCamera.bottom = (-modelWidth * containerRatio) / 2;
+      } else {
+        this.activeCamera.left = -modelHeight / containerRatio / 2;
+        this.activeCamera.right = modelHeight / containerRatio / 2;
+        this.activeCamera.top = modelHeight / 2;
+        this.activeCamera.bottom = -modelHeight / 2;
+      }
     }
+    this.activeCamera.updateProjectionMatrix();
 
     this.invalidate();
   }
@@ -317,6 +334,12 @@ export default abstract class Layer extends EventSource {
         break;
       case CameraView.BOTTOM:
         this.cameraControl.switchCamera("orthographic", "bottom");
+        break;
+      case CameraView.FRONT:
+        this.cameraControl.switchCamera("orthographic", "front");
+        break;
+      case CameraView.BACK:
+        this.cameraControl.switchCamera("orthographic", "back");
         break;
       default:
         this.cameraControl.switchCamera(camera as THREE.Camera);

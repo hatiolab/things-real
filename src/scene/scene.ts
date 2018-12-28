@@ -8,7 +8,8 @@ import {
   SceneModel,
   SceneMode,
   FitMode,
-  ComponentModel
+  ComponentModel,
+  CameraView
 } from "../types";
 import { Component, RootContainer } from "../component/index";
 import { CommandChange, SnapshotCommander } from "../command/index";
@@ -162,6 +163,24 @@ export default class Scene extends EventSource {
 
     /* edit mode 에서만 적용되는 transformMode 를 효과적으로 처리하는 방법은 ? */
     (this._layer as any).transformMode = mode;
+  }
+
+  set activeCamera(camera) {
+    const cameraviews = {
+      perspective: CameraView.PERSPECTIVE,
+      top: CameraView.TOP,
+      bottom: CameraView.BOTTOM,
+      left: CameraView.LEFT,
+      right: CameraView.RIGHT,
+      front: CameraView.FRONT,
+      back: CameraView.BACK
+    };
+
+    if (typeof camera == "string") {
+      this._layer.activateCamera(cameraviews[camera]);
+    } else {
+      this._layer.activateCamera(camera);
+    }
   }
 
   get baseUrl() {
