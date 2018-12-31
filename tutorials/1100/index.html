@@ -39,13 +39,13 @@
       var scene;
 
       var textStyle = `
-      color: yellow;
-      margin: 0;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-    `;
+        color: yellow;
+        margin: 0;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      `;
 
       export function create() {
         scene = new Scene({
@@ -75,6 +75,57 @@
                   bold: true,
                   italic: true,
                   fontSize: 100
+                }
+              },
+              {
+                type: "global-ref",
+                dimension: {
+                  width: 100,
+                  height: 100
+                },
+                translate: {
+                  x: -100,
+                  y: -100,
+                  z: -100
+                },
+                ref: "audio.png"
+              },
+              {
+                type: "global-ref",
+                dimension: {
+                  width: 100,
+                  height: 100
+                },
+                translate: {
+                  x: -300,
+                  y: -300,
+                  z: -300
+                },
+                ref: "hatiolab-logo.png"
+              },
+              {
+                type: "button",
+                translate: {
+                  x: 100,
+                  y: -100,
+                  z: 0
+                },
+                scale: {
+                  x: 100,
+                  y: 100,
+                  z: 1
+                },
+                textOptions: {
+                  text: "Hi, sprite"
+                },
+                textStyle: {
+                  fontColor: "red",
+                  bold: true,
+                  italic: true,
+                  fontSize: 20
+                },
+                fillStyle: {
+                  color: "blue"
                 }
               }
             ]

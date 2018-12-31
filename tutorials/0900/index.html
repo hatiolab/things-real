@@ -134,8 +134,6 @@
           texts[2] = String(Date.now());
           let text = texts[Math.round(Math.random() * 2)];
 
-          console.log("text", text);
-
           scene &&
             scene.findAll("text").forEach(component => {
               component.set({

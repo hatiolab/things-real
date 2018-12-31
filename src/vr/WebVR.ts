@@ -7,6 +7,8 @@
 
 export var WEBVR = {
   createButton: function(renderer, options?) {
+    if (document.getElementById("xrbutton")) return;
+
     if (options && options.frameOfReferenceType) {
       renderer.vr.setFrameOfReferenceType(options.frameOfReferenceType);
     }
@@ -124,6 +126,7 @@ export var WEBVR = {
 
     if ("xr" in navigator) {
       var button = document.createElement("button");
+      button.id = "xrbutton";
       button.style.display = "none";
 
       stylizeElement(button);
@@ -145,6 +148,7 @@ export var WEBVR = {
       return button;
     } else if ("getVRDisplays" in navigator) {
       var button = document.createElement("button");
+      button.id = "xrbutton";
       button.style.display = "none";
 
       stylizeElement(button);

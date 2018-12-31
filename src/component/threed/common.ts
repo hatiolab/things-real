@@ -13,5 +13,4 @@ export function applyAlpha(material: any, alpha, fillStyle) {
   }
 
   material.opacity = opacity;
-  material.transparent = opacity < 1;
 }

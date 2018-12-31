@@ -11,10 +11,10 @@ import { SceneMode, ActionModel } from "../types";
 import { PIXEL_RATIO } from "../component/html/elements";
 
 import * as THREE from "three";
-window["THREE"] = THREE; // for ray-input
+// window["THREE"] = THREE; // for ray-input
 
 import { WEBVR } from "../vr/WebVR";
-import RayInput from "ray-input/build/ray.min"; // to prevent uglify-js compile error
+import RayInput from "../threed/ray-input/ray-input"; // to prevent uglify-js compile error
 import { callFrameAnimation } from "../util/custom-animation-frame";
 
 /**
@@ -27,6 +27,11 @@ export default class ViewerLayer extends Layer {
   private boundOnmousemove;
   // private boundOnmouseenter
   // private boundOnmouseleave
+
+  private boundOnrayover;
+  private boundOnrayout;
+  private boundOnraydown;
+  private boundOnrayup;
 
   private boundOnvrdisplaypresentchange;
 
@@ -82,6 +87,11 @@ export default class ViewerLayer extends Layer {
       this
     );
 
+    this.boundOnrayover = this.onrayover.bind(this);
+    this.boundOnrayout = this.onrayout.bind(this);
+    this.boundOnraydown = this.onraydown.bind(this);
+    this.boundOnrayup = this.onrayup.bind(this);
+
     this.element.addEventListener("click", this.boundOnclick);
     this.element.addEventListener("mousedown", this.boundOnmousedown);
     this.element.addEventListener("mouseup", this.boundOnmouseup);
@@ -98,15 +108,25 @@ export default class ViewerLayer extends Layer {
   private _rayInput: RayInput;
 
   get rayInput() {
-    if (!this._rayInput) {
-      this._rayInput = new RayInput(
-        this.activeCamera,
-        this.glRenderer.domElement
-      );
-      this._rayInput.setSize(this.glRenderer.getSize());
-    }
-
     return this._rayInput;
+  }
+
+  set rayInput(rayInput) {
+    this.disposeRayInput();
+    this._rayInput = rayInput;
+  }
+
+  createRayInput() {
+    var rayInput = new RayInput(this.activeCamera, this.glRenderer.domElement);
+    rayInput.setSize(this.glRenderer.getSize());
+
+    return rayInput;
+  }
+
+  disposeRayInput() {
+    if (this._rayInput) {
+    }
+    delete this._rayInput;
   }
 
   /* object-scene */
@@ -277,6 +297,7 @@ export default class ViewerLayer extends Layer {
   protected createGLRenderer() {
     var renderer: THREE.WebGLRenderer = new THREE.WebGLRenderer({
       canvas: this.canvas,
+      preserveDrawingBuffer: true,
       precision: "highp",
       antialias: true,
       alpha: true
@@ -370,6 +391,10 @@ export default class ViewerLayer extends Layer {
         this.rootContainer.css3DScene,
         this.activeCamera
       );
+
+      if (this.rayInput) {
+        this.rayInput.update();
+      }
 
       this.trigger("redraw");
     }
@@ -468,53 +493,87 @@ export default class ViewerLayer extends Layer {
    * @param event
    */
 
-  onSelected(mesh) {
-    if (!mesh) {
-      return;
-    }
+  onrayover(mesh) {
+    this.onmouseenter(mesh.component);
+    // mesh.component
+    // if (!mesh) {
+    //   return;
+    // }
 
-    if (mesh.material) mesh.material.opacity = 1;
+    // if (mesh.material) mesh.material.opacity = 1;
   }
 
-  onDeselected(mesh) {
-    if (!mesh) {
+  onrayout(mesh) {
+    this.onmouseleave(mesh.component);
+  }
+
+  onraydown(mesh) {}
+
+  onrayup(mesh) {
+    var component = mesh.component;
+    var tapEvtModel: ActionModel =
+      component.model.event && component.model.event.tap;
+
+    if (!tapEvtModel) {
       return;
     }
 
-    if (mesh.material) mesh.material.opacity = 0.5;
+    this._doEventAction(tapEvtModel, component, true);
   }
 
   bindRayInputs() {
-    this.objectScene.add(this.rayInput.getMesh());
+    this.rayInput = this.createRayInput();
 
-    console.log(this.rayInput.getMesh());
+    var camera: any = this.activeCamera;
 
-    this.rootContainer.components.forEach(component => {
-      console.log("component added to rayInput", component);
-      // Track the box for ray inputs.
-      this.rayInput.add(component.object3D);
+    if (!camera.parent) {
+      this.objectScene.add(this.rayInput.getMesh());
+    } else {
+      (camera.parent as any).add(this.rayInput.getMesh());
+    }
 
-      // Set up a bunch of event listeners.
-      this.rayInput.on("rayover", this.onSelected);
-      this.rayInput.on("rayout", this.onDeselected);
-      this.rayInput.on("raydown", this.onSelected);
-      this.rayInput.on("rayup", this.onDeselected);
-    });
+    this.rootContainer.components
+      .filter(component => {
+        let event = component.getState("event");
+        return event && (event.tap || event.hover);
+      })
+      .forEach(component => {
+        // Track the box for ray inputs.
+        this.rayInput.add(component.object3D);
+
+        // Set up a bunch of event listeners.
+        this.rayInput.on("rayover", this.boundOnrayover);
+        this.rayInput.on("rayout", this.boundOnrayout);
+        this.rayInput.on("raydown", this.boundOnraydown);
+        this.rayInput.on("rayup", this.boundOnrayup);
+      });
   }
 
   unbindRayInputs() {
-    this.objectScene.remove(this.rayInput.getMesh());
+    var camera: any = this.activeCamera;
+    if (!camera.parent) {
+      this.objectScene.remove(this.rayInput.getMesh());
+    } else {
+      (camera.parent as any).remove(this.rayInput.getMesh());
+    }
 
-    this.rootContainer.components.forEach(component => {
-      // Track the box for ray inputs.
-      this.rayInput.remove(component.object3D);
+    this.rootContainer.components
+      .filter(component => {
+        let event = component.getState("event");
+        return event && (event.tap || event.hover);
+      })
+      .forEach(component => {
+        // Track the box for ray inputs.
+        this.rayInput.remove(component.object3D);
 
-      // Set up a bunch of event listeners.
-      this.rayInput.off("rayover", this.onSelected);
-      this.rayInput.off("rayout", this.onDeselected);
-      this.rayInput.off("raydown", this.onSelected);
-      this.rayInput.off("rayup", this.onDeselected);
-    });
+        // Set up a bunch of event listeners.
+        this.rayInput.off("rayover", this.boundOnrayover);
+        this.rayInput.off("rayout", this.boundOnrayout);
+        this.rayInput.off("raydown", this.boundOnraydown);
+        this.rayInput.off("rayup", this.boundOnrayup);
+      });
+
+    this.disposeRayInput();
   }
 
   /**
@@ -531,18 +590,11 @@ export default class ViewerLayer extends Layer {
     setTimeout(() => {
       if (!isPresenting) {
         this.activeCamera.layers.enable(1);
-        var { height } = this.rootContainer.state;
-
-        this.activeCamera.position.set(0, height, (height * 3) / 4);
-        this.activeCamera.lookAt(new THREE.Vector3(0, 0, 0));
 
         this.unbindRayInputs();
       } else {
         display.depthNear = this.activeCamera.near;
         display.depthFar = this.activeCamera.far;
-
-        // this.activeCamera.position.set(0, height, (height * 3) / 4);
-        // this.activeCamera.lookAt(new THREE.Vector3(100, 100, 100));
 
         this.bindRayInputs();
       }
@@ -653,20 +705,20 @@ export default class ViewerLayer extends Layer {
     switch (action) {
       case "data-toggle":
         (enter || restore) &&
-          this.rootContainer.findAll(target).forEach(component => {
+          this.rootContainer.findAll(target, component).forEach(component => {
             component.data = !component.data;
           });
         break;
       case "data-tristate":
         (enter || restore) &&
-          this.rootContainer.findAll(target).forEach(component => {
+          this.rootContainer.findAll(target, component).forEach(component => {
             let number = Math.round(Math.max(Number(component.data) || 0, 0));
             component.data = (number + (enter ? 1 : 2)) % 3;
           });
         break;
       case "data-set":
         if (enter) {
-          this.rootContainer.findAll(target).forEach(component => {
+          this.rootContainer.findAll(target, component).forEach(component => {
             component.data = component.substitute(value);
           });
         } else if (restore) {

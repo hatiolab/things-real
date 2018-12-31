@@ -13,6 +13,7 @@ import { debounce } from "lodash";
 import EventEngine from "../event/event-engine";
 
 import * as THREE from "three";
+import ReferenceMap from "../util/reference-map";
 
 var invalidateDataDebouncer = debounce(function mapper(comp: Component) {
   comp.dataSpreadEngine.execute();
@@ -47,6 +48,7 @@ export default class RootContainer extends Container {
     this.disposeCSS3DScene();
     this.disposeTemplateMap();
     this.disposeIndexMap();
+    this.disposeRefProvider();
   }
 
   /**
@@ -61,6 +63,21 @@ export default class RootContainer extends Container {
    */
   get root() {
     return this;
+  }
+
+  /* reference provider */
+  private _refProvider: ReferenceMap;
+
+  get refProvider() {
+    return this._refProvider;
+  }
+
+  set refProvider(refProvider: ReferenceMap) {
+    this._refProvider = refProvider;
+  }
+
+  disposeRefProvider() {
+    delete this._refProvider;
   }
 
   /* event engine */

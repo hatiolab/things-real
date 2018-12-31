@@ -18,11 +18,13 @@ import { EventSource } from "../event/index";
 import SceneModelMigrator from "../migrator/scene-model-migrator";
 import { clonedeep, fullscreen, error } from "../util/index";
 import { compile } from "../real/index";
+import ReferenceMap from "../util/reference-map";
 
 export default class Scene extends EventSource {
   private _sceneMode: SceneMode;
   private _fitMode: FitMode;
   private _targetEl: HTMLElement;
+  private _refProvider: ReferenceMap;
   private _snapshotCommander: SnapshotCommander;
 
   private _rootContainer: RootContainer;
@@ -37,6 +39,7 @@ export default class Scene extends EventSource {
     /** root-container */
     this._sceneMode = config.mode | SceneMode.VIEW;
     this._fitMode = config.fit | FitMode.RATIO;
+    this._refProvider = config.refProvider;
 
     this.model = config.model;
 
@@ -71,19 +74,19 @@ export default class Scene extends EventSource {
   }
 
   private setTargetEl(targetEl) {
-    var targetEl;
+    var _targetEl;
 
     if (typeof targetEl == "string") {
-      targetEl = document.getElementById(targetEl);
-      if (!targetEl) throw `target element '${targetEl}' is not exist`;
+      _targetEl = document.getElementById(targetEl);
+      if (!_targetEl) throw `target element '${targetEl}' is not exist`;
 
-      if (targetEl.firstChild)
+      if (_targetEl.firstChild)
         throw `target element '${targetEl}' is not empty`;
     } else if (targetEl instanceof HTMLElement) {
-      targetEl = targetEl;
+      _targetEl = targetEl;
     }
 
-    this._targetEl = targetEl;
+    this._targetEl = _targetEl;
 
     if (this._targetEl && this._targetEl.style) {
       this._targetEl.style.cursor = "default";
@@ -99,6 +102,10 @@ export default class Scene extends EventSource {
     this._layer.target = this._targetEl;
 
     this.fit(this._fitMode);
+  }
+
+  get refProvider(): ReferenceMap {
+    return this._refProvider;
   }
 
   get target(): HTMLElement {
@@ -131,6 +138,8 @@ export default class Scene extends EventSource {
       ...SceneModelMigrator.migrate(model),
       type: "root"
     }) as RootContainer;
+
+    this._rootContainer.refProvider = this.refProvider;
 
     this._layer && this._layer.setRootContainer(this._rootContainer);
 

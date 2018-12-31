@@ -1,0 +1,210 @@
+<html>
+  <head>
+    <style>
+      #wrapper {
+        width: 100%;
+        height: 500px;
+      }
+
+      #scene {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+      }
+    </style>
+    <script src="../../things-real.js"></script>
+  </head>
+
+  <body>
+    <h1>3D Modeling Library - REAL</h1>
+    <div id="wrapper"><div id="scene"></div></div>
+
+    <p>
+      <button id="create">Create</button> <button id="dispose">Dispose</button>
+      <button id="fullscreen">Full-Screen</button>
+    </p>
+
+    <script type="module">
+      import { html, render } from "../../node_modules/lit-html/lit-html.js";
+
+      document.querySelectorAll("button").forEach(button => {
+        let id = button.id;
+        button.addEventListener("click", e => {
+          eval(id).call();
+        });
+      });
+
+      var { Scene, SceneMode, FitMode, ReferenceMap, error } = REAL;
+
+      var model_empty = {
+        width: 1,
+        height: 1,
+        components: []
+      };
+
+      var model_01 = {
+        width: 800,
+        height: 600,
+        components: [
+          {
+            type: "cube",
+            color: "green",
+            fillStyle: {
+              type: "pattern",
+              image: "https://i.imgur.com/fHyEMsl.jpg"
+            },
+            dimension: {
+              width: 100,
+              height: 100,
+              depth: 100
+            },
+            translate: {
+              x: -200,
+              y: 50,
+              z: 150
+            },
+            animation: {
+              oncreate: {
+                type: "rotation",
+                rx: 6.28,
+                ry: 6.28,
+                duration: 2000,
+                delay: 0,
+                repeat: true
+              }
+            }
+          }
+        ]
+      };
+
+      var model_02 = {
+        id: "root",
+        width: 400,
+        height: 300,
+        components: [
+          {
+            type: "cube",
+            color: "green",
+            fillStyle: {
+              type: "pattern",
+              image: "https://i.imgur.com/fHyEMsl.jpg"
+            },
+            dimension: {
+              width: 100,
+              height: 100,
+              depth: 100
+            },
+            translate: {
+              x: -200,
+              y: 50,
+              z: 150
+            },
+            animation: {
+              oncreate: {
+                type: "rotation",
+                rx: 6.28,
+                ry: 6.28,
+                duration: 2000,
+                delay: 0,
+                repeat: true
+              }
+            }
+          }
+        ]
+      };
+
+      var models = {
+        "01": model_01,
+        "02": model_02
+      };
+
+      var refs = new ReferenceMap(
+        async (boardId, resolve, reject) => {
+          try {
+            var model = models[boardId];
+            if (!model) {
+              reject(Error("There's no model with id " + boardId));
+              return;
+            }
+            var scene;
+
+            scene = await REAL.create({
+              model,
+              mode: 0,
+              refProvider: refs
+            });
+
+            // var target = document.createElement("div");
+            // document.body.appendChild(target);
+            // target.style.width = 100 + "px";
+            // target.style.height = 100 + "px";
+            // target.hidden = true;
+
+            // scene.target = target;
+
+            // s.app.baseUrl = undefined;
+
+            resolve(scene, model);
+          } catch (e) {
+            error(e);
+            reject(e);
+          }
+        },
+        async (boardId, ref) => {
+          ref.dispose();
+        }
+      );
+
+      var scene;
+
+      export function create() {
+        scene = new Scene({
+          targetEl: "scene",
+          mode: SceneMode.VIEW,
+          model: {
+            width: 700,
+            height: 300,
+            version: 2,
+            components: [
+              {
+                type: "sky",
+                dimension: {},
+                rotate: {},
+                fillStyle: {
+                  image: "360-image.jpg"
+                }
+              },
+              {
+                type: "global-ref",
+                dimension: {
+                  width: 100,
+                  height: 100
+                },
+                translate: {
+                  x: 0,
+                  y: 0,
+                  z: -100
+                },
+                ref: "01"
+              }
+            ]
+          },
+          fit: FitMode.RATIO,
+          refProvider: refs
+        });
+      }
+
+      function dispose() {
+        scene && scene.dispose();
+        stop();
+        scene = undefined;
+      }
+
+      function fullscreen() {
+        scene && scene.fullscreen(FitMode.RATIO);
+      }
+
+      create();
+    </script>
+  </body>
+</html>

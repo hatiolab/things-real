@@ -122,15 +122,23 @@ export default class EditorControls extends THREE.EventDispatcher {
   }
 
   zoom(delta) {
-    var distance = this.object.position.distanceTo(this.center);
+    if (this.object.isOrthographicCamera) {
+      let { x: dx, y: dy, z: dz } = delta;
+      let zoom = this.object.zoom - (this.object.zoom * (dx + dy + dz)) / 10;
 
-    delta.multiplyScalar(distance * this.zoomSpeed);
+      this.object.zoom = Math.max(0.5, zoom);
+      this.object.updateProjectionMatrix();
+    } else {
+      var distance = this.object.position.distanceTo(this.center);
 
-    if (delta.length() > distance) return;
+      delta.multiplyScalar(distance * this.zoomSpeed);
 
-    delta.applyMatrix3(normalMatrix.getNormalMatrix(this.object.matrix));
+      if (delta.length() > distance) return;
 
-    this.object.position.add(delta);
+      delta.applyMatrix3(normalMatrix.getNormalMatrix(this.object.matrix));
+
+      this.object.position.add(delta);
+    }
 
     this.dispatchEvent(changeEvent);
   }
@@ -156,7 +164,11 @@ export default class EditorControls extends THREE.EventDispatcher {
     if (this.enabled === false) return;
 
     if (event.button === 0) {
-      this.state = STATE.ROTATE;
+      if (this.object.isOrthographicCamera) {
+        this.state = STATE.PAN;
+      } else {
+        this.state = STATE.ROTATE;
+      }
     } else if (event.button === 1) {
       this.state = STATE.ZOOM;
     } else if (event.button === 2) {

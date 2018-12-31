@@ -1,3 +1,5 @@
+import ReferenceMap from "./util/reference-map";
+
 /*
  * Copyright © HatioLab Inc. All rights reserved.
  */
@@ -37,6 +39,7 @@ export interface TextStyle {
   fontFamily?: string;
   fontSize?: number;
   lineHeight?: number;
+  fontColor?: string;
 }
 
 export interface LineStyle {
@@ -150,4 +153,5 @@ export interface SceneConfig {
   mode?: SceneMode;
   model: SceneModel;
   fit?: FitMode;
+  refProvider?: ReferenceMap;
 }
