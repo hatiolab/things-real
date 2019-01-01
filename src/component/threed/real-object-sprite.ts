@@ -154,5 +154,8 @@ export default abstract class RealObjectSprite extends THREE.Sprite
 
   abstract buildMaterial(): THREE.Material;
 
-  clear() {}
+  clear() {
+    this.material.dispose();
+    (this as any).geometry.dispose();
+  }
 }

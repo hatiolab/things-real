@@ -82,6 +82,15 @@ export default class Component extends ModelAndState
     this.disposeObject3D();
   }
 
+  /* ready 상태가 됨을 하위 컴포넌트에 전파한다. */
+  propagateReadyState() {
+    this.ready();
+    this.isContainer &&
+      (this as any).components.forEach(component => {
+        component.propagateReadyState();
+      });
+  }
+
   /* LifeCycleCallback */
   created() {}
 

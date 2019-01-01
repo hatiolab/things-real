@@ -80,6 +80,17 @@ export default class RootContainer extends Container {
     delete this._refProvider;
   }
 
+  /* ready */
+  private _isReady = false;
+
+  get isReady() {
+    return this._isReady;
+  }
+
+  ready() {
+    this._isReady = true;
+  }
+
   /* event engine */
 
   /**

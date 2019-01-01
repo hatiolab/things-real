@@ -4,10 +4,23 @@
 
 import Component from "./component";
 import RealObjectSprite from "./threed/real-object-sprite";
-import { textTexture } from "./text/text-texture";
+import { textTexture, drawTextTexture } from "./text/text-texture";
 import * as THREE from "three";
 
 class ObjectButton extends RealObjectSprite {
+  needTextureUpdate() {
+    var texture = (this.material as THREE.SpriteMaterial).map;
+
+    var { x: width, y: height } = this.component.state.scale;
+    var { textStyle } = this.component.state;
+    var text = this.component.text;
+
+    var canvas = texture.image;
+    drawTextTexture(canvas, text, width, height, textStyle);
+
+    texture.needsUpdate = true;
+  }
+
   buildMaterial() {
     var { x: width, y: height } = this.component.state.scale;
     var { textStyle } = this.component.state;
@@ -25,7 +38,7 @@ class ObjectButton extends RealObjectSprite {
   }
 }
 
-export default class GlobalRef extends Component {
+export default class Button extends Component {
   static get type() {
     return "button";
   }
@@ -45,10 +58,20 @@ export default class GlobalRef extends Component {
     return new ObjectButton(this);
   }
 
-  onchangeref(after, before) {}
+  ready() {
+    super.ready();
+
+    setInterval(() => {
+      this.text = String(Math.random());
+    });
+  }
+
+  onchangetextOptions(after, before) {
+    (this.object3D as ObjectButton).needTextureUpdate();
+  }
 }
 
-Component.register(GlobalRef.type, GlobalRef);
+Component.register(Button.type, Button);
 
 // var camera, scene, renderer;
 // var cameraOrtho, sceneOrtho;

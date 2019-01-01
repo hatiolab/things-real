@@ -73,7 +73,7 @@ export default class Container extends Component {
 
     if (this.started) component.start();
 
-    // this.root && this.root.isReady && component.ready()
+    this.root && this.root.isReady && component.propagateReadyState();
   }
 
   insertComponentAt(component, index) {

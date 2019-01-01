@@ -143,9 +143,13 @@ export default class Scene extends EventSource {
 
     this._layer && this._layer.setRootContainer(this._rootContainer);
 
-    if (this.mode == SceneMode.VIEW) {
-      this._rootContainer.start();
-    }
+    setTimeout(() => {
+      this._rootContainer.propagateReadyState();
+
+      if (this.mode == SceneMode.VIEW) {
+        this._rootContainer.start();
+      }
+    }, 100);
   }
 
   // for things-scene compatible

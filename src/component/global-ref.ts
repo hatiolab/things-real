@@ -4,20 +4,16 @@
 
 import Component from "./component";
 import RealObjectDomElement from "./threed/real-object-dom-element";
+
 import { error } from "../util/logger";
 
 import * as THREE from "three";
 
 class RealObjectRef extends RealObjectDomElement {
-  private _texture;
-
   needTextureUpdate() {
-    if (this._texture) {
-      // CONFIRM-ME 아래 needsUpdate 속성 수정만으로 다시 그려지는지.
-      this._texture.needsUpdate = true;
-    } else {
-      this.update();
-    }
+    var texture = (this.material as THREE.MeshBasicMaterial).map;
+
+    texture.needsUpdate = true;
   }
 
   buildMaterial() {
@@ -92,43 +88,32 @@ export default class GlobalRef extends Component {
     return new RealObjectRef(this);
   }
 
+  ready() {
+    try {
+      this.buildRef();
+    } catch (e) {
+      error(e);
+    }
+  }
+
   private _ref;
-  private _waiting;
 
-  get ref() {
-    if (this._ref || this._waiting) return this._ref;
-
+  async buildRef() {
     var provider = this.root.refProvider;
     var refname = this.getState("ref");
 
     if (provider && refname) {
-      this._waiting = true;
-      provider.get(refname, true).then(
-        ref => {
-          this._ref = ref;
-          this._ref._layer.on("redraw", this.onredraw_ref, this);
+      let scene: any = await provider.get(refname, true);
+      scene.target = this.domElement;
+      scene._layer.on("redraw", this.onredraw_ref, this);
 
-          this._ref.target = this.domElement;
-
-          this.object3D.update();
-          delete this._waiting;
-
-          // TODO remove below, 위의 redraw 이벤트를 활용하거나, VR 렌더링 문제를 수정.
-          setInterval(() => {
-            this.object3D.update();
-            this.invalidate();
-          }, 1000);
-        },
-        error => {
-          delete this._waiting;
-        }
-      );
-    } else {
-      setTimeout(() => {
-        this.object3D.update();
-      }, 100);
+      this._ref = scene;
     }
 
+    this.object3D.update();
+  }
+
+  get ref() {
     return this._ref;
   }
 
@@ -147,7 +132,7 @@ export default class GlobalRef extends Component {
 
   onchangeref(after, before) {
     this._releaseRef();
-    this.object3D.update();
+    if (after) this.buildRef();
   }
 
   /* isDomComponent 가 true인 경우는 cssObject3D getter를 구현해야 한다. */

@@ -35,7 +35,7 @@ function nextPowerOf2(n) {
   return 1 << count;
 }
 
-function drawTextTexture(
+export function drawTextTexture(
   canvas: HTMLCanvasElement,
   text: string,
   width: number,
@@ -86,6 +86,7 @@ export function textTexture(
   drawTextTexture(canvas, text, width, height, textStyle);
 
   var texture = new THREE.CanvasTexture(canvas);
+
   texture.wrapS = THREE.RepeatWrapping;
   texture.wrapT = THREE.RepeatWrapping;
   texture.offset.set(0, 1 - height / poweredHeight);

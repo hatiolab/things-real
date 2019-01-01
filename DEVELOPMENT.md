@@ -69,7 +69,13 @@ CSS3DRenderer용 CSS3DScene을 내장한다.
 
 - invalidate : Scene 화면을 갱신하도록 'render' 이벤트를 발생시킨다.
 
-### component
+### component lifecycle
+
+- created : component가 최최 생성되었다. 아직까지는 부모/자식 관계가 형성되지 않았다.
+- added : 부모 컴포넌트에 추가되었다.
+- ready : 최상위 부모 컴포넌트로부터 자식 컴포넌트들까지 구성이 완료되었다.
+- removed : 부모 컴포넌트로부터 분리되었다.
+- disposed : 완전히 파괴되었다.
 
 ## layer
 

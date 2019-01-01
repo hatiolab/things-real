@@ -14,7 +14,7 @@
  */
 
 import { base64 } from "./util";
-import EventEmitter from "eventemitter3";
+import * as EventEmitter from "eventemitter3";
 
 import * as THREE from "three";
 
@@ -43,7 +43,19 @@ const GRADIENT_IMAGE = base64(
  *     rayout(mesh): This mesh was unselected.
  */
 export default class RayRenderer extends EventEmitter {
-  constructor(camera, opt_params) {
+  private camera;
+  private meshes;
+  private selected;
+  private raycaster;
+  private position;
+  private orientation;
+  private root;
+  private reticle;
+  private ray;
+  private reticleDistance;
+  private isActive;
+
+  constructor(camera, opt_params?) {
     super();
 
     this.camera = camera;

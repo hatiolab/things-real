@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-import EventEmitter from "eventemitter3";
+import * as EventEmitter from "eventemitter3";
 import InteractionModes from "./ray-interaction-modes";
 import { isMobile } from "./util";
 
@@ -35,6 +35,19 @@ const DRAG_DISTANCE_PX = 10;
  *    pointermove(2D position): The pointer is moved (mouse or touch).
  */
 export default class RayController extends EventEmitter {
+  private pointer;
+  private lastPointer;
+  private pointerNdc;
+  private dragDistance;
+  private isDragging;
+  private isTouchActive;
+  private isSyntheticMouseEvent;
+  private isLeftHanded;
+  private gamepad;
+  private vrDisplay;
+  private wasGamepadPressed;
+  private size;
+
   constructor(opt_el) {
     super();
     let el = opt_el || window;

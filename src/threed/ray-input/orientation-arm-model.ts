@@ -34,6 +34,18 @@ const MIN_ANGULAR_SPEED = 0.61; // 35 degrees per second (in radians).
  * Get the model's pose using getPose().
  */
 export default class OrientationArmModel {
+  private isLeftHanded;
+  private controllerQ;
+  private lastControllerQ;
+  private headQ;
+  private headPos;
+  private elbowPos;
+  private wristPos;
+  private time;
+  private lastTime;
+  private rootQ;
+  private pose;
+
   constructor() {
     this.isLeftHanded = false;
 

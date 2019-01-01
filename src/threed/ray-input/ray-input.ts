@@ -14,7 +14,7 @@
  */
 
 import OrientationArmModel from "./orientation-arm-model";
-import EventEmitter from "eventemitter3";
+import * as EventEmitter from "eventemitter3";
 import RayRenderer from "./ray-renderer";
 import RayController from "./ray-controller";
 import InteractionModes from "./ray-interaction-modes";
@@ -25,6 +25,13 @@ import * as THREE from "three";
  * API wrapper for the input library.
  */
 export default class RayInput extends EventEmitter {
+  private camera;
+  private renderer;
+  private controller;
+  private armModel;
+  private pointerNdc;
+  private handlers;
+
   constructor(camera, opt_el) {
     super();
 
@@ -53,7 +60,7 @@ export default class RayInput extends EventEmitter {
     this.handlers = {};
   }
 
-  add(object, handlers) {
+  add(object, handlers?) {
     this.renderer.add(object, handlers);
     this.handlers[object.id] = handlers;
   }
