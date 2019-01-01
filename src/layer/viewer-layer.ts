@@ -338,7 +338,10 @@ export default class ViewerLayer extends Layer {
   }
 
   protected disposeGLRenderer() {
-    this._glRenderer && this._glRenderer.dispose();
+    if (this._glRenderer) {
+      this._glRenderer.setAnimationLoop(undefined);
+      this._glRenderer.dispose();
+    }
 
     if (this._vrbutton) {
       document.body.removeChild(this._vrbutton);
