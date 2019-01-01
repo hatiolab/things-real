@@ -11,7 +11,6 @@ import { SceneMode, ActionModel } from "../types";
 import { PIXEL_RATIO } from "../component/html/elements";
 
 import * as THREE from "three";
-// window["THREE"] = THREE; // for ray-input
 
 import { WEBVR } from "../vr/WebVR";
 import RayInput from "../threed/ray-input/ray-input"; // to prevent uglify-js compile error
@@ -581,24 +580,26 @@ export default class ViewerLayer extends Layer {
    * @param event
    */
   onvrdisplaypresentchange(event: VRDisplayEvent) {
+    if (!this._vrbutton) return;
+
     var { display } = event;
     var isPresenting = !!display.isPresenting;
 
     var vr = this.glRenderer.vr as any;
-    vr.enabled = isPresenting;
+    vr && (vr.enabled = isPresenting);
 
-    setTimeout(() => {
-      if (!isPresenting) {
-        this.activeCamera.layers.enable(1);
+    if (!isPresenting) {
+      // this.activeCamera.layers.enable(1); // CLARIFY-ME
 
-        this.unbindRayInputs();
-      } else {
-        display.depthNear = this.activeCamera.near;
-        display.depthFar = this.activeCamera.far;
+      this.rayInput && this.unbindRayInputs();
+    } else {
+      // this.activeCamera.layers.enable(1); // CLARIFY-ME
 
-        this.bindRayInputs();
-      }
-    }, 100);
+      display.depthNear = this.activeCamera.near;
+      display.depthFar = this.activeCamera.far;
+
+      this.bindRayInputs();
+    }
 
     this.invalidate();
   }

@@ -43,7 +43,7 @@ export default class Scene extends EventSource {
 
     this.model = config.model;
 
-    this.setTargetEl(config.targetEl);
+    config.targetEl && this.setTargetEl(config.targetEl);
 
     /** commander */
     this._snapshotCommander = new SnapshotCommander({
