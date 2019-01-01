@@ -14,7 +14,10 @@ import * as THREE from "three";
 
 import { WEBVR } from "../vr/WebVR";
 import RayInput from "../threed/ray-input/ray-input"; // to prevent uglify-js compile error
-import { callFrameAnimation } from "../util/custom-animation-frame";
+import {
+  callFrameAnimation,
+  requestCustomAnimationFrame
+} from "../util/custom-animation-frame";
 
 /**
  * Real Scene Renderer for Viewer
@@ -314,7 +317,22 @@ export default class ViewerLayer extends Layer {
       document.body.appendChild(this._vrbutton);
     }
 
-    renderer.setAnimationLoop(this.render.bind(this));
+    // TODO Main Scene과 보조 Scene을 구별할 수 있는 방법이 필요하다.
+    // Main Scene인 경우만 setAnimationLoop를 설정한다.
+    if (this._vrbutton) {
+      renderer.setAnimationLoop(() => {
+        callFrameAnimation();
+
+        this.render();
+      });
+    } else {
+      let _ = () => {
+        this.render();
+        requestCustomAnimationFrame(_);
+      };
+
+      !this.disposed && requestCustomAnimationFrame(_);
+    }
 
     return renderer;
   }
@@ -380,8 +398,6 @@ export default class ViewerLayer extends Layer {
   private _draw_reserved = false;
 
   protected render(context?) {
-    callFrameAnimation();
-
     var vr = this.glRenderer.vr as any;
 
     if (vr.enabled || this._draw_reserved) {
@@ -579,21 +595,24 @@ export default class ViewerLayer extends Layer {
    *
    * @param event
    */
-  onvrdisplaypresentchange(event: VRDisplayEvent) {
-    if (!this._vrbutton) return;
 
+  private _boundRender;
+
+  onvrdisplaypresentchange(event: VRDisplayEvent) {
     var { display } = event;
-    var isPresenting = !!display.isPresenting;
+
+    // TODO Main Scene과 보조 Scene을 구별할 수 있는 방법이 필요하다.
+    var isPresenting = !!display.isPresenting && this._vrbutton;
 
     var vr = this.glRenderer.vr as any;
     vr && (vr.enabled = isPresenting);
 
     if (!isPresenting) {
-      // this.activeCamera.layers.enable(1); // CLARIFY-ME
+      this.activeCamera.layers.enable(1); // CLARIFY-ME
 
       this.rayInput && this.unbindRayInputs();
     } else {
-      // this.activeCamera.layers.enable(1); // CLARIFY-ME
+      this.activeCamera.layers.enable(1); // CLARIFY-ME
 
       display.depthNear = this.activeCamera.near;
       display.depthFar = this.activeCamera.far;

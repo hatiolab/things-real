@@ -28,7 +28,11 @@ export default abstract class Layer extends EventSource {
   /**
    * diposer
    */
+  protected disposed = false;
+
   dispose() {
+    this.disposed = true;
+
     this.disposeCameras();
     this.disposeRootContainer();
     this.disposeTarget();
