@@ -106,7 +106,7 @@ export function textBounds(
     fontFamily = "Serif",
     fontSize = 10,
     lineHeight = "normal"
-  } = textStyle;
+  } = textStyle || {};
 
   if (text === undefined || text == "") {
     text = " ";

@@ -43,8 +43,10 @@
       };
 
       var model_01 = {
+        version: 2,
         width: 800,
         height: 600,
+        fillStyle: "orange",
         components: [
           {
             type: "cube",
@@ -72,6 +74,12 @@
                 delay: 0,
                 repeat: true
               }
+            },
+            event: {
+              tap: {
+                action: "goto",
+                target: "02"
+              }
             }
           }
         ]
@@ -79,8 +87,10 @@
 
       var model_02 = {
         id: "root",
-        width: 400,
-        height: 300,
+        version: 2,
+        width: 800,
+        height: 600,
+        fillStyle: "red",
         components: [
           {
             type: "cube",
@@ -101,12 +111,19 @@
             },
             animation: {
               oncreate: {
-                type: "rotation",
-                rx: 6.28,
-                ry: 6.28,
+                type: "heartbeat",
+                sx: 1.3,
+                sy: 1.3,
+                sz: 1.3,
                 duration: 2000,
                 delay: 0,
                 repeat: true
+              }
+            },
+            event: {
+              tap: {
+                action: "goto",
+                target: "01"
               }
             }
           }
@@ -169,15 +186,21 @@
               {
                 type: "global-ref",
                 dimension: {
-                  width: 100,
-                  height: 100
+                  width: 400,
+                  height: 300
                 },
                 translate: {
                   x: 0,
                   y: 100,
                   z: -100
                 },
-                ref: "01"
+                ref: "02",
+                event: {
+                  tap: {
+                    action: "goto",
+                    target: "01"
+                  }
+                }
               }
             ]
           },

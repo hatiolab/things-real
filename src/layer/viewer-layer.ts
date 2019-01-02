@@ -5,40 +5,18 @@
 import Scene from "../scene/scene";
 import Layer from "./layer";
 import EditorControls from "../threed/controls/editor-controls";
-import { CSS3DRenderer } from "../threed/renderers/css-3d-renderer";
-import RealObjectScene from "../component/threed/real-object-scene";
-import { SceneMode, ActionModel } from "../types";
+import { ActionModel } from "../types";
 import { PIXEL_RATIO } from "../component/html/elements";
 
-import * as THREE from "three";
+import { error } from "../util/logger";
 
+import * as THREE from "three";
 import { WEBVR } from "../vr/WebVR";
-import RayInput from "../threed/ray-input/ray-input"; // to prevent uglify-js compile error
-import {
-  callFrameAnimation,
-  requestCustomAnimationFrame
-} from "../util/custom-animation-frame";
 
 /**
  * Real Scene Renderer for Viewer
  */
 export default class ViewerLayer extends Layer {
-  private boundOnclick;
-  private boundOnmousedown;
-  private boundOnmouseup;
-  private boundOnmousemove;
-  // private boundOnmouseenter
-  // private boundOnmouseleave
-
-  private boundOnrayover;
-  private boundOnrayout;
-  private boundOnraydown;
-  private boundOnrayup;
-
-  private boundOnvrdisplaypresentchange;
-
-  private enteredComponent;
-
   /**
    * constructor
    * @param owner Real Scene
@@ -53,114 +31,17 @@ export default class ViewerLayer extends Layer {
   dispose() {
     super.dispose();
 
-    this.element.removeEventListener("click", this.boundOnclick);
-    this.element.removeEventListener("mousedown", this.boundOnmousedown);
-    this.element.removeEventListener("mouseup", this.boundOnmouseup);
-    this.element.removeEventListener("mousemove", this.boundOnmousemove);
-
-    window.removeEventListener(
-      "vrdisplaypresentchange",
-      this.boundOnvrdisplaypresentchange
-    );
-
     this.disposeEditorControls();
-
-    this.disposeObjectScene();
-    this.disposeGLRenderer();
-    this.disposeCSS3DRenderer();
-    this.disposeLights();
-    this.disposeRaycaster();
-
-    this.disposeCanvas();
   }
 
   /**
    * Lifecycle Target Element에 attach된 후, render() 전에 호출됨
    */
   ready() {
+    super.ready();
+
     // editorControls을 만들기 위해 강제로 getter를 access 함.
     this.editorControls;
-
-    this.boundOnclick = this.onclick.bind(this);
-    this.boundOnmousedown = this.onmousedown.bind(this);
-    this.boundOnmouseup = this.onmouseup.bind(this);
-    this.boundOnmousemove = this.onmousemove.bind(this);
-    this.boundOnvrdisplaypresentchange = this.onvrdisplaypresentchange.bind(
-      this
-    );
-
-    this.boundOnrayover = this.onrayover.bind(this);
-    this.boundOnrayout = this.onrayout.bind(this);
-    this.boundOnraydown = this.onraydown.bind(this);
-    this.boundOnrayup = this.onrayup.bind(this);
-
-    this.element.addEventListener("click", this.boundOnclick);
-    this.element.addEventListener("mousedown", this.boundOnmousedown);
-    this.element.addEventListener("mouseup", this.boundOnmouseup);
-    this.element.addEventListener("mousemove", this.boundOnmousemove);
-
-    window.addEventListener(
-      "vrdisplaypresentchange",
-      this.boundOnvrdisplaypresentchange,
-      false
-    );
-  }
-
-  /* ray-input */
-  private _rayInput: RayInput;
-
-  get rayInput() {
-    return this._rayInput;
-  }
-
-  set rayInput(rayInput) {
-    this.disposeRayInput();
-    this._rayInput = rayInput;
-  }
-
-  createRayInput() {
-    var rayInput = new RayInput(this.activeCamera, this.glRenderer.domElement);
-    rayInput.setSize(this.glRenderer.getSize());
-
-    return rayInput;
-  }
-
-  disposeRayInput() {
-    if (this._rayInput) {
-    }
-    delete this._rayInput;
-  }
-
-  /* object-scene */
-  private _objectScene: RealObjectScene;
-
-  /**
-   * getter
-   */
-  get objectScene(): RealObjectScene {
-    if (!this._objectScene) {
-      this._objectScene = this.createObjectScene();
-    }
-
-    return this._objectScene;
-  }
-
-  /**
-   * createObjectScene
-   */
-  protected createObjectScene(): RealObjectScene {
-    var objectScene = this.rootContainer.object3D as RealObjectScene;
-    objectScene && objectScene.add(...this.lights);
-
-    return objectScene;
-  }
-
-  /**
-   * objectScene disposer
-   */
-  protected disposeObjectScene() {
-    // 폐기된 objectScene을 지워서 다음 objectScene getter 호출시 새로 생성되도록 한다.
-    delete this._objectScene;
   }
 
   /**
@@ -169,53 +50,10 @@ export default class ViewerLayer extends Layer {
    * lights 등은 다른 root-container에서 재활용될 수 있다.
    */
   disposeRootContainer() {
-    this.objectScene.remove(...this.lights);
+    super.disposeRootContainer();
 
     this.disposeObjectScene();
     super.disposeRootContainer();
-  }
-
-  /**
-   * ViewRenderer에서는 CSS3DRenderer와 GLRendering을 위한 canvas를 오버레이로 만든다.
-   * Warn: this.element는 아직 만들어지지 않은 상태에 buildOverlays가 호출됨.
-   * @param into
-   */
-  buildOverlays(into) {
-    into.appendChild(this.css3DRenderer.domElement);
-    into.appendChild(this.canvas);
-  }
-
-  /* canvas for GLRenderer */
-  private _canvas: HTMLCanvasElement;
-
-  /**
-   * canvas getter
-   */
-  get canvas() {
-    if (!this._canvas) {
-      this._canvas = this.createCanvas();
-    }
-    return this._canvas;
-  }
-
-  /**
-   * canvas creator
-   */
-  createCanvas() {
-    var canvas = document.createElement("canvas");
-    canvas.style.position = "absolute";
-    canvas.style.top = "0";
-    canvas.style.background = "transparent";
-    canvas.style.pointerEvents = "none";
-
-    return canvas;
-  }
-
-  /**
-   * canvas disposer
-   */
-  disposeCanvas() {
-    this._canvas && this.element.removeChild(this._canvas);
   }
 
   /* editor-controls */
@@ -253,145 +91,16 @@ export default class ViewerLayer extends Layer {
     }
   }
 
-  /* raycaster */
-  private _raycaster: THREE.Raycaster;
-
-  /**
-   * raycaster getter
-   */
-  get raycaster() {
-    if (!this._raycaster) {
-      this._raycaster = this.createRaycaster();
-    }
-
-    return this._raycaster;
-  }
-
-  /**
-   * create raycaster
-   */
-  protected createRaycaster() {
-    return new THREE.Raycaster();
-  }
-
-  /**
-   * raycaster disposer
-   */
-  protected disposeRaycaster() {
-    // Nothing to do
-  }
-
-  /* gl-renderer */
-  private _glRenderer: THREE.WebGLRenderer;
-  private _vrbutton;
-
-  /**
-   * gl-renderer getter
-   */
-  get glRenderer() {
-    if (!this._glRenderer && this.canvas) {
-      this._glRenderer = this.createGLRenderer();
-    }
-
-    return this._glRenderer;
-  }
-
-  protected createGLRenderer() {
-    var renderer: THREE.WebGLRenderer = new THREE.WebGLRenderer({
-      canvas: this.canvas,
-      preserveDrawingBuffer: true,
-      precision: "highp",
-      antialias: true,
-      alpha: true
-    });
-
-    renderer.setClearColor(0xffffff, 0);
-    // Add support for retina displays
-    renderer.setPixelRatio(PIXEL_RATIO);
-    // Specify the size of the canvas
-    renderer.setSize(1, 1);
-
-    this._vrbutton = WEBVR.createButton(renderer);
-
-    if (this._vrbutton) {
-      document.body.appendChild(this._vrbutton);
-    }
-
-    // TODO Main Scene과 보조 Scene을 구별할 수 있는 방법이 필요하다.
-    // Main Scene인 경우만 setAnimationLoop를 설정한다.
-    if (this._vrbutton) {
-      renderer.setAnimationLoop(() => {
-        callFrameAnimation();
-
-        this.render();
-      });
-    } else {
-      let _ = () => {
-        this.render();
-        requestCustomAnimationFrame(_);
-      };
-
-      !this.disposed && requestCustomAnimationFrame(_);
-    }
-
-    return renderer;
-  }
-
-  protected disposeGLRenderer() {
-    if (this._glRenderer) {
-      this._glRenderer.setAnimationLoop(undefined);
-      this._glRenderer.dispose();
-    }
-
-    if (this._vrbutton) {
-      document.body.removeChild(this._vrbutton);
-      delete this._vrbutton;
-    }
-  }
-
-  /* css3d-renderer */
-  private _css3DRenderer; //: CSS3DRenderer
-
-  /**
-   * css3d-renderer getter
-   */
-  get css3DRenderer() {
-    if (!this._css3DRenderer) {
-      this._css3DRenderer = this.createCSS3DRenderer();
-    }
-
-    return this._css3DRenderer;
-  }
-
-  protected createCSS3DRenderer() {
-    var renderer = new CSS3DRenderer();
-    var div = renderer.domElement;
-    div.style.position = "absolute";
-    div.style.top = "0";
-
-    if (this.ownerScene.mode === SceneMode.EDIT) {
-      div.style.pointerEvents = "none";
-    } else {
-      // disableAllUserEvents(div)
-    }
-
-    return renderer;
-  }
-
-  protected disposeCSS3DRenderer() {
-    // Nothing to do
-  }
-
   /**
    *
    * @param force
    */
-  prerender(force?) {
-    this.rootContainer.components.forEach(component => {
-      let object = component.object3D;
-      !object["isRealObject"] && object["prerender"](force);
-    });
-  }
+  // prerender(force?) {
+  //   this.rootContainer.components.forEach(component => {
+  //     let object = component.object3D;
+  //     !object["isRealObject"] && object["prerender"](force);
+  //   });
+  // }
 
   /**
    * render
@@ -401,6 +110,10 @@ export default class ViewerLayer extends Layer {
   private _draw_reserved = false;
 
   protected render(context?) {
+    if (this.disposed) {
+      return;
+    }
+
     var vr = this.glRenderer.vr as any;
 
     if (vr.enabled || this._draw_reserved) {
@@ -437,57 +150,7 @@ export default class ViewerLayer extends Layer {
   onresize(width, height) {
     super.onresize(width, height);
 
-    this.css3DRenderer.setSize(width, height);
-    this.glRenderer.setSize(width, height, true);
-
     this.editorControls.setObject(this.activeCamera);
-  }
-
-  /**
-   * mouse/touch pointer를 받아서 raycaster로 Object3D를 찾고,
-   * Object3D를 생성한 Component를 리턴한다.
-   * @param x
-   * @param y
-   */
-  capture(coords) {
-    var { width, height } = this.canvas;
-
-    this.raycaster.setFromCamera(coords, this.activeCamera);
-
-    // TUNE-ME 자손들까지의 모든 intersects를 다 포함하는 것이면, capturable component에 해당하는 오브젝트라는 것을 보장할 수 없음.
-    // 또한, component에 매핑된 오브젝트라는 것도 보장할 수 없음.
-    var capturables = this.rootContainer.capturables();
-    var intersects = this.raycaster.intersectObjects(
-      capturables.map(component => {
-        return component.object3D;
-      }),
-      true
-    );
-
-    for (let i = 0; i < intersects.length; i++) {
-      let object: THREE.Object3D = intersects[i].object;
-
-      while (!object["isRealObject"] && object !== this.objectScene) {
-        object = object.parent;
-      }
-
-      let component;
-      if (object["isRealObject"]) {
-        component = object["component"];
-      }
-
-      if (component) {
-        /* [BEGIN] GROUP을 위한 테스트 로직임(제거되어야 함.) */
-        while (component.parent && component.parent !== this.rootContainer) {
-          component = component.parent;
-        }
-        /* [END] GROUP을 위한 테스트 로직임 */
-
-        return component;
-      }
-    }
-
-    return this.rootContainer;
   }
 
   _getPosition(event): { x; y } {
@@ -539,93 +202,6 @@ export default class ViewerLayer extends Layer {
     this._doEventAction(tapEvtModel, component, true);
   }
 
-  bindRayInputs() {
-    this.rayInput = this.createRayInput();
-
-    var camera: any = this.activeCamera;
-
-    if (!camera.parent) {
-      this.objectScene.add(this.rayInput.getMesh());
-    } else {
-      (camera.parent as any).add(this.rayInput.getMesh());
-    }
-
-    this.rootContainer.components
-      .filter(component => {
-        let event = component.getState("event");
-        return event && (event.tap || event.hover);
-      })
-      .forEach(component => {
-        // Track the box for ray inputs.
-        this.rayInput.add(component.object3D);
-
-        // Set up a bunch of event listeners.
-        this.rayInput.on("rayover", this.boundOnrayover);
-        this.rayInput.on("rayout", this.boundOnrayout);
-        this.rayInput.on("raydown", this.boundOnraydown);
-        this.rayInput.on("rayup", this.boundOnrayup);
-      });
-  }
-
-  unbindRayInputs() {
-    var camera: any = this.activeCamera;
-    if (!camera.parent) {
-      this.objectScene.remove(this.rayInput.getMesh());
-    } else {
-      (camera.parent as any).remove(this.rayInput.getMesh());
-    }
-
-    this.rootContainer.components
-      .filter(component => {
-        let event = component.getState("event");
-        return event && (event.tap || event.hover);
-      })
-      .forEach(component => {
-        // Track the box for ray inputs.
-        this.rayInput.remove(component.object3D);
-
-        // Set up a bunch of event listeners.
-        this.rayInput.off("rayover", this.boundOnrayover);
-        this.rayInput.off("rayout", this.boundOnrayout);
-        this.rayInput.off("raydown", this.boundOnraydown);
-        this.rayInput.off("rayup", this.boundOnrayup);
-      });
-
-    this.disposeRayInput();
-  }
-
-  /**
-   *
-   * @param event
-   */
-
-  private _boundRender;
-
-  onvrdisplaypresentchange(event: VRDisplayEvent) {
-    var { display } = event;
-
-    // TODO Main Scene과 보조 Scene을 구별할 수 있는 방법이 필요하다.
-    var isPresenting = !!display.isPresenting && this._vrbutton;
-
-    var vr = this.glRenderer.vr as any;
-    vr && (vr.enabled = isPresenting);
-
-    if (!isPresenting) {
-      this.activeCamera.layers.enable(1); // CLARIFY-ME
-
-      this.rayInput && this.unbindRayInputs();
-    } else {
-      this.activeCamera.layers.enable(1); // CLARIFY-ME
-
-      display.depthNear = this.activeCamera.near;
-      display.depthFar = this.activeCamera.far;
-
-      this.bindRayInputs();
-    }
-
-    this.invalidate();
-  }
-
   /**
    *
    * @param event
@@ -664,6 +240,8 @@ export default class ViewerLayer extends Layer {
    * @param event
    */
   onmouseup(event) {}
+
+  private enteredComponent;
 
   onmousemove(event) {
     let coords = this._getPosition(
@@ -755,9 +333,55 @@ export default class ViewerLayer extends Layer {
         //     ? InfoWindow.show(component, target, true /* auto close - no close button */)
         //     : restore ? InfoWindow.hide(component, target) : ;
         break;
+      case "goto":
+        this._gotoScene(target);
+        break;
       default:
         // things-real 라이브러리 외부에서 처리하도록 한다.
         this.ownerScene.trigger(action, target, component.substitute(value));
+    }
+  }
+
+  async _gotoScene(boardName) {
+    if (!boardName) return;
+
+    try {
+      var scene: any = await this.rootContainer.refProvider.get(
+        boardName,
+        true
+      );
+
+      var old_scene = this.ownerScene;
+
+      if (scene.target === this.target) {
+        scene.release();
+        return;
+      }
+
+      // this.forward.forEach(function(scene) {
+      //   scene.release();
+      // });
+      // this.forward = [];
+
+      if (old_scene) {
+        // this._unbindAllEvents(old_scene._container, this);
+        old_scene.target = null;
+        // this.backward.push(old_scene);
+      }
+      scene.target = this.target;
+      scene._layer.glRenderer;
+
+      // this._bindAllEvents(this.scene._container, this);
+
+      /* 이 컴포넌트의 폭이 값을 가지고 있으면 - 화면상에 자리를 잡고 보여지고 있음을 의미한다.
+       * 이 때는 정상적으로 그려주고,
+       * 그렇지 않으면, 다음 Resize Handling시에 처리하도록 한다.
+       */
+      // if (this.offsetWidth) this._fit();
+
+      // this._showHideNavButton();
+    } catch (e) {
+      error(e);
     }
   }
 }

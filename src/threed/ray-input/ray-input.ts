@@ -209,8 +209,6 @@ export default class RayInput extends EventEmitter {
   }
 
   onRayDown_(e) {
-    //console.log('onRayDown_');
-
     // Force the renderer to raycast.
     this.renderer.update();
     let mesh = this.renderer.getSelectedMesh();
@@ -220,7 +218,6 @@ export default class RayInput extends EventEmitter {
   }
 
   onRayUp_(e) {
-    //console.log('onRayUp_');
     let mesh = this.renderer.getSelectedMesh();
     this.emit("rayup", mesh);
 
@@ -228,7 +225,6 @@ export default class RayInput extends EventEmitter {
   }
 
   onRayCancel_(e) {
-    //console.log('onRayCancel_');
     let mesh = this.renderer.getSelectedMesh();
     this.emit("raycancel", mesh);
   }

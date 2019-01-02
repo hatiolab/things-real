@@ -1,54 +1,50 @@
 <html>
+  <head>
+    <script src="../../things-real.js"></script>
+  </head>
 
-<head>
-  <script src="../../things-real.js"></script>
-</head>
+  <body>
+    <h1>3D Modeling Library - REAL</h1>
+    <div id="scene"></div>
 
-<body>
-  <h1>3D Modeling Library - REAL</h1>
-  <div id="scene"></div>
+    <script type="module">
+      import { html, render } from "../../node_modules/lit-html/lit-html.js";
 
-  <script type="module">
-    import { html, render } from '../../node_modules/lit-html/lit-html.js';
+      var { Component } = REAL;
 
-    var {
-      Component
-    } = REAL;
+      const component = new Component({
+        model: {
+          center: 10
+        }
+      });
 
-    const component = new Component({
-      model: {
-        center: 10
-      }
-    });
+      component.onchange = function(after, before) {
+        console.log("state changed", before, "==>", after);
+      };
 
-    component.onchange = function (after, before) {
-      console.log('state changed', before, '==>', after);
-    }
+      component.dimension = "100"; // state
+      component.setModel("center", 50); // model
+      component.clearState("dimension"); // state
+      component.center = 40; // state
+      component.clearState("center"); // state
+      component.rotate = 800; // state
+      component.center = 60; // state
+      component.dimension = 90; // state
 
-    component.dimension = '100'; // state
-    component.setModel('center', 50); // model
-    component.clearState('dimension'); // state
-    component.center = 40; // state
-    component.clearState('center'); // state
-    component.rotate = 800; // state
-    component.center = 60; // state
-    component.dimension = 90; // state
+      console.log("residents", Component.residents);
 
-    console.log('residents', Component.residents);
+      const show = component => {
+        return html`
+          <h2>model : ${JSON.stringify(component.model, null, 2)}</h2>
+          <h2>state : ${JSON.stringify(component.state, null, 2)}</h2>
+          <h2>center : ${component.center}</h2>
+          <h2>dimension : ${component.dimension}</h2>
+        `;
+      };
 
-    const show = (component) => {
-      return html`
-        <h2>model : ${JSON.stringify(component.model, null, 2)}</h2>
-        <h2>state : ${JSON.stringify(component.state, null, 2)}</h2>
-        <h2>center : ${component.center}</h2>
-        <h2>dimension : ${component.dimension}</h2>
-      `;
-    };
+      const el = document.querySelector("#scene");
 
-    const el = document.querySelector('#scene');
-
-    render(show(component), el);
-  </script>
-</body>
-
+      render(show(component), el);
+    </script>
+  </body>
 </html>

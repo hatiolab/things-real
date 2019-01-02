@@ -5,12 +5,43 @@
  * Based on @tojiro's vr-samples-utils.js
  */
 
-export var WEBVR = {
-  createButton: function(renderer, options?) {
-    if (document.getElementById("xrbutton")) return;
+export class WEBVR {
+  static _mainRenderer;
+  static _device;
+
+  static set mainRenderer(renderer) {
+    WEBVR._mainRenderer = renderer;
+    if (renderer) {
+      renderer.vr.setDevice(WEBVR.device);
+    }
+  }
+
+  static get mainRenderer() {
+    return WEBVR._mainRenderer;
+  }
+
+  static get device() {
+    return WEBVR._device;
+  }
+
+  static set device(device) {
+    this._device = device;
+    if (WEBVR.mainRenderer) {
+      WEBVR.mainRenderer.vr.setDevice(WEBVR.device);
+    }
+  }
+
+  static createButton(renderer, options?) {
+    if (WEBVR.mainRenderer) {
+      return;
+    }
+
+    WEBVR.mainRenderer = renderer;
 
     if (options && options.frameOfReferenceType) {
-      renderer.vr.setFrameOfReferenceType(options.frameOfReferenceType);
+      WEBVR.mainRenderer.vr.setFrameOfReferenceType(
+        options.frameOfReferenceType
+      );
     }
 
     function showEnterVR(device) {
@@ -32,10 +63,10 @@ export var WEBVR = {
       button.onclick = function() {
         device.isPresenting
           ? device.exitPresent()
-          : device.requestPresent([{ source: renderer.domElement }]);
+          : device.requestPresent([{ source: WEBVR.mainRenderer.domElement }]);
       };
 
-      renderer.vr.setDevice(device);
+      WEBVR.device = device;
     }
 
     function showEnterXR(device) {
@@ -44,7 +75,7 @@ export var WEBVR = {
       function onSessionStarted(session) {
         session.addEventListener("end", onSessionEnded);
 
-        renderer.vr.setSession(session);
+        WEBVR.mainRenderer.vr.setSession(session);
         button.textContent = "EXIT VR";
 
         currentSession = session;
@@ -53,7 +84,7 @@ export var WEBVR = {
       function onSessionEnded(event: any) {
         currentSession.removeEventListener("end", onSessionEnded);
 
-        renderer.vr.setSession(null);
+        WEBVR.mainRenderer.vr.setSession(null);
         button.textContent = "ENTER VR";
 
         currentSession = null;
@@ -89,7 +120,7 @@ export var WEBVR = {
         }
       };
 
-      renderer.vr.setDevice(device);
+      WEBVR.device = device;
     }
 
     function showVRNotFound() {
@@ -106,7 +137,7 @@ export var WEBVR = {
 
       button.onclick = null;
 
-      renderer.vr.setDevice(null);
+      WEBVR.device = null;
     }
 
     function stylizeElement(element) {
@@ -182,7 +213,9 @@ export var WEBVR = {
       window.addEventListener(
         "vrdisplayactivate",
         function(event: VRDisplayEvent) {
-          event.display.requestPresent([{ source: renderer.domElement }]);
+          event.display.requestPresent([
+            { source: WEBVR.mainRenderer.domElement }
+          ]);
         },
         false
       );
@@ -201,4 +234,4 @@ export var WEBVR = {
       return button;
     }
   }
-};
+}

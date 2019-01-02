@@ -56,24 +56,26 @@ export default class Scene extends EventSource {
     });
 
     this._snapshotCommander.delegate_on(this);
-
-    window.addEventListener(
-      "resize",
-      () => {
-        this.resize();
-      },
-      false
-    );
   }
 
   dispose() {
     // TODO implement
+
     this._snapshotCommander.delegate_off(this);
-    this._layer.dispose();
     this._rootContainer && this._rootContainer.dispose();
+    this._layer && this._layer.dispose();
+
+    delete this._snapshotCommander;
+    delete this._rootContainer;
+    delete this._layer;
   }
 
   private setTargetEl(targetEl) {
+    if (this._layer) {
+      this._layer.dispose();
+      delete this._layer;
+    }
+
     var _targetEl;
 
     if (typeof targetEl == "string") {
@@ -87,6 +89,10 @@ export default class Scene extends EventSource {
     }
 
     this._targetEl = _targetEl;
+
+    if (!targetEl) {
+      return;
+    }
 
     if (this._targetEl && this._targetEl.style) {
       this._targetEl.style.cursor = "default";
