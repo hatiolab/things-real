@@ -389,7 +389,7 @@ export default class Component extends ModelAndState
   }
 
   substitute(text) {
-    return substitute(text);
+    return substitute.call(this, text);
   }
 
   /**

@@ -306,21 +306,21 @@ export default class ViewerLayer extends Layer {
     switch (action) {
       case "data-toggle":
         (enter || restore) &&
-          this.rootContainer.findAll(target, component).forEach(component => {
-            component.data = !component.data;
+          this.rootContainer.findAll(target, component).forEach(x => {
+            x.data = !x.data;
           });
         break;
       case "data-tristate":
         (enter || restore) &&
-          this.rootContainer.findAll(target, component).forEach(component => {
-            let number = Math.round(Math.max(Number(component.data) || 0, 0));
-            component.data = (number + (enter ? 1 : 2)) % 3;
+          this.rootContainer.findAll(target, component).forEach(x => {
+            let number = Math.round(Math.max(Number(x.data) || 0, 0));
+            x.data = (number + (enter ? 1 : 2)) % 3;
           });
         break;
       case "data-set":
         if (enter) {
-          this.rootContainer.findAll(target, component).forEach(component => {
-            component.data = component.substitute(value);
+          this.rootContainer.findAll(target, component).forEach(x => {
+            x.data = component.substitute(value);
           });
         } else if (restore) {
           // TODO restore 설정은 leave 시점에 enter 시점의 상태로 되돌린다는 뜻이다.
