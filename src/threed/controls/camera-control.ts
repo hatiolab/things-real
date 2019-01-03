@@ -85,8 +85,7 @@ export default class CameraController {
 
   _findRecursive(container) {
     let found = (container.components || []).find(component => {
-      let camera = component.state.camera;
-      return camera && camera.active;
+      return component.state.type == "camera" && component.state.active;
     });
 
     if (found) return found;

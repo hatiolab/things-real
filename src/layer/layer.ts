@@ -152,17 +152,19 @@ export default abstract class Layer extends EventSource {
         this.invalidate();
       });
 
-      this._rootContainer.on("active-camera", (component, camera, hint) => {
+      this._rootContainer.on("active-camera", (camera, hint) => {
         this.activateCamera(camera);
       });
 
-      this._rootContainer.on("deactive-camera", (component, camera, hint) => {
+      this._rootContainer.on("deactive-camera", (camera, hint) => {
         this.inactivateCamera(camera);
       });
 
       var activeCameraComponent = this.cameraControl.findActiveCamera();
       this.activateCamera(
-        activeCameraComponent && activeCameraComponent.object3D.camera
+        activeCameraComponent
+          ? activeCameraComponent.object3D
+          : CameraView.PERSPECTIVE
       );
 
       this.invalidate();
@@ -392,10 +394,11 @@ export default abstract class Layer extends EventSource {
         this.activeCamera.bottom = -modelHeight / 2;
       }
     }
-    this.activeCamera.updateProjectionMatrix();
 
     this.css3DRenderer.setSize(width, height);
     this.glRenderer.setSize(width, height, true);
+
+    this.activeCamera.updateProjectionMatrix();
 
     this.invalidate();
   }
@@ -443,6 +446,7 @@ export default abstract class Layer extends EventSource {
   createRayInput() {
     var rayInput = new RayInput(this.activeCamera, this.glRenderer.domElement);
     rayInput.setSize(this.glRenderer.getSize());
+    rayInput.update();
 
     return rayInput;
   }
@@ -458,13 +462,13 @@ export default abstract class Layer extends EventSource {
 
     this.rayInput = this.createRayInput();
 
-    var camera: any = this.activeCamera;
+    // var camera: any = this.activeCamera;
 
-    if (!camera.parent) {
-      this.objectScene.add(this.rayInput.getMesh());
-    } else {
-      (camera.parent as any).add(this.rayInput.getMesh());
-    }
+    // if (!camera.parent) {
+    this.objectScene.add(this.rayInput.getMesh());
+    // } else {
+    //   (camera.parent as any).add(this.rayInput.getMesh());
+    // }
 
     this.rootContainer.components
       .filter(component => {
@@ -484,12 +488,12 @@ export default abstract class Layer extends EventSource {
   }
 
   unbindRayInputs() {
-    var camera: any = this.activeCamera;
-    if (!camera.parent) {
-      this.objectScene.remove(this.rayInput.getMesh());
-    } else {
-      (camera.parent as any).remove(this.rayInput.getMesh());
-    }
+    // var camera: any = this.activeCamera;
+    // if (!camera.parent) {
+    this.objectScene.remove(this.rayInput.getMesh());
+    // } else {
+    //   (camera.parent as any).remove(this.rayInput.getMesh());
+    // }
 
     this.rootContainer.components
       .filter(component => {
@@ -530,12 +534,27 @@ export default abstract class Layer extends EventSource {
 
       this.rayInput && this.unbindRayInputs();
     } else {
-      this.activeCamera.layers.enable(1); // CLARIFY-ME
+      // this.activeCamera.layers.enable(1); // CLARIFY-ME
+
+      console.log(
+        "active camera 1",
+        this.activeCamera.position.x,
+        this.activeCamera.position.y,
+        this.activeCamera.position.z,
+        this.activeCamera.uuid
+      );
 
       display.depthNear = this.activeCamera.near;
       display.depthFar = this.activeCamera.far;
 
       this.bindRayInputs();
+      console.log(
+        "active camera 2",
+        this.activeCamera.position.x,
+        this.activeCamera.position.y,
+        this.activeCamera.position.z,
+        this.activeCamera.uuid
+      );
     }
 
     this.invalidate();
@@ -678,7 +697,7 @@ export default abstract class Layer extends EventSource {
    * prerender
    * @param context
    */
-  protected prerender(context?) {}
+  // protected prerender(context?) {}
 
   /**
    * 화면을 갱신하는 render() 함수호출을 최소화하기 위한 기능을 함.
@@ -713,6 +732,8 @@ export default abstract class Layer extends EventSource {
   activateCamera(camera?: CameraView | THREE.Camera) {
     if (camera === undefined) {
       this.cameraControl.switchCamera("perspective");
+      this.invalidate();
+
       return;
     }
 

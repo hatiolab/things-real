@@ -203,13 +203,16 @@ export default class ModelerLayer extends ViewerLayer {
 
     this.raycaster.setFromCamera(coords, this.activeCamera);
 
+    var intersects = [];
+
     /* modeler case begin */
     var activePickers = this.transformControls.activePickers;
-    var intersects = this.raycaster.intersectObjects(activePickers, true);
+    if (activePickers.length > 0) {
+      intersects = this.raycaster.intersectObjects(activePickers, true);
 
-    if (intersects.length > 0) {
-      // return this.rootContainer
-      return this.ownerScene.selected[0];
+      if (intersects.length > 0) {
+        return this.ownerScene.selected[0];
+      }
     }
     /* modeler case end */
 

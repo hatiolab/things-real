@@ -457,19 +457,6 @@ export default class Component extends ModelAndState
   onchangetextStyle(after, before) {
     this.update();
   }
-
-  onchangecamera(after?: CameraModel, before?: CameraModel) {
-    this.object3D.updateCamera();
-
-    let afterActive = after && after.active;
-    let beforeActive = before && before.active;
-
-    if (afterActive !== beforeActive) {
-      if (afterActive)
-        this.trigger("active-camera", this, this.object3D.camera);
-      else this.trigger("deactive-camera", this, this.object3D.camera);
-    }
-  }
 }
 
 Component.register(Component.type, Component);

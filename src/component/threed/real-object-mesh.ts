@@ -7,7 +7,6 @@ import Component from "../component";
 
 import * as THREE from "three";
 
-import { createCamera, updateCamera } from "../camera/camera";
 import { applyAlpha } from "./common";
 import { error } from "../../util/logger";
 
@@ -44,26 +43,6 @@ export default abstract class RealObjectMesh extends THREE.Mesh
     this._component = component;
 
     this.update();
-  }
-
-  private _camera: THREE.Camera;
-
-  get camera() {
-    if (!this._camera) {
-      let { camera: options = {} } = this.component.state;
-      if (options) {
-        this._camera = createCamera(this, options);
-      }
-    }
-
-    return this._camera;
-  }
-
-  set camera(camera) {
-    if (this._camera === camera) return;
-    if (this._camera) this.remove(this._camera);
-    this._camera = camera;
-    if (this._camera) this.add(this._camera);
   }
 
   update() {
@@ -146,10 +125,6 @@ export default abstract class RealObjectMesh extends THREE.Mesh
 
   updateHidden() {
     this.visible = !this.component.state.hidden;
-  }
-
-  updateCamera() {
-    updateCamera(this.camera, this.component.state.camera);
   }
 
   protected abstract buildGeometry(): THREE.Geometry | THREE.BufferGeometry;

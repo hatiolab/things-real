@@ -23,6 +23,8 @@
       <button id="create">Create</button> <button id="dispose">Dispose</button>
       <button id="undo">Undo</button> <button id="redo">Redo</button>
       <button id="start">Start</button> <button id="stop">Stop</button>
+      <button id="stop">Stop</button>
+      <button id="switchCamera">Switch Camera</button>
       <button id="setTranslateMode">Translate</button>
       <button id="setRotateMode">Rotate</button>
       <button id="setScaleMode">Scale</button>
@@ -62,25 +64,49 @@
       var interval;
 
       var textStyle = `
-      color: yellow;
-      margin: 0;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-    `;
+        color: yellow;
+        margin: 0;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      `;
 
       var texts = ["Halo", "안녕하세요", "Hello"];
 
       export function create() {
         scene = new Scene({
           targetEl: "scene",
-          mode: SceneMode.EDIT,
+          mode: SceneMode.VIEW,
           model: {
             width: 700,
             height: 300,
             version: 2,
             components: [
+              {
+                id: "camera",
+                type: "camera",
+                fillStyle: {
+                  type: "pattern",
+                  image: "https://i.imgur.com/fHyEMsl.jpg"
+                },
+                dimension: {
+                  width: 100,
+                  height: 100,
+                  depth: 100
+                },
+                translate: {
+                  x: 0,
+                  y: 500,
+                  z: 500
+                },
+                rotation: {
+                  x: 180,
+                  y: 0,
+                  z: 0
+                },
+                active: true
+              },
               {
                 id: "text",
                 type: "text",
@@ -101,9 +127,39 @@
                   bold: true,
                   italic: true,
                   fontSize: 100
+                }
+              },
+              {
+                type: "cube",
+                color: "green",
+                fillStyle: {
+                  type: "pattern",
+                  image: "https://i.imgur.com/fHyEMsl.jpg"
                 },
-                camera: {
-                  active: true
+                dimension: {
+                  width: 100,
+                  height: 100,
+                  depth: 100
+                },
+                translate: {
+                  x: 0,
+                  y: 50,
+                  z: 150
+                },
+                animation: {
+                  oncreate: {
+                    type: "rotation",
+                    rx: 6.28,
+                    ry: 6.28,
+                    duration: 2000,
+                    delay: 0,
+                    repeat: true
+                  }
+                },
+                event: {
+                  tap: {
+                    action: "emphasize"
+                  }
                 }
               }
             ]
@@ -149,6 +205,11 @@
       function stop() {
         clearInterval(interval);
         interval = undefined;
+      }
+
+      function switchCamera() {
+        var camera = scene.findAll("camera")[0];
+        camera.setState("active", !camera.getState("active"));
       }
 
       function setTranslateMode() {

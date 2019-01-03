@@ -23,7 +23,6 @@
       <button id="create">Create</button> <button id="dispose">Dispose</button>
       <button id="undo">Undo</button> <button id="redo">Redo</button>
       <button id="start">Start</button> <button id="stop">Stop</button>
-      <button id="switchCamera">Switch Camera</button>
       <button id="setTranslateMode">Translate</button>
       <button id="setRotateMode">Rotate</button>
       <button id="setScaleMode">Scale</button>
@@ -150,9 +149,6 @@
                   y: 50,
                   z: -150
                 },
-                camera: {
-                  active: true
-                },
                 url:
                   "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/Buggy/glTF-Binary/Buggy.glb"
               },
@@ -173,9 +169,6 @@
                   x: -200,
                   y: 50,
                   z: 150
-                },
-                camera: {
-                  active: false
                 }
               }
             ]
@@ -220,38 +213,6 @@
       function stop() {
         clearInterval(interval);
         interval = undefined;
-      }
-
-      var current_camera = 0;
-
-      function switchCamera() {
-        var first = scene.findById("first-cube");
-        var second = scene.findById("second-cube");
-
-        var firstCamera = first.state.camera;
-        var secondCamera = second.state.camera;
-
-        first.setState("camera", {
-          ...firstCamera,
-          active: current_camera == 0
-        });
-
-        second.setState("camera", {
-          ...secondCamera,
-          active: current_camera == 1
-        });
-
-        switch (current_camera) {
-          case 0:
-            current_camera++;
-            break;
-          case 1:
-            current_camera++;
-            break;
-          default:
-            current_camera = 0;
-            break;
-        }
       }
 
       function setTranslateMode() {

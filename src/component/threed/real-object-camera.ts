@@ -8,8 +8,18 @@ import RealObject from "./real-object";
 import * as THREE from "three";
 
 import { SCALE_MIN } from "./common";
+// import { updateCamera } from "../camera/camera";
 
-export default abstract class AbstractRealObject extends THREE.Object3D
+import { error } from "../../util/logger";
+
+const DEFAULT = {
+  far: 100000,
+  fov: 80,
+  near: 1,
+  zoom: 1
+};
+
+export default class RealObjectCamera extends THREE.PerspectiveCamera
   implements RealObject {
   protected _component: Component;
 
@@ -48,6 +58,7 @@ export default abstract class AbstractRealObject extends THREE.Object3D
     this.updateTransform();
     this.updateAlpha();
     this.updateHidden();
+    this.updateCamera();
   }
 
   /**
@@ -126,7 +137,60 @@ export default abstract class AbstractRealObject extends THREE.Object3D
     this.visible = !this.component.state.hidden;
   }
 
-  protected abstract build();
+  updateCamera() {
+    var {
+      near = DEFAULT.near,
+      far = DEFAULT.far,
+      fov = DEFAULT.fov,
+      zoom = DEFAULT.zoom
+    } = this.component.state;
+
+    this.far = far;
+    this.fov = fov;
+    this.near = near;
+    this.zoom = zoom;
+  }
+
+  build() {
+    this.add(new THREE.Mesh(this.buildGeometry(), this.buildMaterial()));
+  }
+
+  buildMaterial() {
+    var { fillStyle } = this.component.state;
+
+    var params: any = {};
+
+    if (typeof fillStyle == "object") {
+      params = {
+        map: new THREE.TextureLoader(THREE.DefaultLoadingManager).load(
+          fillStyle.image,
+          () => {
+            this.component.invalidate();
+          },
+          e => {
+            error(e);
+          }
+        )
+      };
+    } else {
+      params = {
+        color: fillStyle || "#FFF"
+      };
+    }
+
+    const material = new THREE.MeshLambertMaterial(params);
+
+    return material;
+  }
+
+  buildGeometry() {
+    var { width = 1, height = 1, depth = 1 } =
+      this.component.state.dimension || Component.UNIT_DIMENSION;
+
+    var radius = Math.min(width, height, depth) / 2;
+
+    return new THREE.SphereGeometry(radius, 32, 32);
+  }
 
   clear() {
     this.children.slice().forEach(child => {

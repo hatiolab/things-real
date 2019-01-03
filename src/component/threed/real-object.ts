@@ -8,7 +8,7 @@ import * as THREE from "three";
 export default interface RealObject extends THREE.Object3D {
   component: Component;
   isRealObject;
-  camera;
+  // camera;
 
   dispose();
 
@@ -41,10 +41,10 @@ export default interface RealObject extends THREE.Object3D {
    * Component의 hidden 상태 속성을 오브젝트에 반영한다.
    */
   updateHidden();
-  /**
-   * Component의 camera 상태 속성을 오브젝트에 반영한다.
-   */
-  updateCamera();
+  // /**
+  //  * Component의 camera 상태 속성을 오브젝트에 반영한다.
+  //  */
+  // updateCamera();
 
   updateTransform();
   updateTransformReverse();
