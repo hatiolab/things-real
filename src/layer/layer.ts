@@ -163,7 +163,7 @@ export default abstract class Layer extends EventSource {
       var activeCameraComponent = this.cameraControl.findActiveCamera();
       this.activateCamera(
         activeCameraComponent
-          ? activeCameraComponent.object3D
+          ? activeCameraComponent.object3DCamera
           : CameraView.PERSPECTIVE
       );
 
@@ -462,13 +462,13 @@ export default abstract class Layer extends EventSource {
 
     this.rayInput = this.createRayInput();
 
-    // var camera: any = this.activeCamera;
+    var camera: any = this.activeCamera;
 
-    // if (!camera.parent) {
-    this.objectScene.add(this.rayInput.getMesh());
-    // } else {
-    //   (camera.parent as any).add(this.rayInput.getMesh());
-    // }
+    if (!camera.parent) {
+      this.objectScene.add(this.rayInput.getMesh());
+    } else {
+      (camera.parent as any).add(this.rayInput.getMesh());
+    }
 
     this.rootContainer.components
       .filter(component => {
@@ -488,12 +488,12 @@ export default abstract class Layer extends EventSource {
   }
 
   unbindRayInputs() {
-    // var camera: any = this.activeCamera;
-    // if (!camera.parent) {
-    this.objectScene.remove(this.rayInput.getMesh());
-    // } else {
-    //   (camera.parent as any).remove(this.rayInput.getMesh());
-    // }
+    var camera: any = this.activeCamera;
+    if (!camera.parent) {
+      this.objectScene.remove(this.rayInput.getMesh());
+    } else {
+      (camera.parent as any).remove(this.rayInput.getMesh());
+    }
 
     this.rootContainer.components
       .filter(component => {
@@ -534,27 +534,20 @@ export default abstract class Layer extends EventSource {
 
       this.rayInput && this.unbindRayInputs();
     } else {
-      // this.activeCamera.layers.enable(1); // CLARIFY-ME
+      this.activeCamera.layers.enable(1); // CLARIFY-ME
 
-      console.log(
-        "active camera 1",
-        this.activeCamera.position.x,
-        this.activeCamera.position.y,
-        this.activeCamera.position.z,
-        this.activeCamera.uuid
-      );
+      // console.log(
+      //   "active camera 1",
+      //   this.activeCamera.position.x,
+      //   this.activeCamera.position.y,
+      //   this.activeCamera.position.z,
+      //   this.activeCamera.uuid
+      // );
 
       display.depthNear = this.activeCamera.near;
       display.depthFar = this.activeCamera.far;
 
       this.bindRayInputs();
-      console.log(
-        "active camera 2",
-        this.activeCamera.position.x,
-        this.activeCamera.position.y,
-        this.activeCamera.position.z,
-        this.activeCamera.uuid
-      );
     }
 
     this.invalidate();

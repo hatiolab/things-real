@@ -55,6 +55,10 @@ export default class Camera extends Component {
   //   }
   // }
 
+  get object3DCamera() {
+    return (this.object3D as RealObjectCamera).camera;
+  }
+
   buildObject3D() {
     return new RealObjectCamera(this);
   }
@@ -73,7 +77,10 @@ export default class Camera extends Component {
   }
 
   onchangeactive(after, before) {
-    this.trigger(after ? "active-camera" : "deactive-camera", this.object3D);
+    this.trigger(
+      after ? "active-camera" : "deactive-camera",
+      (this.object3D as RealObjectCamera).camera
+    );
   }
 }
 
