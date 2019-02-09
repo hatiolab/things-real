@@ -61,6 +61,8 @@ export default class CameraController {
     perspectiveCamera.lookAt(new THREE.Vector3(0, 0, 0));
     perspectiveCamera.updateMatrixWorld(false);
 
+    perspectiveCamera.name = "perspective";
+
     // let frustum = Math.max(width, height) / 2;
     // this._defaultCamera = new THREE.OrthographicCamera(-frustum, frustum, frustum, -frustum, 0, 30000);
     // this._defaultCamera.position.set(0, frustum * 2, 0);
@@ -146,7 +148,6 @@ export default class CameraController {
     var { width, height } = this.layer.rootContainer.state;
 
     const targetEl = this.layer.target;
-    const ratio = targetEl.offsetWidth / targetEl.offsetHeight;
 
     const info = this.orthoCameraMemory[dir];
 
@@ -156,5 +157,7 @@ export default class CameraController {
     camera.bottom = info.bottom || -height;
     camera.position.copy(info.position);
     camera.rotation.copy(info.rotation);
+
+    camera.name = dir;
   }
 }

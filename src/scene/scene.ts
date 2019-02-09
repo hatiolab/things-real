@@ -198,8 +198,12 @@ export default class Scene extends EventSource {
     if (typeof camera == "string") {
       this._layer.activateCamera(cameraviews[camera]);
     } else {
-      this._layer.activateCamera(camera);
+      this._layer.activateCamera(camera as any);
     }
+  }
+
+  get activeCamera() {
+    return this._layer.activeCamera;
   }
 
   get baseUrl() {
