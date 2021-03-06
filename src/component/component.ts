@@ -21,7 +21,8 @@ type EventMap = {
   [selector: string]: { [delegator: string]: { [event: string]: Function } };
 };
 
-export default class Component extends ModelAndState
+export default class Component
+  extends ModelAndState
   implements LifeCycleCallback {
   static readonly UNIT_DIMENSION = { width: 1, height: 1, depth: 1 };
   static readonly UNIT_SCALE = { x: 1, y: 1, z: 1 };
@@ -33,7 +34,7 @@ export default class Component extends ModelAndState
     resizable: true,
     rotatable: true,
     properties: [],
-    "value-property": "text"
+    "value-property": "text",
   };
 
   /**
@@ -86,7 +87,7 @@ export default class Component extends ModelAndState
   propagateReadyState() {
     this.ready();
     this.isContainer &&
-      (this as any).components.forEach(component => {
+      (this as any).components.forEach((component) => {
         component.propagateReadyState();
       });
   }
@@ -367,7 +368,7 @@ export default class Component extends ModelAndState
 
     this.textOptions = {
       ...(this.textOptions || {}),
-      text: text === undefined ? "" : String(t)
+      text: text === undefined ? "" : String(t),
     };
   }
 

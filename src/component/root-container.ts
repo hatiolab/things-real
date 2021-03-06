@@ -18,7 +18,7 @@ import ReferenceMap from "../util/reference-map";
 var invalidateDataDebouncer = debounce(function mapper(comp: Component) {
   comp.dataSpreadEngine.execute();
   comp.isContainer &&
-    (comp as Container).components.forEach(child => mapper(child));
+    (comp as Container).components.forEach((child) => mapper(child));
 }, 500);
 
 export default class RootContainer extends Container {
@@ -137,7 +137,7 @@ export default class RootContainer extends Container {
 
   protected disposeCSS3DScene() {
     var children = [...this.css3DScene.children];
-    children.forEach(child => this.css3DScene.remove(child));
+    children.forEach((child) => this.css3DScene.remove(child));
   }
 
   /**
@@ -209,11 +209,9 @@ export default class RootContainer extends Container {
    */
   private findTemplateFor(id: string) {
     if (!this._templatePrefixes)
-      this._templatePrefixes = Object.keys(this._templateMap)
-        .sort()
-        .reverse();
+      this._templatePrefixes = Object.keys(this._templateMap).sort().reverse();
 
-    var prefix = this._templatePrefixes.find(prefix => {
+    var prefix = this._templatePrefixes.find((prefix) => {
       return id.startsWith(prefix);
     });
     if (prefix) return this._templateMap[prefix];
@@ -224,12 +222,12 @@ export default class RootContainer extends Container {
 
   get identities() {
     return Object.values(this._indexMap)
-      .map(component => {
+      .map((component) => {
         let { id, data } = component.model;
 
         return {
           key: id,
-          value: data
+          value: data,
         };
       })
       .sort((c1, c2) => {
@@ -289,7 +287,7 @@ export default class RootContainer extends Container {
       if (template) {
         let clone = Object.assign(clonedeep(template.hierarchy), {
           id: id,
-          templatePrefix: ""
+          templatePrefix: "",
         });
         component = compile(clone);
         this.addComponent(component);
@@ -308,17 +306,17 @@ export default class RootContainer extends Container {
     invalidateDataDebouncer(this);
   }
 
-  get eventMap() {
-    return {
-      "(root)": {
-        "(descendant)": {
-          added: this._onadded,
-          removed: this._onremoved,
-          change: this._onchanged
-        }
-      }
-    };
-  }
+  eventMap = {
+    // return {
+    "(root)": {
+      "(descendant)": {
+        added: this._onadded,
+        removed: this._onremoved,
+        change: this._onchanged,
+      },
+    },
+    // };
+  };
 
   /**
    * Scene 화면을 갱신
@@ -385,7 +383,7 @@ export default class RootContainer extends Container {
    */
   private addTraverse(component: Component) {
     if (component.isContainer) {
-      (component as Container).components.forEach(child =>
+      (component as Container).components.forEach((child) =>
         this.addTraverse(child)
       );
     }
@@ -409,7 +407,7 @@ export default class RootContainer extends Container {
    */
   private removeTraverse(component: Component) {
     if (component.isContainer)
-      (component as Container).components.forEach(child =>
+      (component as Container).components.forEach((child) =>
         this.removeTraverse(child)
       );
 

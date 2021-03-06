@@ -85,7 +85,7 @@ export default class RayController extends EventEmitter {
         "WebVR API not available! Consider using the webvr-polyfill."
       );
     } else {
-      navigator.getVRDisplays().then(displays => {
+      navigator.getVRDisplays().then((displays) => {
         this.vrDisplay = displays[0];
       });
     }
@@ -319,7 +319,7 @@ export default class RayController extends EventEmitter {
       // The array may contain undefined gamepads, so check for that as well as
       // a non-null pose. Clicker devices such as Cardboard button emulation
       // have a displayId but no pose.
-      if (gamepad && (gamepad.pose || gamepad.displayId)) {
+      if (gamepad && gamepad.pose /* || gamepad.displayId) */) {
         return gamepad;
       }
     }
